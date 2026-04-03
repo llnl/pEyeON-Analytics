@@ -69,3 +69,20 @@ DLT
            |
            v
       Streamlit UI
+```
+
+## Quickstart - Uses Streamlit GUI to load and process data
+
+_Prequisite: you have data created by EyeOn accessible in the host you're running the Streamlit app on_
+
+1. Install UV which will manage python and dependencies
+    https://docs.astral.sh/uv/getting-started/installation/
+
+2. Copy `EyeOnData.toml-template` to `EyeOnData.toml`. You must edit the `datasets->dataset_path` value to a the top level of your EyeOn batches of JSON files.
+
+3. Run the app
+    `uv run streamlit run EyeOnData.py`
+
+4. On initial exedcution, as there is no existing database, you'll be presented with a form for loading your first batch(es) of data.  Just select the batch(es) to load and click the `Create DB directory` button.
+
+5. Once loaded, browse thru the app to see data!
