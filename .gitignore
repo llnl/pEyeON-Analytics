@@ -204,5 +204,8 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+# dbt local user metadata
+dbt_eyeon_gold/.user.yml
+
 # macOS
 .DS_Store
