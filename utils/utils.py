@@ -1,20 +1,18 @@
-import streamlit as st
-from utils.config import duckdb_path, resolve_dlt_path, settings, update_eyeondata_toml
-import pages.pages as pages
-import utils.db as db
-from utils.schema_ext import EnrichedTable
-from pathlib import Path
-import os
-import subprocess
-import load_eyeon
-from dbt.cli.main import dbtRunner, dbtRunnerResult
-import pandas as pd
-from datetime import datetime
-import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+import os
+import re
+import subprocess
 
+from dbt.cli.main import dbtRunner, dbtRunnerResult
+import pandas as pd
+import streamlit as st
+
+import load_eyeon
+import utils.db as db
+from utils.config import duckdb_path, resolve_dlt_path, settings, update_eyeondata_toml
+from utils.schema_ext import EnrichedTable
 
 
 def app_base_config():
@@ -45,7 +43,7 @@ def init_app_form():
             placeholder="/path/to/eyeon_json_data",
         )
 
-        selected_rows = batch_selector()            
+        selected_rows = batch_selector(batch_dir)
 
         database_path = st.text_input(
             "DB Directory path",
@@ -80,7 +78,7 @@ def init_app_form():
                 errors.append(f"Dataset Path must be a directory: {batch_path}")
 
             # Must select at least 1 dataset dir
-            if len(selected_rows)==0:
+            if len(selected_rows) == 0:
                 errors.append("Must select at least 1 Dataset to process")
 
             # DB directory: create if requested; must end up writable.
@@ -124,9 +122,11 @@ def init_app_form():
                         "db": {
                             "db_path": (database_path or "").strip(),
                         },
+                        "datasets": {
+                            "dataset_path": str(batch_path),
+                        },
                         "defaults": {
                             "utility_id": utility_id_clean,
-                            "json_dir": str(batch_path),
                         },
                     }
                 )
@@ -140,13 +140,19 @@ def init_app_form():
                 with st.spinner("Initializing..."):
                     db.init()
                     load_me_some_data(selected_rows)
-#                    load_data(str(batch_path), utility_id=utility_id_clean)
-                    run_dbt()
 
-def batch_selector():
+
+def batch_selector(dataset_path: str) -> list[dict]:
     with st.container(border=True):
-        # Get OS Dirs
-        batch_dirs = list_dirs(settings.datasets.dataset_path)
+        dataset_path = (dataset_path or "").strip()
+        if not dataset_path:
+            st.caption("Enter a dataset path to list available batch directories.")
+            return []
+
+        batch_dirs = list_dirs(dataset_path)
+        if batch_dirs.empty:
+            st.info("No batch directories found for the selected dataset path.")
+            return []
 
         event = st.dataframe(
             batch_dirs,
@@ -166,7 +172,8 @@ def batch_selector():
                 .to_dict(orient="records")
             )
         return selected_rows
-    
+
+
 # 20260326T153450Z_MAC -> ts=2026-03-26T15:34:50Z, utility_id=MAC
 DIR_RE = re.compile(r"^(?P<ts>\d{8}T\d{6}Z)_(?P<utility_id>[^/]+)$")
 
@@ -280,10 +287,12 @@ def _db_settings():
 def run_eyeon():
     with st.spinner("Running eyeon..."):
         try:
-            # Run the command and capture the output
-            command = f"../../builds/eyeon-parse.sh {settings.defaults.utility_id} {st.session_state.data_dir}"
             result = subprocess.run(
-                command,
+                [
+                    str(resolve_dlt_path("eyeon-parse.sh")),
+                    settings.defaults.utility_id,
+                    st.session_state.data_dir,
+                ],
                 capture_output=True,
                 text=True,
                 check=True,  # Raise an exception if the command fails
@@ -344,9 +353,17 @@ def sidebar_db_chooser():
 def list_dirs(directory_path: str) -> pd.DataFrame:
     empty_df = pd.DataFrame(columns=["directory_name", "modified_time"])
     rows = []
+    raw_path = (directory_path or "").strip()
+    if not raw_path:
+        return empty_df
+
+    base_path = Path(raw_path).expanduser()
+
+    if not base_path.exists() or not base_path.is_dir():
+        return empty_df
 
     try:
-        with os.scandir(directory_path) as entries:
+        with os.scandir(base_path) as entries:
             for entry in entries:
                 if entry.is_dir():
                     mtime_timestamp = entry.stat().st_mtime
@@ -355,17 +372,13 @@ def list_dirs(directory_path: str) -> pd.DataFrame:
                     )
                     rows.append(
                         {
-                            "directory_path": directory_path,
+                            "directory_path": str(base_path),
                             "directory_name": entry.name,
                             "modified_time": mtime_readable,
                         }
                     )
 
         return pd.DataFrame(rows)
-
-    except FileNotFoundError:
-        print(f"Error: Directory not found at {directory_path}")
-        return empty_df
 
     except Exception as e:
         print(f"An error occurred: {e}")

@@ -2,7 +2,7 @@ from pathlib import Path
 import os
 import tomllib
 from typing import Any, Mapping, Union
-from dynaconf import Dynaconf, Validator
+from dynaconf import Dynaconf
 
 
 _DLT_DIR = Path(__file__).resolve().parents[1]
@@ -17,6 +17,7 @@ settings = Dynaconf(
     envvar_prefix="EyeOnData_",
     settings_files=[str(_SETTINGS_FILE)],
 )
+
 
 def resolve_dlt_path(path: Union[str, Path]) -> Path:
     """Resolve a path relative to `schema/dlt/` unless already absolute."""

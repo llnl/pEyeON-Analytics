@@ -15,14 +15,18 @@ def exists() -> bool:
 
 
 @st.cache_resource
+def _get_conn():
+    return duckdb.connect(db_path())
+
+
 def get_conn(schema="silver"):
     """
-    Returns a cached DB connection shared across all pages and reruns.
-    cache_resource keeps this alive for the lifetime of the app session.
+    Returns a shared DB connection and switches to the requested schema.
     Silver is the default as it is generally used the most.
     """
-    conn = duckdb.connect(db_path())
-    #    conn.execute(f"use {schema}")
+    conn = _get_conn()
+    if schema:
+        conn.execute(f"use {schema}")
     return conn
 
 

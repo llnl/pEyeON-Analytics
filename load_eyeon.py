@@ -1,14 +1,16 @@
 import argparse
 import base64
-import dlt
+from datetime import datetime
 import json
 import logging
-from pathlib import Path
-from datetime import datetime
-import socket
 import os
+from pathlib import Path
 import re
+import socket
+
+import dlt
 import duckdb
+
 import utils.schema_blame as schema_blame
 from utils.config import duckdb_path, resolve_dlt_path
 
@@ -148,9 +150,6 @@ def eyeon_source(utility_id, source, depth):
         max_table_nesting=depth,
     )
     def metadata_resource():
-        import hashlib
-        import base64
-
         for path in Path(source).glob("*.json"):
             try:
                 with open(path, "r") as f:
