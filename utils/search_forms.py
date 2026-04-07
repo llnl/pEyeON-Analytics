@@ -2,18 +2,22 @@ import utils.db as db
 import streamlit as st
 from utils.config import settings
 
-def search_raw_obs(table_name, table):
+
+def search_raw_obs(table_name, table, key_prefix=""):
     """
     Display a form for searching the Observations table
     Default is to AND conditions together
     """
+    widget_prefix = f"{key_prefix}_{table_name}_search"
+
     with st.container(border=True):
         c1, c2, c3 = st.columns(3)
         with c1:
-            filter_uuid = st.text_input("UUID")
+            filter_uuid = st.text_input("UUID", key=f"{widget_prefix}_uuid")
             filter_text = st.text_input(
                 f"Filter on: {table.search_field}",
                 placeholder="Use % or * for wildcard (case insensitive)",
+                key=f"{widget_prefix}_text",
             )
         with c2:
             filter_metadata = st.selectbox(
@@ -30,9 +34,13 @@ def search_raw_obs(table_name, table):
                     "uimage",
                     "unknown",
                 ],
+                key=f"{widget_prefix}_metadata",
             )
             # Find an example file. Present a list of metadata types (that exist in this dataset) and then randomly pick one.
-            filter_ignore_unknown = st.checkbox("Ignore observations with unknown/no metadata")
+            filter_ignore_unknown = st.checkbox(
+                "Ignore observations with unknown/no metadata",
+                key=f"{widget_prefix}_ignore_unknown",
+            )
 
         raw_obs_summary()
 
@@ -41,7 +49,7 @@ def search_raw_obs(table_name, table):
         conditions = []
         if filter_uuid:
             conditions.append(f"uuid ilike '%{filter_uuid.replace('*', '%')}%'")
-        
+
         if filter_text:
             conditions.append(f"filename ilike '%{filter_text.replace('*', '%')}%'")
 
@@ -63,7 +71,8 @@ def search_raw_obs(table_name, table):
             sql += f" where {where_clause}"
         results = db.get_conn().execute(sql).df()
 
-    return results
+    return results, sql
+
 
 def raw_obs_summary():
     """
@@ -71,20 +80,31 @@ def raw_obs_summary():
     """
     with st.container(border=True):
         st.markdown("For all observations:")
-        col1, col2 = st.columns([.2,.8])
+        col1, col2 = st.columns([0.2, 0.8])
 
         # High level stats
         with col1:
-            st.metric("Observations", db.get_conn().execute('select count(*) from silver.raw_obs').fetchone()[0])
-            #st.dataframe( db.get_conn().execute('select count(*) from silver.raw_obs').df())
+            st.metric(
+                "Observations",
+                db.get_conn()
+                .execute("select count(*) from silver.raw_obs")
+                .fetchone()[0],
+            )
+            # st.dataframe( db.get_conn().execute('select count(*) from silver.raw_obs').df())
 
         with col2:
             # Get the list of tables with data, then simplify the names for display.
-            tables = db.get_conn().execute('select list(distinct _metadata_table_name) from gold.all_metadata').fetchone()[0]
+            tables = (
+                db.get_conn()
+                .execute(
+                    "select list(distinct _metadata_table_name) from gold.all_metadata"
+                )
+                .fetchone()[0]
+            )
             if tables == None:
-                type_names=["_None_"]
+                type_names = ["_None_"]
             else:
-                type_names = [s.removeprefix("metadata_").removesuffix("_file") for s in tables]
-            st.metric("Types", f"{", ".join(type_names)}")
-
-    
+                type_names = [
+                    s.removeprefix("metadata_").removesuffix("_file") for s in tables
+                ]
+            st.metric("Types", f"{', '.join(type_names)}")

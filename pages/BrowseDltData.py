@@ -1,3 +1,4 @@
+import hashlib
 from pathlib import Path
 import subprocess
 
@@ -25,7 +26,17 @@ class LandingPage(BasePageLayout):
             """Get immediate child tables"""
             return db.get_schema().get_table(table_name).get_children()
 
-        def query_table(table_name, parent_row=None):
+        def clear_selection_branch(table: EnrichedTable):
+            """Clear selection state for a table and all of its children."""
+            st.session_state.selections.pop(table.name, None)
+            for child in get_child_tables(table.name):
+                clear_selection_branch(child)
+
+        def selection_key_for(table_name, level, key_prefix, query_signature):
+            query_hash = hashlib.md5(query_signature.encode("utf-8")).hexdigest()[:12]
+            return f"{key_prefix}_{table_name}_{level}_{query_hash}"
+
+        def query_table(table_name, parent_row=None, state_prefix=""):
             """
             Query a table, optionally filtering by parent_id
             """
@@ -35,20 +46,32 @@ class LandingPage(BasePageLayout):
             table = db.get_schema().get_table(table_name)
 
             results = None
+            query_signature = f"table:{table_name}"
             if parent_row is None:
                 # Root level query
                 if table.search_field:
-                    results = sf.search_raw_obs(table_name, table)
+                    results, sql = sf.search_raw_obs(
+                        table_name, table, key_prefix=state_prefix
+                    )
+                    query_signature = f"sql:{sql}"
                 else:
                     if any(col.extra.get("search") for col in table.columns.values()):
                         search_cols = {}
                         for k, v in table.columns.items():
                             if v.extra.get("search"):
-                                search_cols[k] = st.checkbox(f"{k} is null", False)
+                                checkbox_key = (
+                                    f"{state_prefix}_{table_name}_null_search_{k}"
+                                )
+                                search_cols[k] = st.checkbox(
+                                    f"{k} is null", False, key=checkbox_key
+                                )
                         filter = "true"
                         for k, v in search_cols.items():
                             if v:
                                 filter += f" and {k} is null"
+                        query_signature = (
+                            f"sql:select * from {table_name} where {filter}"
+                        )
                         results = (
                             db.get_conn()
                             .execute(f"select * from {table_name} where {filter}")
@@ -75,6 +98,7 @@ class LandingPage(BasePageLayout):
                 else:
                     parent_column = "_dlt_parent_id"
                     parent_id = parent_row["_dlt_id"]
+                query_signature = f"child:{table_name}:{parent_column}:{parent_id}"
                 results = (
                     db.get_conn()
                     .execute(
@@ -84,16 +108,17 @@ class LandingPage(BasePageLayout):
                     .df()
                 )
 
-            return results
+            return results, query_signature
 
         def render_table_level(
             table: EnrichedTable, parent_row=None, level=0, key_prefix=""
         ):
             # "Recursively render table and its children"
             # Query the data
-            df = query_table(table.name, parent_row)
+            df, query_signature = query_table(table.name, parent_row, key_prefix)
 
             if df.empty:
+                clear_selection_branch(table)
                 if not hide_empty_tables:
                     st.markdown(
                         f"{'  ' * level}### {'📄' if level == 0 else '📋'} {table.name}"
@@ -103,31 +128,55 @@ class LandingPage(BasePageLayout):
             else:
                 st.markdown(
                     f"{'  ' * level}### {'📄' if level == 0 else '📋'} {table.name} {'&nbsp;' * 10} _{len(df)} rows_",
-                     unsafe_allow_html=True
+                    unsafe_allow_html=True,
                 )
 
             # Show dataframe with selection enabled
-            selection_key = f"{key_prefix}_{table.name}_{level}"
+            selection_key = selection_key_for(
+                table.name, level, key_prefix, query_signature
+            )
+            persisted_selected_id = st.session_state.selections.get(table.name)
 
             column_config = {}
             if hide_dlt_columns:
-                column_config = {col: None for col in df.columns if col.startswith('_dlt')}
+                column_config = {
+                    col: None for col in df.columns if col.startswith("_dlt")
+                }
 
+            display_df = df
+            if persisted_selected_id is not None and "_dlt_id" in df.columns:
+
+                def highlight_selected_row(row):
+                    if row["_dlt_id"] == persisted_selected_id:
+                        return ["background-color: rgba(49, 51, 63, 0.12)"] * len(row)
+                    return [""] * len(row)
+
+                display_df = df.style.apply(highlight_selected_row, axis=1)
 
             event = st.dataframe(
-                df,
+                display_df,
                 width="stretch",
                 hide_index=True,
                 on_select="rerun",
                 selection_mode="single-row",
                 key=selection_key,
-                column_config=column_config
+                column_config=column_config,
             )
 
             # Check if a row was selected
+            selected_row = None
             if event.selection.rows:
                 selected_idx = event.selection.rows[0]
-                selected_row = df.iloc[selected_idx]
+                if 0 <= selected_idx < len(df):
+                    selected_row = df.iloc[selected_idx]
+
+            if selected_row is None and table.name in st.session_state.selections:
+                selected_id = st.session_state.selections[table.name]
+                matching_rows = df[df["_dlt_id"] == selected_id]
+                if not matching_rows.empty:
+                    selected_row = matching_rows.iloc[0]
+
+            if selected_row is not None:
                 selected_id = selected_row["_dlt_id"]
 
                 # Store selection in session state
@@ -189,9 +238,7 @@ class LandingPage(BasePageLayout):
                                     key_prefix=f"{key_prefix}_{selected_id}",
                                 )
             else:
-                # Clear selection if no row selected
-                if table.name in st.session_state.selections:
-                    del st.session_state.selections[table.name]
+                clear_selection_branch(table)
 
         # Main UI
 
