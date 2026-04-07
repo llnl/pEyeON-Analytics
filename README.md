@@ -1,88 +1,87 @@
 # pEyeON-Analytics
 
-Data loading, transformation, and exploration pipeline for EyeOn metadata.
+Data pipeline and exploration app for EyeOn metadata.
 
-This repository contains the data engineering layer for EyeOn:
-- `dlt` loads EyeOn JSON into DuckDB using a medallion-style layout
-- `dbt` builds Gold-layer analytics models from the Silver layer
-- `Streamlit` provides interactive views for batch, metadata, and certificate exploration
-- `Extras` directory includes starter jupyter notebooks for exploration
+This repository includes:
+- `dlt` to load EyeOn JSON into DuckDB
+- `dbt` to build Gold analytics models
+- `Streamlit` to browse batches, metadata, and certificates
+- `extras/` notebooks for ad hoc exploration
 
 ## Overview
 
-EyeOn produces JSON observations for scanned files. This project turns those JSON observations into queryable analytics tables.
+EyeOn produces JSON observations for scanned files. This project turns them into queryable analytics tables.
 
-The source for the [pEyeON](https://github.com/llnl/pEyeON) is also available.
+The [pEyeON](https://github.com/llnl/pEyeON) source is available separately.
 
-The pipeline is organized into three layers:
+The pipeline has three layers:
 
-- Bronze:
-  raw JSON as-ingested for forensic traceability
-- Silver:
-  normalized DLT-loaded tables derived from the JSON structure
-- Gold:
-  dbt models that create business-friendly and analysis-friendly datasets
+- Bronze: raw JSON for traceability
+- Silver: normalized tables loaded from the JSON structure
+- Gold: dbt models for analysis-friendly datasets
 
 ## Components
 
 ### DLT
 `load_eyeon.py` loads EyeOn JSON into DuckDB.
 
-It writes:
-- Bronze raw JSON tables
-- Silver observation and metadata tables
-- schema change tracking data
+It writes Bronze raw JSON tables, Silver observation and metadata tables, and schema change tracking data.
 
 ### dbt
 The `dbt_eyeon_gold/` project builds Gold models from Silver.
 
-Examples include:
-- file-centric summary tables
-- batch summaries
-- certificate dimensions and facts
-- analytical marts for certificate usage, dates, issuers, and organizations
+Examples include file summaries, batch summaries, and certificate-focused models.
 
 ### Streamlit
-The Streamlit app provides a lightweight interface for:
-- viewing and loading batches of data
-- browsing DLT-loaded tables
-- exploring certificate analytics
-- inspecting schema evolution
+The Streamlit app provides a lightweight interface for loading batches, browsing tables, exploring certificate analytics, and inspecting schema evolution.
 
 ## Architecture
 
 ```text
-EyeOn JSON
+EyeOn JSON files
    |
    v
-DLT
+DLT load
    |
    +--> bronze.*
    |
    +--> silver.*
-           |
-           v
-         dbt
-           |
-           v
-         gold.*
-           |
-           v
-      Streamlit UI
+            |
+            v
+          dbt models
+            |
+            v
+          gold.*
+            |
+            v
+       Streamlit app
 ```
 
-## Quickstart - Uses Streamlit GUI to load and process data
+## Quickstart
 
-_Prequisite: you have data created by EyeOn accessible in the host you're running the Streamlit app on_
+### Prerequisites
+This quickstart assumes a local system with:
 
-1. Install UV which will manage python and dependencies
-    https://docs.astral.sh/uv/getting-started/installation/
+- The binaries you want to scan
+- Docker
+- A Python environment with this project's requirements installed
 
-2. Copy `EyeOnData.toml-template` to `EyeOnData.toml`. You must edit the `datasets->dataset_path` value to a the top level of your EyeOn batches of JSON files.
+### Configure paths
 
-3. Run the app
-    `uv run streamlit run EyeOnData.py`
+1. Prepare a Python environment for the Streamlit app. If needed, install `uv`: https://docs.astral.sh/uv/getting-started/installation/
+2. Copy `EyeOnData.toml-template` to `EyeOnData.toml`.
+3. Set `datasets.dataset_path` to the top-level directory where EyeOn batch directories will be written and loaded from.
 
-4. On initial exedcution, as there is no existing database, you'll be presented with a form for loading your first batch(es) of data.  Just select the batch(es) to load and click the `Create DB directory` button.
+### Generate data using EyeOn CLI
 
-5. Once loaded, browse thru the app to see data!
+Run EyeOn to scan a directory of binaries:
+
+`eyeon-parse.sh UTIL_CD SOURCE THREADS`
+
+This creates a new batch directory under `datasets.dataset_path`. You can override it with `--dataset-path` or `EYEON_DATASET_PATH`.
+
+### Load data into database and explore it
+
+1. Run the app with `uv run streamlit run EyeOnData.py` or `streamlit run EyeOnData.py`.
+2. On first run, if no database exists yet, the app will prompt you to load one or more batches and choose the DB directory.
+3. Browse the loaded data in the app.
