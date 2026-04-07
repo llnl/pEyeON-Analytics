@@ -73,7 +73,7 @@ def raw_obs_summary():
         st.markdown("For all observations:")
         col1, col2 = st.columns([.2,.8])
 
-        # High level stats: hosts, data range
+        # High level stats
         with col1:
             st.metric("Observations", db.get_conn().execute('select count(*) from silver.raw_obs').fetchone()[0])
             #st.dataframe( db.get_conn().execute('select count(*) from silver.raw_obs').df())
@@ -81,7 +81,10 @@ def raw_obs_summary():
         with col2:
             # Get the list of tables with data, then simplify the names for display.
             tables = db.get_conn().execute('select list(distinct _metadata_table_name) from gold.all_metadata').fetchone()[0]
-            type_names = [s.removeprefix("metadata_").removesuffix("_file") for s in tables]
+            if tables == None:
+                type_names=["_None_"]
+            else:
+                type_names = [s.removeprefix("metadata_").removesuffix("_file") for s in tables]
             st.metric("Types", f"{", ".join(type_names)}")
 
     

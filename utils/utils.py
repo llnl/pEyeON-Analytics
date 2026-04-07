@@ -22,7 +22,12 @@ def app_base_config():
         initial_sidebar_state="expanded",
     )
     if db.exists():
+        # This content is generated as the "virtual welcome page" when a user first connects. There doesn't appear
+        #  to be any way to get back to it once you navigate to another page.
+        st.switch_page("pages/EyeOnSummary.py")
+        #  Sometimes, programmitc navigation doesn't work, so display a message, just in case.
         st.markdown("Virtual Main Page: Select a page from the sidebar!!")
+
     else:
         init_app_form()
 
@@ -31,7 +36,7 @@ def init_app_form():
     """
     If no existing database is found, prompt for an initial batch of data to load allow user to specify DB location.
     """
-    with st.form(key="init_db_form"):
+    with st.form(key="init_db_form", width="stretch"):
         st.markdown("Initialize Database")
         utility_id = st.text_input(
             "Utility ID",
@@ -143,7 +148,7 @@ def init_app_form():
 
 
 def batch_selector(dataset_path: str) -> list[dict]:
-    with st.container(border=True):
+    with st.container(border=True, width="stretch"):
         dataset_path = (dataset_path or "").strip()
         if not dataset_path:
             st.caption("Enter a dataset path to list available batch directories.")

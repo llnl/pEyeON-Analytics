@@ -208,10 +208,6 @@ class LandingPage(BasePageLayout):
             with c2:
                 hide_dlt_columns = st.checkbox("Hide DLT columns (_dlt_id, etc)")
 
-        # Sidebar for table selection
-        with st.sidebar:
-            "Should add something for this page here..."
-
         # Main content area
         if st.session_state.root_table_selector:
             render_table_level(
