@@ -279,6 +279,8 @@ class LandingPage(BasePageLayout):
         st.header("Certificate Data Visualization")
 
         missing = _missing_models()
+        any_certs = db.get_conn().execute("select count(*) from gold.fct_observation_certificates").fetchone()[0]
+
         if missing:
             st.warning("Certificate dbt models are not available yet.")
             st.code(
@@ -288,6 +290,10 @@ class LandingPage(BasePageLayout):
             st.caption(
                 "Run the dbt project so the certificate marts are materialized in the `gold` schema."
             )
+            return
+        
+        if any_certs == 0:
+            st.warning("No certificates found on any observations")
             return
 
         _render_summary()
