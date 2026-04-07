@@ -41,11 +41,23 @@ class LandingPage(BasePageLayout):
                 total_obs = int(batches["num_rows"].fillna(0).sum())
 
                 with tabs[0]:
-                    k1, k2, k3, k4 = st.columns(4)
+                    k1, k2, k3, k4 = st.columns([.1,.1,.1,.7])
                     k1.metric("Utilities", f"{total_utilities}")
                     k2.metric("Batches", f"{total_batches}")
                     k3.metric("Observations", f"{total_obs}")
-                    total_md_types=-1
+                    tables = ( db.get_conn()
+                        .execute(
+                            "select list_sort(list(distinct _metadata_table_name)) from gold.all_metadata"
+                        )
+                        .fetchone()[0]
+                    )
+                    if tables == None:
+                        type_names = ["_None_"]
+                    else:
+                        type_names = [
+                            s.removeprefix("metadata_").removesuffix("_file") for s in tables
+                        ]
+                    total_md_types = f"{', '.join(type_names)}"
                     k4.metric("Metadata Types", f"{total_md_types}")
 
                     left, right = st.columns([2, 1])

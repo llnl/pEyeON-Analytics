@@ -97,7 +97,7 @@ def raw_obs_summary():
             tables = (
                 db.get_conn()
                 .execute(
-                    "select list(distinct _metadata_table_name) from gold.all_metadata"
+                    "select list_sort(list(distinct _metadata_table_name)) from gold.all_metadata"
                 )
                 .fetchone()[0]
             )
