@@ -1,5 +1,5 @@
 from pages._base_page import BasePageLayout
-from  pages.pages import app_pages
+from pages.pages import app_pages
 from utils.utils import sidebar_config
 from utils.config import settings
 import streamlit as st
@@ -7,16 +7,17 @@ import utils.db as db
 
 import os
 
-class LandingPage(BasePageLayout):
 
+class LandingPage(BasePageLayout):
     def __init__(self):
         super().__init__()
 
     def page_content(self):
-        st.set_page_config(page_icon=settings.app.logo, page_title="Debug", layout="wide")
+        st.set_page_config(
+            page_icon=settings.app.logo, page_title="Debug", layout="wide"
+        )
         sidebar_config(app_pages())
         st.header("Streamlit Debugging Tools")
-
 
         with st.expander("Session State"):
             st.json(st.session_state)
@@ -30,16 +31,19 @@ class LandingPage(BasePageLayout):
         if "_debug_sql" not in st.session_state:
             st.session_state._debug_sql = "summarize silver.raw_obs"
 
-
         def change_sql():
             st.session_state._debug_sql = st.session_state.debug_sql
 
-
         st.text_input(
-            "SQL", value=st.session_state._debug_sql, key="debug_sql", on_change=change_sql
+            "SQL",
+            value=st.session_state._debug_sql,
+            key="debug_sql",
+            on_change=change_sql,
         )
         try:
-            st.dataframe(db.get_conn().sql(st.session_state.debug_sql).df(), height='stretch')
+            st.dataframe(
+                db.get_conn().sql(st.session_state.debug_sql).df(), height="stretch"
+            )
         except Exception as e:
             st.error(e)
 
@@ -67,9 +71,11 @@ class LandingPage(BasePageLayout):
 
         st.toggle("DuckDB UI", key="duckdb_ui", on_change=change_duckdb_ui)
 
+
 def main():
     page = LandingPage()
     page.page_content()
+
 
 if __name__ == "__main__":
     main()

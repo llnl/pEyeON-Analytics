@@ -1,8 +1,9 @@
 """
 Streamlit interface for exploring schema_blame data.
 """
+
 from pages._base_page import BasePageLayout
-from  pages.pages import app_pages
+from pages.pages import app_pages
 from utils.utils import sidebar_config
 import json
 import utils.db as db
@@ -16,6 +17,7 @@ from utils.schema_blame import (
     blame_summary,
     blame_for_column,
 )
+
 
 class LandingPage(BasePageLayout):
     def __init__(self):
@@ -39,7 +41,7 @@ class LandingPage(BasePageLayout):
         st.sidebar.title("🔬 Schema Blame")
         st.sidebar.caption("eyeon_metadata pipeline")
 
-        if st.sidebar.button("🔄 Refresh (run materialize)", width='stretch'):
+        if st.sidebar.button("🔄 Refresh (run materialize)", width="stretch"):
             n = materialize_schema_blame(conn)
             if n:
                 st.sidebar.success(f"Wrote {n} new change(s)")
@@ -50,8 +52,12 @@ class LandingPage(BasePageLayout):
         st.sidebar.divider()
 
         change_type_options = [
-            "new_table", "new_column", "dropped_table",
-            "dropped_column", "column_type_changed", "column_nullable_changed"
+            "new_table",
+            "new_column",
+            "dropped_table",
+            "dropped_column",
+            "column_type_changed",
+            "column_nullable_changed",
         ]
         selected_types = st.sidebar.multiselect(
             "Change types",
@@ -59,10 +65,14 @@ class LandingPage(BasePageLayout):
             default=change_type_options,
         )
 
-        table_filter = st.sidebar.text_input("Filter by table name", placeholder="e.g. pe_file")
+        table_filter = st.sidebar.text_input(
+            "Filter by table name", placeholder="e.g. pe_file"
+        )
 
         st.sidebar.divider()
-        st.sidebar.caption("Select a row in the changelog to drill into sample rows below.")
+        st.sidebar.caption(
+            "Select a row in the changelog to drill into sample rows below."
+        )
 
         # ---------------------------------------------------------------------------
         # Load blame data
@@ -71,7 +81,9 @@ class LandingPage(BasePageLayout):
         df_all = blame_summary(conn)
 
         if df_all.empty:
-            st.warning("No schema blame data found. Likely due to no schema changes from loaded data.")
+            st.warning(
+                "No schema blame data found. Likely due to no schema changes from loaded data."
+            )
             st.stop()
 
         # apply filters
@@ -87,9 +99,9 @@ class LandingPage(BasePageLayout):
 
         c1, c2, c3, c4 = st.columns(4)
         c1.metric("Schema versions", df_all["version_to"].nunique())
-        c2.metric("Total changes",   len(df_all))
-        c3.metric("New tables",      len(df_all[df_all.change_type == "new_table"]))
-        c4.metric("New columns",     len(df_all[df_all.change_type == "new_column"]))
+        c2.metric("Total changes", len(df_all))
+        c3.metric("New tables", len(df_all[df_all.change_type == "new_table"]))
+        c4.metric("New columns", len(df_all[df_all.change_type == "new_column"]))
 
         st.divider()
 
@@ -99,10 +111,18 @@ class LandingPage(BasePageLayout):
 
         st.subheader("Changelog by version")
 
-        for (v_from, v_to), grp in df.groupby(["version_from", "version_to"], sort=True):
-            v_at    = grp["version_at"].iloc[0]
+        for (v_from, v_to), grp in df.groupby(
+            ["version_from", "version_to"], sort=True
+        ):
+            v_at = grp["version_at"].iloc[0]
             load_id = grp["load_id"].iloc[0]
-            load_ts = pd.to_datetime(float(load_id), unit="s").strftime("%Y-%m-%d %H:%M:%S UTC") if load_id else "unknown"
+            load_ts = (
+                pd.to_datetime(float(load_id), unit="s").strftime(
+                    "%Y-%m-%d %H:%M:%S UTC"
+                )
+                if load_id
+                else "unknown"
+            )
             n_changes = len(grp)
 
             label = f"v{v_from} → v{v_to}   |   {v_at}   |   {n_changes} change(s)"
@@ -117,15 +137,23 @@ class LandingPage(BasePageLayout):
 
                         if ct == "new_table":
                             cols = detail.get("initial_columns", [])
-                            user_cols = [c for c in cols if c not in DLT_INTERNAL_COLUMNS]
-                            st.markdown(f"&nbsp;&nbsp;📋 `{row['table_name']}`  — {len(user_cols)} user columns")
+                            user_cols = [
+                                c for c in cols if c not in DLT_INTERNAL_COLUMNS
+                            ]
+                            st.markdown(
+                                f"&nbsp;&nbsp;📋 `{row['table_name']}`  — {len(user_cols)} user columns"
+                            )
                             st.code(", ".join(user_cols), language=None)
 
                         elif ct == "new_column":
-                            col_def  = detail.get("column_def", {})
-                            dtype    = col_def.get("data_type", "?")
-                            nullable = "nullable" if col_def.get("nullable") else "not null"
-                            st.markdown(f"&nbsp;&nbsp;➕ `{row['table_name']}`.`{row['column_name']}`  [{dtype}, {nullable}]")
+                            col_def = detail.get("column_def", {})
+                            dtype = col_def.get("data_type", "?")
+                            nullable = (
+                                "nullable" if col_def.get("nullable") else "not null"
+                            )
+                            st.markdown(
+                                f"&nbsp;&nbsp;➕ `{row['table_name']}`.`{row['column_name']}`  [{dtype}, {nullable}]"
+                            )
 
                         elif ct == "column_type_changed":
                             st.markdown(
@@ -140,7 +168,9 @@ class LandingPage(BasePageLayout):
                             )
 
                         elif ct in ("dropped_table", "dropped_column"):
-                            col = f".`{row['column_name']}`" if row["column_name"] else ""
+                            col = (
+                                f".`{row['column_name']}`" if row["column_name"] else ""
+                            )
                             st.markdown(f"&nbsp;&nbsp;🗑️ `{row['table_name']}`{col}")
 
         st.divider()
@@ -159,12 +189,12 @@ class LandingPage(BasePageLayout):
         chart_df["version_to"] = "v" + chart_df["version_to"].astype(str)
 
         color_map = {
-            "new_table":              "#4C9BE8",
-            "new_column":             "#63C987",
-            "dropped_table":          "#E8694C",
-            "dropped_column":         "#E8A34C",
-            "column_type_changed":    "#B07FE8",
-            "column_nullable_changed":"#E8D44C",
+            "new_table": "#4C9BE8",
+            "new_column": "#63C987",
+            "dropped_table": "#E8694C",
+            "dropped_column": "#E8A34C",
+            "column_type_changed": "#B07FE8",
+            "column_nullable_changed": "#E8D44C",
         }
 
         bar = (
@@ -175,14 +205,16 @@ class LandingPage(BasePageLayout):
                 y=alt.Y("count:Q", title="Number of changes"),
                 color=alt.Color(
                     "change_type:N",
-                    scale=alt.Scale(domain=list(color_map.keys()), range=list(color_map.values())),
+                    scale=alt.Scale(
+                        domain=list(color_map.keys()), range=list(color_map.values())
+                    ),
                     legend=alt.Legend(title="Change type"),
                 ),
                 tooltip=["version_to", "change_type", "count"],
             )
             .properties(height=300)
         )
-        st.altair_chart(bar, width='stretch')
+        st.altair_chart(bar, width="stretch")
 
         st.divider()
 
@@ -191,7 +223,9 @@ class LandingPage(BasePageLayout):
         # ---------------------------------------------------------------------------
 
         st.subheader("Table change heatmap")
-        st.caption("Darker = more changes in that version. Reveals which file types are still stabilizing.")
+        st.caption(
+            "Darker = more changes in that version. Reveals which file types are still stabilizing."
+        )
 
         heat_df = (
             df_all.groupby(["version_to", "table_name"])
@@ -201,7 +235,9 @@ class LandingPage(BasePageLayout):
         heat_df["version_to"] = "v" + heat_df["version_to"].astype(str)
 
         # strip leading "metadata_" for brevity
-        heat_df["table_short"] = heat_df["table_name"].str.replace(r"^metadata_", "", regex=True)
+        heat_df["table_short"] = heat_df["table_name"].str.replace(
+            r"^metadata_", "", regex=True
+        )
 
         # order tables by total changes so the busiest rise to the top
         table_order = (
@@ -226,19 +262,21 @@ class LandingPage(BasePageLayout):
             )
             .properties(height=max(200, len(table_order) * 22))
         )
-        st.altair_chart(heatmap, width='stretch')
+        st.altair_chart(heatmap, width="stretch")
 
-        st.divider() # blame + sample rows for a specific column
+        st.divider()  # blame + sample rows for a specific column
         # ---------------------------------------------------------------------------
 
         st.subheader("Column drill-down")
 
         all_tables = sorted(df_all["table_name"].dropna().unique())
-        col_tables  = st.selectbox("Table", options=[""] + all_tables)
+        col_tables = st.selectbox("Table", options=[""] + all_tables)
 
         if col_tables:
             col_cols = sorted(
-                df_all[df_all["table_name"] == col_tables]["column_name"].dropna().unique()
+                df_all[df_all["table_name"] == col_tables]["column_name"]
+                .dropna()
+                .unique()
             )
             if col_cols:
                 selected_col = st.selectbox("Column", options=col_cols)
@@ -258,17 +296,19 @@ class LandingPage(BasePageLayout):
                                 sample = json.loads(row["sample_row"])
                                 # show only non-null, non-internal fields
                                 clean = {
-                                    k: v for k, v in sample.items()
+                                    k: v
+                                    for k, v in sample.items()
                                     if v is not None and k not in DLT_INTERNAL_COLUMNS
                                 }
                                 st.json(clean, expanded=False)
             else:
                 st.info("No column-level changes recorded for this table.")
 
-    
+
 def main():
     page = LandingPage()
     page.page_content()
+
 
 if __name__ == "__main__":
     main()

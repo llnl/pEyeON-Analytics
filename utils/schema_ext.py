@@ -43,6 +43,7 @@ _KNOWN_OVERLAY_KEYS = {"description", "columns", "nested"}
 # Data model
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class ColumnDef:
     name: str
@@ -65,6 +66,7 @@ class ColumnDef:
             nullable=dlt_col.get("nullable"),
         )
 
+
 @dataclass
 class JoinDef:
     child_col: str
@@ -78,9 +80,11 @@ class EnrichedTable:
     # Hierarchy
     depth: int = 0
     hierarchy_path: list[str] = field(default_factory=list)
-    parent_table: Optional[str] = None     # immediate DLT parent (__ separated)
-    root_table: Optional[str] = None       # top-level ancestor
-    orphan_parent: Optional[str] = None    # # Workaround: manually parent metadata_* tables to raw_obs until DLT supports it natively.
+    parent_table: Optional[str] = None  # immediate DLT parent (__ separated)
+    root_table: Optional[str] = None  # top-level ancestor
+    orphan_parent: Optional[str] = (
+        None  # # Workaround: manually parent metadata_* tables to raw_obs until DLT supports it natively.
+    )
     # Join
     join: Optional[JoinDef] = None
     # Enrichment
@@ -107,7 +111,7 @@ class EnrichedTable:
             return extra[item]
         else:
             return None
-        #raise AttributeError(f"{type(self).__name__!r} has no attribute {item!r}")
+        # raise AttributeError(f"{type(self).__name__!r} has no attribute {item!r}")
 
     def get_children(self) -> list["EnrichedTable"]:
         """
@@ -140,20 +144,19 @@ class EnrichedTable:
 # Abstract base
 # ---------------------------------------------------------------------------
 
+
 class SchemaProvider(ABC):
+    @abstractmethod
+    def get_table(self, name: str) -> Optional[EnrichedTable]: ...
 
     @abstractmethod
-    def get_table(self, name: str) -> Optional[EnrichedTable]:
-        ...
-
-    @abstractmethod
-    def get_all_tables(self) -> dict[str, EnrichedTable]:
-        ...
+    def get_all_tables(self) -> dict[str, EnrichedTable]: ...
 
 
 # ---------------------------------------------------------------------------
 # Layer 1: DLT schema — raw data, no enrichment
 # ---------------------------------------------------------------------------
+
 
 class DltSchema(SchemaProvider):
     """
@@ -188,6 +191,7 @@ class DltSchema(SchemaProvider):
 # ---------------------------------------------------------------------------
 # Layer 2: Overlay decorator — human-authored descriptions and directives from YAML
 # ---------------------------------------------------------------------------
+
 
 class OverlayDecorator(SchemaProvider):
     """
@@ -226,7 +230,9 @@ class OverlayDecorator(SchemaProvider):
                     description: "..."
     """
 
-    def __init__(self, inner: SchemaProvider, overlay_path: str = "schema_ext_overlay.yaml"):
+    def __init__(
+        self, inner: SchemaProvider, overlay_path: str = "schema_ext_overlay.yaml"
+    ):
         self._inner = inner
         self._overlay = self._load(overlay_path)
 
@@ -265,16 +271,23 @@ class OverlayDecorator(SchemaProvider):
             if isinstance(val, str):
                 desc, col_extra = val, {}
             else:
-                desc, col_extra = val.get("description"), {k: v for k, v in val.items() if k != "description"}
+                desc, col_extra = (
+                    val.get("description"),
+                    {k: v for k, v in val.items() if k != "description"},
+                )
 
             if col_name in table.columns:
                 table.columns[col_name].description = desc
                 table.columns[col_name].extra.update(col_extra)
             else:
-                table.columns[col_name] = ColumnDef(name=col_name, description=desc, extra=col_extra)
+                table.columns[col_name] = ColumnDef(
+                    name=col_name, description=desc, extra=col_extra
+                )
 
         # Forward any unrecognised keys into extra
-        table.extra.update({k: v for k, v in node.items() if k not in _KNOWN_OVERLAY_KEYS})
+        table.extra.update(
+            {k: v for k, v in node.items() if k not in _KNOWN_OVERLAY_KEYS}
+        )
 
         return table
 
@@ -283,12 +296,15 @@ class OverlayDecorator(SchemaProvider):
         return self._enrich(table) if table else None
 
     def get_all_tables(self) -> dict[str, EnrichedTable]:
-        return {name: self._enrich(t) for name, t in self._inner.get_all_tables().items()}
+        return {
+            name: self._enrich(t) for name, t in self._inner.get_all_tables().items()
+        }
 
 
 # ---------------------------------------------------------------------------
 # Layer 3: Relationship decorator — hierarchy + join resolution
 # ---------------------------------------------------------------------------
+
 
 class RelationshipDecorator(SchemaProvider):
     """
@@ -305,9 +321,12 @@ class RelationshipDecorator(SchemaProvider):
     # Tables that are DLT system tables, not part of any hierarchy
     SYSTEM_TABLES = {"_dlt_loads", "_dlt_pipeline_state", "_dlt_version"}
 
-    def __init__(self, inner: SchemaProvider,
-                 orphan_root_pattern: str = "metadata_*",
-                 orphan_parent: str = "raw_obs"):
+    def __init__(
+        self,
+        inner: SchemaProvider,
+        orphan_root_pattern: str = "metadata_*",
+        orphan_parent: str = "raw_obs",
+    ):
         self._inner = inner
         self._orphan_root_pattern = orphan_root_pattern
         self._orphan_parent = orphan_parent
@@ -316,10 +335,10 @@ class RelationshipDecorator(SchemaProvider):
     def _parse_hierarchy(name: str) -> dict:
         parts = name.split("__")
         return {
-            "depth":     len(parts) - 1,
-            "path":      parts,
-            "root":      parts[0],
-            "parent":    "__".join(parts[:-1]) if len(parts) > 1 else None,
+            "depth": len(parts) - 1,
+            "path": parts,
+            "root": parts[0],
+            "parent": "__".join(parts[:-1]) if len(parts) > 1 else None,
             "is_nested": len(parts) > 1,
         }
 
@@ -328,14 +347,13 @@ class RelationshipDecorator(SchemaProvider):
             return table
 
         h = self._parse_hierarchy(table.name)
-        table.depth          = h["depth"]
+        table.depth = h["depth"]
         table.hierarchy_path = h["path"]
-        table.root_table     = h["root"]
-        table.parent_table   = h["parent"]
+        table.root_table = h["root"]
+        table.parent_table = h["parent"]
 
-        is_orphan_root = (
-            not h["is_nested"]
-            and fnmatch.fnmatch(table.name, self._orphan_root_pattern)
+        is_orphan_root = not h["is_nested"] and fnmatch.fnmatch(
+            table.name, self._orphan_root_pattern
         )
 
         if is_orphan_root:
@@ -343,13 +361,13 @@ class RelationshipDecorator(SchemaProvider):
             table.join = JoinDef(
                 child_col="uuid",
                 parent_col="uuid",
-                note=f"orphan key join to {self._orphan_parent}"
+                note=f"orphan key join to {self._orphan_parent}",
             )
         elif h["is_nested"]:
             table.join = JoinDef(
                 child_col="_dlt_parent_id",
                 parent_col="_dlt_id",
-                note="DLT internal keys; trace uuid up hierarchy for orphan joins"
+                note="DLT internal keys; trace uuid up hierarchy for orphan joins",
             )
 
         # Inject back-reference so get_children() can resolve lazily.
@@ -363,22 +381,23 @@ class RelationshipDecorator(SchemaProvider):
         return self._enrich(table) if table else None
 
     def get_all_tables(self) -> dict[str, EnrichedTable]:
-        return {name: self._enrich(t) for name, t in self._inner.get_all_tables().items()}
+        return {
+            name: self._enrich(t) for name, t in self._inner.get_all_tables().items()
+        }
 
 
 # ---------------------------------------------------------------------------
 # Factory helper
 # ---------------------------------------------------------------------------
 
-def build_schema(pipeline,
-                 overlay_path: str = "schema_ext_overlay.yaml") -> SchemaProvider:
+
+def build_schema(
+    pipeline, overlay_path: str = "schema_ext_overlay.yaml"
+) -> SchemaProvider:
     """
     Convenience factory that assembles the full decorator stack:
         DltSchema → OverlayDecorator → RelationshipDecorator
     """
     return RelationshipDecorator(
-        OverlayDecorator(
-            DltSchema(pipeline),
-            overlay_path=overlay_path
-        )
+        OverlayDecorator(DltSchema(pipeline), overlay_path=overlay_path)
     )

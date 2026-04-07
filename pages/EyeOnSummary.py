@@ -7,6 +7,7 @@ import streamlit as st
 
 import pandas as pd
 
+
 class LandingPage(BasePageLayout):
     def __init__(self):
         super().__init__()
@@ -41,11 +42,12 @@ class LandingPage(BasePageLayout):
                 total_obs = int(batches["num_rows"].fillna(0).sum())
 
                 with tabs[0]:
-                    k1, k2, k3, k4 = st.columns([.1,.1,.1,.7])
+                    k1, k2, k3, k4 = st.columns([0.1, 0.1, 0.1, 0.7])
                     k1.metric("Utilities", f"{total_utilities}")
                     k2.metric("Batches", f"{total_batches}")
                     k3.metric("Observations", f"{total_obs}")
-                    tables = ( db.get_conn()
+                    tables = (
+                        db.get_conn()
                         .execute(
                             "select list_sort(list(distinct _metadata_table_name)) from gold.all_metadata"
                         )
@@ -55,7 +57,8 @@ class LandingPage(BasePageLayout):
                         type_names = ["_None_"]
                     else:
                         type_names = [
-                            s.removeprefix("metadata_").removesuffix("_file") for s in tables
+                            s.removeprefix("metadata_").removesuffix("_file")
+                            for s in tables
                         ]
                     total_md_types = f"{', '.join(type_names)}"
                     k4.metric("Metadata Types", f"{total_md_types}")
@@ -64,11 +67,7 @@ class LandingPage(BasePageLayout):
                     with left:
                         st.subheader("By Utility")
                         chart_tabs = st.tabs(
-                            [
-                                "Observations",
-                                "Batches",
-                                "Metadata Count"
-                            ]
+                            ["Observations", "Batches", "Metadata Count"]
                         )
 
                         with chart_tabs[0]:

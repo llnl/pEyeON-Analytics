@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-class BasePageLayout(ABC):
 
+class BasePageLayout(ABC):
     def __init__(self):
         pass
 
