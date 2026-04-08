@@ -1,0 +1,13 @@
+[project]
+name = "peyeon-analytics"
+version = "0.1.0"
+description = "Data loading, transformation, and exploration pipeline for EyeOn metadata."
+readme = "README.md"
+requires-python = "~=3.13.0"
+dependencies = [
+    "dbt-duckdb>=1.9.0",
+    "dlt[hub,workspace]>=1.22.0",
+    "duckdb>=1.5.1",
+    "dynaconf>=3.2.13",
+    "streamlit>=1.56.0",
+]
