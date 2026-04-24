@@ -142,12 +142,12 @@ uv run dbt build --project-dir dbt_eyeon_gold --profiles-dir dbt_eyeon_gold
 
 ```mermaid
 flowchart TD
-    A[EyeOn JSON batch] --> B[load_eyeon.py]
-    B --> C[bronze.raw_json]
-    B --> D[silver.raw_obs and silver.metadata_*]
+    A["EyeOn JSON batch"] --> B[load_eyeon.py]
+    B --> C["bronze.raw_json"]
+    B --> D["silver.raw_obs and silver.metadata_*"]
     D --> E[dbt_eyeon_gold]
-    E --> F[gold.*]
-    F --> G[Streamlit pages]
+    E --> F["gold.*"]
+    F --> G["Streamlit pages"]
 ```
 
 ## Notes
