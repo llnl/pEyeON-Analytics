@@ -29,7 +29,7 @@ def sanitize_ole_metadata(item):
                 item["ole"]["thumbnail"] = base64.b64encode(
                     ole["thumbnail"].encode("latin-1")
                 ).decode("ascii")
-                print(f"Base64 encoded thumbnail for ...")
+                print("Base64 encoded thumbnail for ...")
             except Exception as e:
                 # Log and null out problematic thumbnails
                 print(
@@ -44,7 +44,7 @@ def sanitize_ole_metadata(item):
                     elfNote["descdata"] = base64.b64encode(
                         elfNote["descdata"].encode("latin-1")
                     ).decode("ascii")
-                    print(f"Base64 encoded descdata for ...")
+                    print("Base64 encoded descdata for ...")
                 except Exception as e:
                     # Log and null out problematic descdata
                     print(
@@ -62,7 +62,8 @@ def drop_empty_lists(obj):
             v2 = drop_empty_lists(v)
             # remove keys where the value is an empty list
             if isinstance(v2, list) and len(v2) == 0:
-                print(f"Dropping: {k}")
+                if False:
+                    print(f"Dropping: {k}")
                 continue
             out[k] = v2
         return out
@@ -85,7 +86,6 @@ def eyeon_source(utility_id, source, depth):
             "source": source,
             "depth": depth,
             "hostname": socket.gethostname(),
-            "schema_blame_hack": "FIXME",
         }
 
     # The raw JSON data from the file. Note that valid JSON is loaded into the "JSON" field, which is also JSON type in duckdb. If the JSON is invalid it will be loaded into json__v_text as a string.
@@ -226,6 +226,19 @@ def eyeon_source(utility_id, source, depth):
     )
 
 
+def print_schema_changes(load_info, load_name):
+    # Access schema changes from the current run
+    # Note: this uses the metadata that is written to a file by DLT.
+    # A more comprehensive approach is implemented in `schema_blame.py`
+    print(f"Schema changes from the {load_name} pipeline:")
+    for package in load_info.load_packages:
+        for table_name, table in package.schema_update.items():
+            for column_name, column in table["columns"].items():
+                print(
+                    f"Table: {table_name}, Column: {column_name}, Type: {column['data_type']}"
+                )
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         prog="load_eyeon.py", description="Load EyeOn JSON into raw tables."
@@ -242,12 +255,15 @@ def parse_args():
         default=4,
         help="Depth that DLT will attempt to parse for complex types",
     )
+    parser.add_argument(
+        "--debug", required=False, help="Display debug messages", default=False
+    )
 
     args = parser.parse_args()
     return vars(args)
 
 
-def main(utility_id, source, depth=4) -> None:
+def main(utility_id, source, depth=4, debug=False) -> None:
     logging.basicConfig(
         level=logging.INFO,  # Change to DEBUG if you need more verbosity
         format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
@@ -275,22 +291,14 @@ def main(utility_id, source, depth=4) -> None:
     bronze_info = pipeline.run(
         bronze
     )  # loads raw_json into bronze schema, no parsing of JSON
+    print_schema_changes(bronze_info, "bronze")
     silver_info = pipeline.run(
         silver, dataset_name="silver"
     )  # Parses JSON into several different tables into silver schema
+    print_schema_changes(silver_info, "silver")
 
     # Process any schema changes and perist in the database
     schema_blame.materialize_schema_blame(conn)
-
-    # Access schema changes from the current run
-    # Note: this uses the metadata that is written to a file by DLT.
-    # A more comprehensive approach is implemented in `schema_blame.py`
-    for package in silver_info.load_packages:
-        for table_name, table in package.schema_update.items():
-            for column_name, column in table["columns"].items():
-                print(
-                    f"Table: {table_name}, Column: {column_name}, Type: {column['data_type']}"
-                )
 
 
 if __name__ == "__main__":
