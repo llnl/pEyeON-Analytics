@@ -142,12 +142,30 @@ uv run dbt build --project-dir dbt_eyeon_gold --profiles-dir dbt_eyeon_gold
 
 ```mermaid
 flowchart TD
+    %% Node Definitions
     A["EyeOn JSON batch"] --> B[load_eyeon.py]
-    B --> C["bronze.raw_json"]
-    B --> D["silver.raw_obs and silver.metadata_*"]
+    B --> C
+    B --> D
     D --> E[dbt_eyeon_gold]
-    E --> F["gold.*"]
+    E --> F
     F --> G["Streamlit pages"]
+
+    %% Labels with Schema naming
+    C("fa:fa-database bronze.raw_json")
+    D("fa:fa-layer-group silver.raw_obs & metadata")
+    F("fa:fa-coins gold.*")
+
+    %% Style Classes
+    classDef bronze fill:#cd7f32,stroke:#333,stroke-width:2px,color:#fff
+    classDef silver fill:#c0c0c0,stroke:#333,stroke-width:2px,color:#000
+    classDef gold fill:#ffd700,stroke:#333,stroke-width:2px,color:#000
+    classDef tool fill:#f9f9f9,stroke:#333,stroke-dasharray: 5 5
+
+    %% Applying Classes
+    class C bronze
+    class D silver
+    class F gold
+    class B,E,G tool
 ```
 
 ## Notes
