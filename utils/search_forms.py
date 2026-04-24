@@ -1,6 +1,5 @@
 import utils.db as db
 import streamlit as st
-from utils.config import settings
 
 
 def search_raw_obs(table_name, table, key_prefix=""):
@@ -33,14 +32,9 @@ def search_raw_obs(table_name, table, key_prefix=""):
                     "pe",
                     "uimage",
                     "unknown",
-                    "error"
+                    "error",
                 ],
                 key=f"{widget_prefix}_metadata",
-            )
-            # Find an example file. Present a list of metadata types (that exist in this dataset) and then randomly pick one.
-            filter_ignore_unknown = st.checkbox(
-                "Ignore observations with unknown/no metadata",
-                key=f"{widget_prefix}_ignore_unknown",
             )
 
         raw_obs_summary()
@@ -105,7 +99,7 @@ def raw_obs_summary():
                 )
                 .fetchone()[0]
             )
-            if tables == None:
+            if tables is None:
                 type_names = ["_None_"]
             else:
                 type_names = [

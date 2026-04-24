@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
+import duckdb
 from pathlib import Path
 import os
 import re
@@ -218,6 +219,7 @@ def load_me_some_data(selected_rows: list[dict]) -> None:
         # DBT only needs to be run once for all batches
         st.write("Running DBT...")
         run_dbt()
+        status.update(label="Processing complete!", state="complete", expanded=False)
         st.rerun()
 
 
@@ -271,8 +273,14 @@ def _db_settings():
         if defn.get_parent() is None and not name.startswith("_dlt")
     ]
 
+    # TODO: This should be dynamic from the eyeon_schema_overlay definitions. But for now, just hardwire for this single instance.
+    default_option = "raw_obs"
+
     selected_root = st.selectbox(
-        "Select Root Table", sorted(root_tables), key="root_table_selector"
+        "Select Root Table",
+        sorted(root_tables),
+        key="root_table_selector",
+        index=root_tables.index(default_option) if default_option in root_tables else 0,
     )
 
     # --- In your expander ---
@@ -396,6 +404,9 @@ def list_all_batches(directory_path):
     from silver.batch_info b
     full outer join dirs d on concat_ws('/',d.directory_path, d.directory_name)=regexp_replace(b.source, '/$', '')
     """
+    # Note: dirs is indirectly referenced by the above SQL. DuckDB automagically maps pandas DF to a table.
     dirs = list_dirs(directory_path)
+    # We'll register the df explicitly to satisfy linters
+    duckdb.register("dirs", dirs)
     batches = db.get_conn().sql(all_batches_sql).df()
     return batches
