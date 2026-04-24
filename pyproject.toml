@@ -9,5 +9,6 @@ dependencies = [
     "dlt[hub,workspace]>=1.22.0",
     "duckdb>=1.5.1",
     "dynaconf>=3.2.13",
+    "ruff>=0.15.11",
     "streamlit>=1.56.0",
 ]

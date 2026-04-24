@@ -5,8 +5,6 @@ from utils.config import settings
 import streamlit as st
 import utils.db as db
 
-import os
-
 
 class LandingPage(BasePageLayout):
     def __init__(self):

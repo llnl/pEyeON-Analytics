@@ -11,6 +11,7 @@ sources:
       - name: batch_info
       - name: metadata_coff_file
       - name: metadata_elf_file
+      - name: metadata_error
       - name: metadata_java_file
       - name: metadata_js_file
       - name: metadata_mach_o_file

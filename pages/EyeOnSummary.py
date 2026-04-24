@@ -53,7 +53,7 @@ class LandingPage(BasePageLayout):
                         )
                         .fetchone()[0]
                     )
-                    if tables == None:
+                    if tables is None:
                         type_names = ["_None_"]
                     else:
                         type_names = [

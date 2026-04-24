@@ -1,6 +1,5 @@
 import utils.db as db
 import streamlit as st
-from utils.config import settings
 
 
 def search_raw_obs(table_name, table, key_prefix=""):
@@ -33,13 +32,9 @@ def search_raw_obs(table_name, table, key_prefix=""):
                     "pe",
                     "uimage",
                     "unknown",
+                    "error",
                 ],
                 key=f"{widget_prefix}_metadata",
-            )
-            # Find an example file. Present a list of metadata types (that exist in this dataset) and then randomly pick one.
-            filter_ignore_unknown = st.checkbox(
-                "Ignore observations with unknown/no metadata",
-                key=f"{widget_prefix}_ignore_unknown",
             )
 
         raw_obs_summary()
@@ -56,11 +51,14 @@ def search_raw_obs(table_name, table, key_prefix=""):
         if filter_metadata:
             md_table = f"metadata_{filter_metadata}_file"
             if filter_metadata == "unknown":
-                # Treat special: filter to observations with NO metadata defined of any type
+                # Filter to observations with NO metadata defined of any type
                 conditions.append("uuid not in (select uuid from gold.all_metadata)")
             elif filter_metadata == "any":
-                # Treat special: filter to observations with any metadata type defined
+                # Filter to observations with any metadata type defined
                 conditions.append("uuid in (select uuid from gold.all_metadata)")
+            elif filter_metadata == "error":
+                # This one doesn't have the "_file" suffix, just hard code the name
+                conditions.append("uuid in (select uuid from silver.metadata_error)")
             else:
                 # Filter the specific metadata type selected
                 conditions.append(f"uuid in (select uuid from silver.{md_table})")
@@ -101,7 +99,7 @@ def raw_obs_summary():
                 )
                 .fetchone()[0]
             )
-            if tables == None:
+            if tables is None:
                 type_names = ["_None_"]
             else:
                 type_names = [
