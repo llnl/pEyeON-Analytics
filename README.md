@@ -1,87 +1,166 @@
 # pEyeON-Analytics
 
-Data pipeline and exploration app for EyeOn metadata.
+`pEyeON-Analytics` is a local analytics stack for EyeOn output.
 
-This repository includes:
+It combines:
 - `dlt` to load EyeOn JSON into DuckDB
-- `dbt` to build Gold analytics models
-- `Streamlit` to browse batches, metadata, and certificates
-- `extras/` notebooks for ad hoc exploration
+- `dbt` to build analysis-friendly models
+- `Streamlit` to explore batches, metadata, schema changes, and certificate data
+
+The upstream EyeOn scanner lives separately in [pEyeON](https://github.com/llnl/pEyeON).
 
 ## Overview
 
-EyeOn produces JSON observations for scanned files. This project turns them into queryable analytics tables.
+EyeOn emits one JSON observation per scanned file. This repository turns those JSON files into queryable tables with a simple local workflow:
 
-The [pEyeON](https://github.com/llnl/pEyeON) source is available separately.
+1. Generate a batch of EyeOn JSON
+2. Launch the Streamlit app
+3. Select one or more batches and click `Load Selected`
+4. Explore the loaded data
 
-The pipeline has three layers:
+The pipeline is organized into three layers:
 
-- Bronze: raw JSON for traceability
-- Silver: normalized tables loaded from the JSON structure
-- Gold: dbt models for analysis-friendly datasets
+- `bronze`: raw JSON retained for traceability
+- `silver`: normalized observation and metadata tables loaded from EyeOn JSON
+- `gold`: dbt models for reporting and exploration
 
 ## Quickstart
 
 ### Prerequisites
-This quickstart assumes a local system with:
 
-- The binaries you want to scan
-- Docker
-- A Python environment with this project's requirements installed
+- Python 3.13
+- `uv`
+- Docker or Podman
+- a directory of files to scan with EyeOn
 
-### Configure paths
+### 1. Install dependencies
 
-1. Prepare a Python environment for the Streamlit app. If needed, install `uv`: https://docs.astral.sh/uv/getting-started/installation/
-2. Copy `EyeOnData.toml-template` to `EyeOnData.toml`.
-3. Set `datasets.dataset_path` to the top-level directory where EyeOn batch directories will be written and loaded from.
+```bash
+uv sync
+```
 
-### Generate data using EyeOn CLI
+### 2. Configure local paths
 
-Run EyeOn to scan a directory of binaries:
+Copy the sample config and update the dataset location.
 
-`eyeon-parse.sh UTIL_CD SOURCE THREADS`
+```bash
+cp EyeOnData.toml-template EyeOnData.toml
+```
 
-This creates a new batch directory under `datasets.dataset_path`. You can override it with `--dataset-path` or `EYEON_DATASET_PATH`.
+At minimum, set `datasets.dataset_path` in `EyeOnData.toml` to the directory where EyeOn batch folders should be written.
 
-### Load data into database and explore it
+Example:
 
-1. Run the app with `uv run streamlit run EyeOnData.py` or `streamlit run EyeOnData.py`.
-2. On first run, if no database exists yet, the app will prompt you to load one or more batches and choose the DB directory.
-3. Browse the loaded data in the app.
+```toml
+[datasets]
+dataset_path = "/path/to/eyeon/batches"
 
-## Components
+[db]
+db_file = "eyeon.duckdb"
+db_path = "database"
+```
 
-### DLT
-`load_eyeon.py` loads EyeOn JSON into DuckDB.
+### 3. Generate a batch with EyeOn
 
-It writes Bronze raw JSON tables, Silver observation and metadata tables, and schema change tracking data.
+Use the wrapper script to run `eyeon parse` in a container:
 
-### dbt
-The `dbt_eyeon_gold/` project builds Gold models from Silver.
+```bash
+./eyeon-parse.sh --util-cd UTIL_CD --dir /path/to/files --threads 8
+```
 
-Examples include file summaries, batch summaries, and certificate-focused models.
+The script writes a timestamped batch directory under `datasets.dataset_path`.
 
-### Streamlit
-The Streamlit app provides a lightweight interface for loading batches, browsing tables, exploring certificate analytics, and inspecting schema evolution.
+You can also use positional arguments:
 
-## Architecture
+```bash
+./eyeon-parse.sh UTIL_CD /path/to/files 8
+```
 
-```text
-EyeOn JSON files
-   |
-   v
-DLT load
-   |
-   +--> bronze.*
-   |
-   +--> silver.*
-            |
-            v
-          dbt models
-            |
-            v
-          gold.*
-            |
-            v
-       Streamlit app
+For more options:
+
+```bash
+./eyeon-parse.sh --help
+```
+
+Optional: print a quick summary of the newest batch:
+
+```bash
+./eyeon-batch-summary.sh
+```
+
+### 4. Launch the Streamlit app
+
+```bash
+uv run streamlit run EyeOnData.py
+```
+
+### 5. Load batches from the app
+
+The preferred workflow is to use the Streamlit app to run the load pipeline.
+
+From the app:
+- choose the dataset root / database location if prompted
+- select one or more EyeOn batch directories
+- click `Load Selected` to run the load workflow
+
+This path handles the DLT load and the dbt modeling steps for normal usage.
+
+## Optional Manual Workflow
+
+The direct CLI commands below are still useful for development, troubleshooting, or incremental reruns.
+
+### Load a batch with the loader
+
+Run the loader against a specific batch directory:
+
+```bash
+uv run python load_eyeon.py --utility_id UTIL_CD --source /path/to/batch --log-level INFO
+```
+
+Useful log levels:
+- `INFO` for normal runs
+- `DEBUG` for more verbose troubleshooting
+
+### Build dbt models manually
+
+```bash
+uv run dbt build --project-dir dbt_eyeon_gold --profiles-dir dbt_eyeon_gold
+```
+
+## Repo Layout
+
+- `load_eyeon.py`: loads EyeOn JSON into DuckDB via `dlt`
+- `eyeon-parse.sh`: container wrapper around `eyeon parse`
+- `eyeon-batch-summary.sh`: quick batch inspection helper
+- `dbt_eyeon_gold/`: dbt project for modeled analytics tables
+- `pages/`: Streamlit pages
+- `utils/`: shared app and schema utilities
+- `schemas/`: generated DLT schema plus bootstrap SQL
+- `extras/`: notebooks and scratch utilities for ad hoc exploration
+
+## Data Flow
+
+```mermaid
+flowchart TD
+    A[EyeOn JSON batch] --> B[load_eyeon.py]
+    B --> C[bronze.raw_json]
+    B --> D[silver.raw_obs and silver.metadata_*]
+    D --> E[dbt_eyeon_gold]
+    E --> F[gold.*]
+    F --> G[Streamlit pages]
+```
+
+## Notes
+
+- `schemas/eyeon_metadata.schema.yaml` is generated as part of the DLT workflow and is intentionally checked in.
+- `EyeOnData.toml` is local configuration and should not be committed.
+- `test.sh` is a simple local smoke-test script and assumes local sample data paths exist.
+
+## Development
+
+Run linting and formatting with Ruff:
+
+```bash
+uv run ruff check .
+uv run ruff format .
 ```
