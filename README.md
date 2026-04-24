@@ -29,7 +29,7 @@ The pipeline is organized into three layers:
 ### Prerequisites
 
 - Python 3.13
-- `uv`
+- `uv` - [Install UV](https://docs.astral.sh/uv/getting-started/installation/)
 - Docker or Podman
 - a directory of files to scan with EyeOn
 
