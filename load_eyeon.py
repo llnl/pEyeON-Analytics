@@ -16,6 +16,7 @@ from utils.config import duckdb_path, resolve_dlt_path
 
 # Validate UUIDs
 UUID_RE = re.compile(r'"uuid"\s*:\s*"([^"]+)"')
+logger = logging.getLogger(__name__)
 
 
 def sanitize_ole_metadata(item):
@@ -29,11 +30,16 @@ def sanitize_ole_metadata(item):
                 item["ole"]["thumbnail"] = base64.b64encode(
                     ole["thumbnail"].encode("latin-1")
                 ).decode("ascii")
-                print("Base64 encoded thumbnail for ...")
+                logger.debug(
+                    "Base64 encoded OLE thumbnail for %s",
+                    item.get("uuid", "unknown"),
+                )
             except Exception as e:
                 # Log and null out problematic thumbnails
-                print(
-                    f"Error sanitizing thumbnail for {item.get('uuid', 'unknown')}: {e}"
+                logger.error(
+                    "Error sanitizing thumbnail for %s: %s",
+                    item.get("uuid", "unknown"),
+                    e,
                 )
                 item["ole"]["thumbnail"] = None
     if "elfNote" in item and item["elfNote"] is not None:
@@ -44,11 +50,16 @@ def sanitize_ole_metadata(item):
                     elfNote["descdata"] = base64.b64encode(
                         elfNote["descdata"].encode("latin-1")
                     ).decode("ascii")
-                    print("Base64 encoded descdata for ...")
+                    logger.debug(
+                        "Base64 encoded ELF note descdata for %s",
+                        item.get("uuid", "unknown"),
+                    )
                 except Exception as e:
                     # Log and null out problematic descdata
-                    print(
-                        f"Error sanitizing descdata for {item.get('uuid', 'unknown')}: {e}"
+                    logger.error(
+                        "Error sanitizing descdata for %s: %s",
+                        item.get("uuid", "unknown"),
+                        e,
                     )
                     elfNote["descdata"] = None
 
@@ -62,8 +73,7 @@ def drop_empty_lists(obj):
             v2 = drop_empty_lists(v)
             # remove keys where the value is an empty list
             if isinstance(v2, list) and len(v2) == 0:
-                if False:
-                    print(f"Dropping: {k}")
+                logger.debug("Dropping empty list field: %s", k)
                 continue
             out[k] = v2
         return out
@@ -230,12 +240,15 @@ def print_schema_changes(load_info, load_name):
     # Access schema changes from the current run
     # Note: this uses the metadata that is written to a file by DLT.
     # A more comprehensive approach is implemented in `schema_blame.py`
-    print(f"Schema changes from the {load_name} pipeline:")
+    logger.info("Schema changes from the %s pipeline:", load_name)
     for package in load_info.load_packages:
         for table_name, table in package.schema_update.items():
             for column_name, column in table["columns"].items():
-                print(
-                    f"Table: {table_name}, Column: {column_name}, Type: {column['data_type']}"
+                logger.info(
+                    "Table: %s, Column: %s, Type: %s",
+                    table_name,
+                    column_name,
+                    column["data_type"],
                 )
 
 
@@ -256,16 +269,21 @@ def parse_args():
         help="Depth that DLT will attempt to parse for complex types",
     )
     parser.add_argument(
-        "--debug", required=False, help="Display debug messages", default=False
+        "--log-level",
+        required=False,
+        default="INFO",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        type=str.upper,
+        help="Set the log verbosity",
     )
 
     args = parser.parse_args()
     return vars(args)
 
 
-def main(utility_id, source, depth=4, debug=False) -> None:
+def main(utility_id, source, depth=4, log_level="INFO") -> None:
     logging.basicConfig(
-        level=logging.INFO,  # Change to DEBUG if you need more verbosity
+        level=getattr(logging, log_level),
         format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
