@@ -72,9 +72,14 @@ class LandingPage(BasePageLayout):
                         query_signature = (
                             f"sql:select * from {table_name} where {filter}"
                         )
+                        # TODO: Ultimately replace table_name string with an object that includes schema and possibly other metadata.
+                        if table_name == "raw_json":
+                            hack = "bronze.raw_json"
+                        else:
+                            hack = table_name
                         results = (
                             db.get_conn()
-                            .execute(f"select * from {table_name} where {filter}")
+                            .execute(f"select * from {hack} where {filter}")
                             .df()
                         )
                     else:
@@ -207,7 +212,7 @@ class LandingPage(BasePageLayout):
                             )
 
                 # Show selected row details
-                with st.expander(f"🔍 Selected Row Details", expanded=False):
+                with st.expander("🔍 Selected Row Details", expanded=False):
                     st.json(selected_row.to_dict())
 
                 # Get and render child tables
