@@ -139,6 +139,10 @@ resolve_runtime() {
   exit 2
 }
 
+source_has_files() {
+  [[ -n "$(find "$SOURCE" -type f -print -quit)" ]]
+}
+
 IMAGE="${EYEON_IMAGE:-ghcr.io/llnl/peyeon:latest}"
 DATASET_PATH="${EYEON_DATASET_PATH:-}"
 UTIL_CD="${EYEON_UTIL_CD:-}"
@@ -280,6 +284,12 @@ fi
 
 if [[ ! -d "$SOURCE" ]]; then
   echo "SOURCE is not a directory: $SOURCE" >&2
+  exit 2
+fi
+
+if ! source_has_files; then
+  echo "SOURCE does not contain any files: $SOURCE" >&2
+  echo "Select the directory that contains the EyeOn files to parse, not an empty parent directory." >&2
   exit 2
 fi
 
