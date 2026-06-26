@@ -209,3 +209,7 @@ dbt_eyeon_gold/.user.yml
 
 # macOS
 .DS_Store
+
+# Local Obsidian app state
+.obsidian/
+
