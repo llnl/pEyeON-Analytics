@@ -80,6 +80,13 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/tensions/box_vs_local]] | open | Box upload path vs. fully local operation |
 | [[wiki/tensions/filetype_multi]] | open | filetype is an array — multiple types per file; gold models handle this inconsistently |
 
+## Feature Work
+
+| Feature | Status | Summary |
+|---------|--------|---------|
+| [[wiki/work/binwalk-support/brief]] | started | Binwalk support requirements, references, design, spike, implementation, and verification skeleton |
+| [[wiki/work/firmware-corpus/brief]] | handoff-ready | Firmware corpus manifest, fetch/parse utility, and test/demo subset planning; dev handoff in [[wiki/work/firmware-corpus/dev_handoff]] |
+
 ## Concepts
 
 | Page | Confidence | Summary |
@@ -94,4 +101,4 @@ Master catalog of all pages. Updated by the agent on every ingest.
 
 ---
 
-*Last updated: 2026-06-26 (added LLM-assisted feature workflow convention)*
+*Last updated: 2026-06-26 (created Firmware Corpus dev handoff)*

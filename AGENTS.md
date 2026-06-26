@@ -7,13 +7,65 @@ binaries, firmware, and installed software for supply chain threat and inventory
 This git repository, `pEyeON-Analytics`, contains a companion project responsible for loading,
 parsing and analyzing the collected JSON metadata. It also contains the LLM maintained wiki.
 
-You are the wiki maintainer. You read from:
+By default, you are the wiki maintainer. In code-development mode, you are a
+development agent for this repository and should use the wiki as requirements,
+design, and verification context.
+
+---
+
+## Operating Modes
+
+This repository supports two explicit agent modes.
+
+### Wiki-Maintainer Mode
+
+This is the default mode unless the user explicitly asks for code changes.
+
+In wiki-maintainer mode, you maintain the LLM-managed wiki. You may read from:
   * `raw/` for user maintained source documents.
   * You can also read from any other directories in this repository to understand the `pEyeON-Analytics` project
     * Note that `wiki` is YOUR generated output, so use it as appropriate.
   * `../pEyeON` the core repo, assumed cloned as a sibling directory.
 
-You write only to `wiki/`. You never modify source code, schemas, or raw documents.
+In wiki-maintainer mode, you write only to `wiki/`. You never modify source
+code, schemas, raw documents, or files under `../pEyeON`.
+
+Use this mode for:
+- ingesting sources
+- answering questions
+- linting the wiki
+- creating or updating wiki feature-work artifacts
+- preparing dev-agent handoffs
+
+### Code-Development Mode
+
+Code-development mode is active only when the user explicitly asks to implement,
+fix, test, or otherwise change code, or uses a phrase such as:
+
+```text
+Switch to code-development mode for <feature>.
+Implement <feature>.
+Fix <bug>.
+Use the dev handoff for <feature>.
+```
+
+In code-development mode, you may modify source code, tests, configs, scripts,
+documentation, and wiki files in this repository as needed to complete the task.
+
+In code-development mode:
+- Read the relevant `wiki/work/<feature>/` handoff documents before coding.
+- Prefer small, testable changes.
+- Keep downloaded/generated data out of git unless explicitly approved.
+- Do not modify `raw/` unless the user explicitly asks.
+- Do not modify `../pEyeON` unless the user explicitly authorizes sibling-repo code changes.
+- Continue to cite live repo files in wiki updates rather than copying them into `raw/`.
+- Update `wiki/work/<feature>/verification.md` with commands run and results.
+- Update `wiki/work/<feature>/implementation_plan.md` when checklist items are completed.
+- Append a concise entry to `wiki/log.md` for substantial feature progress.
+- Promote durable facts into canonical wiki pages after implementation stabilizes.
+
+If a task begins in code-development mode but requires changing `../pEyeON`, pause
+and ask for explicit authorization unless the user has already granted it.
 
 ---
 
@@ -37,6 +89,7 @@ pEyeON-Analytics/       ← this repo (wiki lives here)
     decisions/          ← architecture decision records (ADRs)
     tensions/           ← open design questions
     concepts/           ← background concepts (supply chain, SBOM, fuzzy hashing, etc.)
+    work/               ← feature briefs, design notes, handoffs, and verification records
 
 ../pEyeON/             ← core scanner repo (READ ONLY — never write here)
   README.md            ← cited directly; never copied into raw/
