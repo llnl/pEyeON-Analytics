@@ -68,6 +68,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/decisions/surfactant_plugins]] | accepted | pluggy for extensible format detection |
 | [[wiki/decisions/duckdb_dlt_dbt]] | accepted | DuckDB + DLT + dbt as local analytics stack |
 | [[wiki/decisions/bronze_silver_gold]] | accepted | Three-layer medallion architecture for EyeON data |
+| [[wiki/decisions/feature_work_artifacts]] | accepted | Standard wiki artifacts for LLM-assisted feature work |
 
 ## Tensions
 
@@ -88,7 +89,9 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/concepts/fuzzy_hashing]] | high | ssdeep, telfhash, imphash — purpose and use in EyeON |
 | [[wiki/concepts/authenticode]] | medium | Windows PE signing: authentihash, LIEF verification |
 | [[wiki/concepts/surfactant]] | medium | Upstream LLNL tool EyeON builds on for plugin management |
+| [[wiki/concepts/llm_assisted_feature_workflow]] | medium | Lightweight RFC/ADR/spike workflow for LLM-assisted code changes |
+| [[wiki/concepts/feature_work_template]] | medium | Reusable skeleton for new feature work folders |
 
 ---
 
-*Last updated: 2026-06-26 (README ingests for pEyeON and pEyeON-Analytics)*
+*Last updated: 2026-06-26 (added LLM-assisted feature workflow convention)*
