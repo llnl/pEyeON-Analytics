@@ -38,6 +38,15 @@ is intentionally checked in.
 <!-- GROUND_TRUTH: ../pEyeON-Analytics/README.md §repo-layout -->
 <!-- GROUND_TRUTH: ../pEyeON-Analytics/README.md §notes -->
 
+The checked-in `schemas/schema.sql` is the bootstrap DDL exported from an evolved
+DuckDB database. The base-schema derivation page records the recovered workflow:
+use representative EyeON sample data to let DLT discover the broadest practical
+silver schema, materialize `schema_blame`, export the database schema, and then
+reuse that DDL for stable bootstrap databases.
+
+<!-- GROUND_TRUTH: ../pEyeON-Analytics/schemas/schema.sql lines 1-62 -->
+<!-- GROUND_TRUTH: ../pEyeON-Analytics/load_eyeon.py lines 304-319 -->
+
 ## Consumer
 
 The dbt project consumes silver tables and builds `gold.*` reporting and
@@ -48,5 +57,6 @@ exploration models.
 ## Related
 
 - [[wiki/components/load_eyeon]] — producer
+- [[wiki/pipeline/base_schema_derivation]] — recovered base-schema derivation methodology
 - [[wiki/schemas/gold_layer]] — downstream modeled layer
 - [[wiki/overview/data_flow]] — full pipeline overview

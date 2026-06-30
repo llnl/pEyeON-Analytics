@@ -4,11 +4,12 @@ type: component
 confidence: high
 grounded_by:
   - ../pEyeON/src/eyeon/observe.py
+  - ../pEyeON/src/eyeon/generic_metadata.py
   - ../pEyeON/schema/observation.schema.json
 policy: agent-editable
 component: pEyeON-core
-last_validated: 2026-06-26
-tags: [observe, hashing, pe, elf, surfactant, lief, ssdeep]
+last_validated: 2026-06-30
+tags: [observe, hashing, pe, elf, surfactant, lief, ssdeep, generic-metadata]
 ---
 
 # Component: Observe
@@ -36,7 +37,7 @@ EyeON scanning.
 | `permissions` | `oct(os.stat().st_mode)` |
 | `eyeon_version` | `importlib.metadata.version("peyeon")` |
 | `filetype` | surfactant plugin hook `identify_file_type` |
-| `metadata` | surfactant plugin hook `extract_file_info` |
+| `metadata` | surfactant plugin hook `extract_file_info`, or EyeON generic fallback metadata when no format plugin produces metadata |
 
 ## Format-Conditional Fields
 
@@ -56,6 +57,33 @@ The two hooks are `identify_file_type` and `extract_file_info`. Each plugin
 receives only the kwargs it declares in its signature (filtered via `argnames`).
 Plugin errors are caught and recorded in `metadata.error` rather than crashing
 the observation. See [[wiki/components/surfactant_plugins]].
+
+## Generic Metadata Fallback
+
+<!-- GROUND_TRUTH: ../pEyeON/src/eyeon/observe.py §_generic_metadata -->
+<!-- GROUND_TRUTH: ../pEyeON/src/eyeon/generic_metadata.py §generic_metadata -->
+When surfactant does not identify a format-specific metadata extractor, EyeON now
+uses an internal generic metadata fallback rather than leaving most firmware
+filesystem artifacts as `metadata.Unknown`. This is not implemented as a new
+surfactant plugin; it is EyeON-owned behavior delegated from `Observe` to
+`src/eyeon/generic_metadata.py`.
+
+The fallback classifies common extracted firmware artifacts into metadata keys
+such as:
+
+- `opkg_file` — OpenWrt/opkg package metadata and package scripts such as `.control`, `.list`, `.prerm`, `.postrm`, `.preinst`, `.postinst`, and `.conffiles`
+- `text_file` — shell/config/plain text, Lua, ucode, JSON, certificates, rules, and other generic text-like files
+- `web_asset` — HTML, JavaScript, CSS, SVG, PNG/GIF/ICO web-interface assets
+- `image_file` — generic image files not otherwise classified
+- `symlink_file` — symbolic links, including the symlink target
+- `linux_kernel_image` — Linux zImage-style kernel images identified from magic output
+- `device_tree_file` — device tree blobs (`.dtb`) and magic-identified device tree files
+- `generic_file` — remaining binary blobs or unclassified artifacts
+
+If filetype identification itself fails, `Observe` records fallback metadata with
+`identify_error` rather than failing the entire observation. This keeps extracted
+filesystem edge cases, such as symlink-like `mtab` files, from becoming parse-level
+observation errors.
 
 ## telfhash Threading Note
 

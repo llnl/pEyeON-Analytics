@@ -3,10 +3,11 @@ title: "Schema: Observation JSON"
 type: schema
 confidence: high
 grounded_by:
+  - ../pEyeON/schema/observation.schema.json
   - ../pEyeON-Analytics/schemas/eyeon_metadata.schema.yaml
 policy: agent-editable
 component: both
-last_validated: 2026-06-26
+last_validated: 2026-06-30
 tags: [schema, observation, json, fields]
 ---
 
@@ -101,6 +102,25 @@ Key fields: `cert_sha256`, `issuer_name`, `subject_name`, `issued_on`, `expires_
 
 EyeON extracts format-specific metadata into separate tables keyed by the observation
 UUID. Each metadata table links back to `raw_obs` via the `uuid` field.
+
+## Generic Metadata Fallbacks
+
+<!-- GROUND_TRUTH: ../pEyeON/schema/observation.schema.json §GenericFileMetadata -->
+The core observation schema now includes EyeON-owned fallback metadata definitions
+for extracted firmware artifacts that are important for inventory but do not have
+deep format-specific extractors. These include `text_file`, `opkg_file`,
+`web_asset`, `image_file`, `symlink_file`, `linux_kernel_image`,
+`device_tree_file`, and `generic_file` metadata keys.
+
+These fallback metadata records are intended to reduce `metadata.Unknown` in
+firmware parses while preserving basic structured facts such as `kind`,
+`extension`, `magic`, `mime_type`, emptiness, line counts for text-like files,
+shebang detection, symlink targets, and parsed opkg control fields where
+available.
+
+The schema also adds surfactant-observed filetype enum values that appear in
+firmware/web assets, including `SHELL`, `HTML`, `CSS`, `JAVASCRIPT`, and
+`SHEBANG`.
 
 ### `metadata_pe_file`
 

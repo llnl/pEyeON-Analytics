@@ -4,6 +4,9 @@ type: component
 confidence: high
 grounded_by:
   - ../pEyeON/README.md
+  - ../pEyeON/builds/Dockerfile
+  - ../pEyeON/builds/podman.Dockerfile
+  - ../pEyeON/.github/workflows/test-build-container.yaml
 policy: agent-editable
 component: pEyeON-core
 last_validated: 2026-06-26
@@ -16,7 +19,7 @@ tags: [docker, podman, container, entrypoint]
 
 EyeON containers package the CLI with extraction dependencies that are not
 installed by the simple `pip install peyeon` path, including `ssdeep`,
-`libmagic`, `tlsh`, and `detect-it-easy`.
+`libmagic`, `tlsh`, `detect-it-easy`, Binwalk v3, 7-Zip, and `sasquatch`.
 
 <!-- GROUND_TRUTH: ../pEyeON/README.md §containers -->
 
@@ -50,6 +53,17 @@ podman run --rm -it -v "$(pwd):/workdir:rw" peyeon /bin/bash
 
 <!-- GROUND_TRUTH: ../pEyeON/README.md §local-docker-build -->
 <!-- GROUND_TRUTH: ../pEyeON/README.md §local-podman-build -->
+
+## Binwalk Packaging
+
+Both `builds/Dockerfile` and `builds/podman.Dockerfile` build Binwalk v3 from
+the ReFirmLabs `v3.1.0` tag in the builder stage and copy the resulting
+`binwalk` binary into the runtime image. Runtime packages include common
+extractors used by Binwalk v3, including `7z`, `sasquatch`, `unar`, `zstd`,
+`lz4`, `lzop`, `sleuthkit`, `cabextract`, and `device-tree-compiler`.
+
+The container build CI smoke tests now verify `eyeon --help`, `binwalk --version`,
+`sasquatch`, and `7z` for both Docker and Podman build paths.
 
 ## Recommended Runtime Path
 

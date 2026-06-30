@@ -4,6 +4,9 @@ type: component
 confidence: high
 grounded_by:
   - ../pEyeON/README.md
+  - ../pEyeON/src/eyeon/parse.py
+  - ../pEyeON/src/eyeon/container.py
+  - ../pEyeON/schema/observation.schema.json
 policy: agent-editable
 component: pEyeON-core
 last_validated: 2026-06-26
@@ -44,6 +47,20 @@ obs = eyeon.parse.Parse(args.dir)
 ```
 
 <!-- GROUND_TRUTH: ../pEyeON/README.md §parse -->
+
+## Container Extraction
+
+`Parse` now owns the first container extraction pattern. For supported container
+filetypes, it observes the container, extracts children into a temporary
+directory, observes extracted children recursively, and writes child observations
+with `parent` set to the container observation UUID.
+
+Supported extraction formats are `ZIP`, `TAR`, `GZIP`, `BZIP2`, `XZ`,
+`DOCKER_TAR`, `DOCKER_GZIP`, `RAR`, and `ISO_9660_CD`. RAR support depends on
+external RAR tooling usable by `rarfile`; ISO support depends on `7zz`, `7z`, or
+`EYEON_7Z_PATH`. The container observation receives
+`metadata.container_file` so the outer container has its own metadata in addition
+to child observations.
 
 ## Optional Upload
 

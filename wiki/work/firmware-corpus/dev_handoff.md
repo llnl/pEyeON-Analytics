@@ -27,6 +27,7 @@ Use these wiki files as the handoff context:
 
 - wiki/work/firmware-corpus/brief.md
 - wiki/work/firmware-corpus/references.md
+- wiki/work/firmware-corpus/candidates.md
 - wiki/work/firmware-corpus/design.md
 - wiki/work/firmware-corpus/implementation_plan.md
 - wiki/work/firmware-corpus/verification.md
@@ -39,6 +40,7 @@ First slice:
 
 - Define a source-controlled firmware corpus manifest format.
 - Add a small initial manifest with candidate entries from raw/binwalk/binwalk.md.
+- Use wiki/work/firmware-corpus/candidates.md to select entries for unit-small, binwalk-smoke, demo-vulnerable, demo-utility, and bulk-index subsets.
 - Add a utility or script to list corpus entries.
 - Add fetch support for direct-download entries if it can be implemented cleanly and tested without relying on network access in default tests.
 - Include checksum fields and verification behavior where checksums are available.
@@ -73,6 +75,7 @@ Read these first:
 - [[wiki/work/firmware-corpus/design]] - manifest-driven design and utility behavior.
 - [[wiki/work/firmware-corpus/implementation_plan]] - step list and done checklist.
 - [[wiki/work/firmware-corpus/references]] - candidate source URLs and evaluation checklist.
+- [[wiki/work/firmware-corpus/candidates]] - expanded candidate catalog and suggested subsets.
 - [[wiki/work/binwalk-support/brief]] - why the corpus matters for Binwalk support.
 - `raw/binwalk/binwalk.md` - seed source for candidate firmware corpus entries.
 
@@ -111,12 +114,16 @@ the repo's existing conventions.
 
 ## Candidate Initial Entries
 
-Seed candidates come from `raw/binwalk/binwalk.md`:
+Seed candidates come from `raw/binwalk/binwalk.md` and [[wiki/work/firmware-corpus/candidates]]:
 
-- OpenWrt: likely best first clean baseline candidate.
+- Tasmota: likely best first small fetch/checksum candidate.
+- OpenWrt: likely best first clean embedded-Linux baseline candidate.
+- IoTGoat: likely best first deliberately vulnerable demo candidate.
 - DVRF: likely useful vulnerable-demo candidate if licensing and size are acceptable.
+- OpenIPC: useful camera firmware corpus candidate with many release assets.
 - D-Link DIR-605L: useful real-world vendor candidate, likely opt-in/manual-download.
-- FirmSecDataset: useful research/dataset-index candidate, not a default test input.
+- Moxa/HMS/Schneider/Siemens/WAGO/Beckhoff: useful industrial and utility-adjacent demo candidates, likely starting as `vendor-page` or `manual` entries.
+- FirmSecDataset, FirmAE, FIRMADYNE, iotwizz, and Netgear GPL Archive: useful bulk/index candidates, not default test inputs.
 
 The dev agent should verify URLs, terms, and direct-download feasibility before
 marking entries as testable or fetchable.

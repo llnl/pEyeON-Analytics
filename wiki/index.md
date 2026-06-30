@@ -47,7 +47,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/file_formats/ole]] | OLE, MSCAB, ISCAB | stg_metadata_ole_file | medium |
 | [[wiki/file_formats/uimage]] | UIMAGE | stg_metadata_uimage_file | medium |
 | [[wiki/file_formats/native_lib]] | AR_LIB, OMF_LIB | stg_metadata_native_lib | low |
-| [[wiki/file_formats/archives]] | ZIP, TAR, GZIP, BZIP2, XZ, RAR, ZSTANDARD, CPIO_* | (none — decompression only) | low |
+| [[wiki/file_formats/archives]] | ZIP, TAR, GZIP, BZIP2, XZ, RAR, ZSTANDARD, CPIO_* | `metadata.container_file` for first-slice extraction | high |
 | [[wiki/file_formats/rpm]] | RPM Package | (no staging model yet) | low |
 | [[wiki/file_formats/docker]] | DOCKER_GZIP, DOCKER_TAR | (SPDX output) | low |
 
@@ -57,6 +57,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 |------|------------|---------|
 | [[wiki/pipeline/eyeon_parse_sh]] | high | eyeon-parse.sh wrapper: batch output, image selection, runtime and ownership behavior |
 | [[wiki/pipeline/dlt_load]] | high | load_eyeon.py: DLT pipeline design and bronze/silver tables |
+| [[wiki/pipeline/base_schema_derivation]] | medium | Recovered methodology for deriving `schemas/schema.sql` from representative EyeON samples and schema_blame evidence |
 | [[wiki/pipeline/dbt_models]] | high | dbt_eyeon_gold: staging → intermediate → mart lineage |
 | [[wiki/pipeline/cert_analysis]] | medium | Certificate extraction, deduplication, expiry/key marts |
 
@@ -74,8 +75,8 @@ Master catalog of all pages. Updated by the agent on every ingest.
 
 | Page | Status | Summary |
 |------|--------|---------|
-| [[wiki/tensions/parent_field]] | open | `parent` field is undefined in schema — pointer to what? |
-| [[wiki/tensions/archive_recursion]] | open | Archives detected but not recursively scanned into |
+| [[wiki/tensions/parent_field]] | resolved | `parent` is the UUID of the containing file observation for extracted children |
+| [[wiki/tensions/archive_recursion]] | resolved | ZIP/TAR/GZIP/BZIP2/XZ, Docker tar/gzip, RAR, and ISO now use the container extraction pattern |
 | [[wiki/tensions/rpm_no_staging]] | open | RPM metadata extracted but no gold staging model exists |
 | [[wiki/tensions/box_vs_local]] | open | Box upload path vs. fully local operation |
 | [[wiki/tensions/filetype_multi]] | open | filetype is an array — multiple types per file; gold models handle this inconsistently |
@@ -85,7 +86,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | Feature | Status | Summary |
 |---------|--------|---------|
 | [[wiki/work/binwalk-support/brief]] | started | Binwalk support requirements, references, design, spike, implementation, and verification skeleton |
-| [[wiki/work/firmware-corpus/brief]] | handoff-ready | Firmware corpus manifest, fetch/parse utility, and test/demo subset planning; dev handoff in [[wiki/work/firmware-corpus/dev_handoff]] |
+| [[wiki/work/firmware-corpus/brief]] | first-slice-implemented | JSON manifest, list/fetch/checksum utility, OpenWrt Binwalk smoke candidate, and expanded candidate catalog including utility/industrial sources |
 
 ## Concepts
 
@@ -101,4 +102,4 @@ Master catalog of all pages. Updated by the agent on every ingest.
 
 ---
 
-*Last updated: 2026-06-26 (created Firmware Corpus dev handoff)*
+*Last updated: 2026-06-30 (documented base schema derivation and schema_blame corpus clues)*

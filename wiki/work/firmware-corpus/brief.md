@@ -62,6 +62,7 @@ manifest, fetching workflow, or test subset strategy.
 ## References
 
 - [[wiki/work/firmware-corpus/dev_handoff]]
+- [[wiki/work/firmware-corpus/candidates]]
 - [[wiki/work/firmware-corpus/references]]
 - [[wiki/work/binwalk-support/brief]]
 - `raw/binwalk/binwalk.md`
@@ -76,6 +77,8 @@ manifest, fetching workflow, or test subset strategy.
 - Should tests download external firmware on demand, or should external corpus tests be opt-in only?
 - What checksum policy is required for fetched files?
 - Which sample should be the first Binwalk spike fixture?
+- Which candidates from [[wiki/work/firmware-corpus/candidates]] should seed the first manifest: `unit-small`, `binwalk-smoke`, `demo-vulnerable`, or `demo-baseline`?
+- Which industrial/utility candidates should seed a `demo-utility` subset, and which must remain manual/gated entries?
 
 ## Test Plan
 

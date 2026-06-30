@@ -90,6 +90,12 @@ the extracted files.
 - Assert extracted child observations are emitted and parseable by the existing analytics loader.
 - Add failure-path coverage for missing Binwalk, extraction failure, or timeout.
 
+## Fixture Selection
+
+- First spike fixture candidate: `openwrt-ath79-carambola2-23-05-5` from `data/firmware_corpus/manifest.json`.
+- Rationale: OpenWrt is an open-source baseline with a direct download URL and a published SHA-256 checksum, making it safer for an opt-in fetch/checksum workflow than vendor pages or large research datasets.
+- Status: selected for the first Binwalk smoke subset, but actual Binwalk signatures and extraction output still need to be verified by an opt-in integration run.
+
 ## Done When
 
 - Requirements and acceptance criteria are complete.

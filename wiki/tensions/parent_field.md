@@ -1,14 +1,16 @@
 ---
 title: "Tension: parent field is undefined"
 type: tension
-status: open
+status: resolved
 poles:
   - "parent field exists in the schema with description 'some yet-to-be-determined pointer to a parent file or something'"
   - "No implementation sets this field; its semantics are unresolved"
-resolution: null
+resolution: "Resolved by core implementation: `parent` is the UUID of the containing file's EyeON observation when a child file is extracted from a container. See ../pEyeON/schema/observation.schema.json §parent and ../pEyeON/src/eyeon/parse.py §_observe."
 confidence: high
 grounded_by:
   - ../pEyeON/schema/observation.schema.json
+  - ../pEyeON/src/eyeon/parse.py
+  - ../pEyeON/src/eyeon/observe.py
 policy: agent-editable
 component: pEyeON-core
 last_validated: 2026-06-26
@@ -20,11 +22,10 @@ tags: [schema, parent, firmware, archive]
 ## The Conflict
 
 <!-- GROUND_TRUTH: ../pEyeON/schema/observation.schema.json §parent -->
-The observation schema includes a `parent` field typed as `string` with the
-description: "Some yet-to-be-determined pointer to a parent file or something."
+The observation schema includes a `parent` field typed as `string`.
 
-This field is not populated by the current `Observe` implementation and has no
-defined semantics.
+This field is now populated for files extracted from supported containers. The
+value is the UUID of the containing file's EyeON observation.
 
 ## Why It Matters
 
@@ -47,5 +48,6 @@ reference to its container.
 
 ## Status
 
-Open. This should be a deliberate design decision before recursive scanning
-or firmware analysis is implemented.
+Resolved. `parent` is a UUID reference to the containing file's observation for
+container-extracted children. This supports archive recursion now and can also
+support future Binwalk-extracted firmware children.

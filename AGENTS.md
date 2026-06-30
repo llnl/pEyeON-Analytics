@@ -67,6 +67,12 @@ In code-development mode:
 If a task begins in code-development mode but requires changing `../pEyeON`, pause
 and ask for explicit authorization unless the user has already granted it.
 
+### Python Tooling
+
+Use `uv` as the Python environment and command runner for this repository. Prefer
+commands such as `uv run python ...`, `uv run streamlit ...`, and `uv run dbt ...`
+over invoking a system `python`, `streamlit`, or `dbt` directly.
+
 ---
 
 ## Repository Layout

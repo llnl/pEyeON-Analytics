@@ -204,6 +204,11 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+# Firmware corpus local cache
+.firmware-corpus/
+firmware-corpus/
+data/firmware-corpus/
+
 # dbt local user metadata
 dbt_eyeon_gold/.user.yml
 
@@ -212,4 +217,3 @@ dbt_eyeon_gold/.user.yml
 
 # Local Obsidian app state
 .obsidian/
-

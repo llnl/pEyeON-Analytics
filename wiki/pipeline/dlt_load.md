@@ -49,5 +49,6 @@ uv run python load_eyeon.py --utility_id UTIL_CD --source /path/to/batch --log-l
 ## Related
 
 - [[wiki/components/load_eyeon]] — loader component
+- [[wiki/pipeline/base_schema_derivation]] — base-schema derivation and schema_blame corpus-selection notes
 - [[wiki/overview/data_flow]] — full data flow
 - [[wiki/pipeline/dbt_models]] — downstream dbt model build
