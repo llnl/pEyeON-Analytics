@@ -36,6 +36,9 @@ tags: [feature-work, verification, firmware, corpus]
 - `EYEON_CONTAINER_RUNTIME=docker ./eyeon-parse.sh --util-cd CORPUSGEN --dir /Users/johnson30/data/eyeon-corpus-downloads-expanded --dataset-path /Users/johnson30/data/eyeon-corpus-json-generic --threads 6 --image peyeon-generic-metadata-test:latest`
 - `/opt/homebrew/bin/uv run python <schema-validation-snippet>` over `/Users/johnson30/data/eyeon-corpus-json-generic/20260630T145633Z_CORPUSGEN`
 - In `../pEyeON`: `/opt/homebrew/bin/uv run python -m py_compile src/eyeon/observe.py src/eyeon/generic_metadata.py tests/testObserve.py`
+- In `../pEyeON`: `/opt/homebrew/bin/uv run python -m py_compile src/eyeon/observe.py src/eyeon/parse.py src/eyeon/generic_metadata.py tests/testObserve.py`
+- `/opt/homebrew/bin/uv run python -m py_compile pages/ObservationHierarchy.py pages/pages.py`
+- `/opt/homebrew/bin/uv run ruff check pages/ObservationHierarchy.py pages/pages.py`
 
 ## Manual Checks
 
@@ -73,6 +76,10 @@ tags: [feature-work, verification, firmware, corpus]
 - Generic-metadata metadata counts: `elf_file` 1005, `opkg_file` 798, `text_file` 613, `web_asset` 291, `generic_file` 162, `binwalk_file` 115, `symlink_file` 61, `container_file` 34, `uimage_file` 31, `linux_kernel_image` 26, `device_tree_file` 11.
 - All 2,998 JSON observations from `/Users/johnson30/data/eyeon-corpus-json-generic/20260630T145633Z_CORPUSGEN` validated against the updated `../pEyeON/schema/observation.schema.json`.
 - Refactored generic metadata classification out of `src/eyeon/observe.py` into `src/eyeon/generic_metadata.py`. Re-ran `tests.testObserve.GenericMetadataTestCase`, schema JSON syntax check, and Python compile checks after the refactor; behavior was not changed, so the expanded corpus parse was not rerun.
+- Added collision-safe JSON output naming in core EyeON. The normal output name remains `<filename>.<md5>.json`; if that file already exists for a different observation UUID, the writer uses `<filename>.<md5>.<uuid>.json`. This preserves both observations when a container and extracted child share the same basename and hash. Same-name/different-hash files already produce distinct `<filename>.<md5>.json` paths.
+- Added tests for same-name/same-hash and same-name/different-hash observations. `tests.testObserve.GenericMetadataTestCase` passed with 6 tests after the output naming change.
+- Added `pages/ObservationHierarchy.py` to display `silver.raw_obs` parent/child relationships with a semantic summary layer. The page groups descendants by metadata type plus fallback `kind`, then offers drilldown rows and a limited hierarchy preview so large containers remain navigable.
+- Streamlit page syntax and Ruff checks passed for `pages/ObservationHierarchy.py` and `pages/pages.py`.
 
 ## Known Gaps
 
@@ -83,7 +90,7 @@ tags: [feature-work, verification, firmware, corpus]
 - Binwalk signatures for the selected OpenWrt fixture are expected but not yet verified by an actual Binwalk run.
 - EyeON parse integration is deferred.
 - The previous `[Errno 22] Invalid argument` metadata error for extracted `mtab` symlink-like files is handled by the generic fallback when using the updated core image. `Observe` records `symlink_file.identify_error`; parse no longer emits `metadata.error` for this case.
-- The output filename collision/collapse for `.bin` and `.bin.gz` pairs needs follow-up if preserving both top-level compressed artifact and extracted child artifact as separate JSON files is required.
+- The previous output filename collision/collapse for `.bin` and `.bin.gz` pairs is addressed in core EyeON by appending the UUID only when `<filename>.<md5>.json` already exists for another observation.
 - Analytics/dbt models do not yet consume the new generic metadata keys (`opkg_file`, `text_file`, `web_asset`, `generic_file`, `symlink_file`, `linux_kernel_image`, `device_tree_file`, `image_file`).
 
 ## Follow-Ups
@@ -92,5 +99,4 @@ tags: [feature-work, verification, firmware, corpus]
 - Add parse workflow integration after the corpus utility stabilizes.
 - Re-check D-Link and other vendor URLs from a normal browser or network environment before using them in demos.
 - Add more direct-download vendor/utility entries to the manifest once source URLs and terms are manually verified.
-- Consider adding source-path or UUID to observation JSON filenames in core EyeON if same-name/same-hash parent/child collisions should be preserved on disk.
 - Add analytics loader/dbt support for the new generic metadata keys after core behavior is accepted.

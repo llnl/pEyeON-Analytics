@@ -378,6 +378,35 @@ Notes: Downgraded handled filetype-identification fallback logging from ERROR to
   `mtab` from appearing as ERROR output when the updated generic metadata fallback
   is active. Targeted generic metadata tests and Python compile checks passed.
 
+## [2026-06-30] fix | Collision-safe observation JSON names
+
+Pages created: none
+Pages updated: wiki/work/firmware-corpus/verification.md
+Files updated in ../pEyeON: src/eyeon/observe.py, src/eyeon/parse.py,
+  tests/testObserve.py
+Contradictions flagged: none
+Notes: Made core EyeON JSON output collision-safe. The default output filename
+  remains `<filename>.<md5>.json`, but if that path already exists for a different
+  observation UUID, EyeON writes `<filename>.<md5>.<uuid>.json`. This preserves
+  both observations when a container and extracted child share the same basename
+  and hash, while same-name/different-hash observations continue to use the
+  existing filename shape. Added targeted tests for both cases; generic metadata
+  tests and Python compile checks passed.
+
+## [2026-06-30] implementation | Streamlit observation hierarchy page
+
+Pages created: none
+Pages updated: wiki/components/streamlit_app.md,
+  wiki/work/firmware-corpus/verification.md
+Files updated: pages/ObservationHierarchy.py, pages/pages.py
+Contradictions flagged: none
+Notes: Added a Streamlit page for browsing `silver.raw_obs` parent/child
+  relationships. The page introduces a semantic summary layer grouped by metadata
+  type plus fallback `kind`, which is more useful than raw MIME type for large
+  firmware/container trees. Users can pick a root observation, choose max depth,
+  inspect summary groups, drill down into a selected group, and view a limited
+  hierarchy preview. Python compile and Ruff checks passed.
+
 ## [2026-06-30] research | Base schema derivation and schema_blame recovery
 
 Pages created: wiki/pipeline/base_schema_derivation.md

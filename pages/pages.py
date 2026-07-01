@@ -14,6 +14,7 @@ def app_pages():
     return [
         Page("pages/EyeOnSummary.py", "EyeOn Summary"),
         Page("pages/certs.py", "X509 Certificates"),
+        Page("pages/ObservationHierarchy.py", "Observation Hierarchy"),
         Page("pages/BrowseDltData.py", "Browse/Search Observations"),
         Page("pages/Schema_Blame.py", "Schema Inspector"),
         Page("pages/debug_page.py", "Debug Tools"),
