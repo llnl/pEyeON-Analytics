@@ -123,6 +123,29 @@
       "notes": "Research corpus pointer from raw/binwalk/binwalk.md. This is intentionally excluded from default fetching and tests."
     },
     {
+      
+      "id": "WUSTL-CSPL-dataset-index",
+      "name": "WUSTL-CSPL firmware link index",
+      "category": "research-dataset",
+      "source_url": "https://github.com/WUSTL-CSPL/Firmware-Dataset",
+      "source_type": "dataset-index",
+      "filename": null,
+      "artifacts": [],
+      "license_or_terms": "Index of ﬁrmware images from the ofﬁcial websites of vendors, open FTP sites, and open-source repositories",
+      "redistributable": "user-must-download",
+      "expected_size": "bulk dataset; not suitable for default tests",
+      "sha256": null,
+      "expected_binwalk": [],
+      "use_cases": [
+        "research"
+      ],
+      "subsets": [
+        "research"
+      ],
+      "notes": "Very large (>180K) references to firmware downloads. Also includes a small utility for downloading images. No review has been performed of this yet."
+
+    },
+    {
       "id": "tasmota-v15-5-0-selected",
       "name": "Tasmota v15.5.0 selected ESP8266 firmware binaries",
       "category": "open-source-baseline",
