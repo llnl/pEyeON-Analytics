@@ -31,24 +31,6 @@ METADATA_LABELS = {
 }
 
 
-KIND_LABELS = {
-    "binary-blob": "binary blob",
-    "config-file-list": "config file list",
-    "control": "package control",
-    "css": "CSS",
-    "device-tree": "device tree",
-    "file-list": "installed file list",
-    "html": "HTML",
-    "javascript": "JavaScript",
-    "linux-kernel-image": "Linux kernel image",
-    "lua": "Lua",
-    "shell": "shell script",
-    "text": "plain text",
-    "ucode": "ucode",
-    "unclassified": "unclassified",
-}
-
-
 def _sql_literal(value: str) -> str:
     return "'" + value.replace("'", "''") + "'"
 
@@ -94,7 +76,6 @@ def _metadata_union_sql() -> str:
     for table_name in _base_metadata_tables():
         columns = _table_columns(table_name)
         metadata_label = _metadata_label(table_name)
-        kind_expr = "cast(kind as varchar)" if "kind" in columns else _sql_literal(metadata_label)
         extension_expr = "cast(extension as varchar)" if "extension" in columns else "NULL"
         mime_expr = "cast(mime_type as varchar)" if "mime_type" in columns else "NULL"
         selects.append(
@@ -103,14 +84,13 @@ def _metadata_union_sql() -> str:
               uuid,
               '{table_name}' as metadata_table,
               {_sql_literal(metadata_label)} as metadata_type,
-              {kind_expr} as semantic_kind,
               {extension_expr} as extension,
               {mime_expr} as mime_type
             from silver.{table_name}
             """
         )
     if not selects:
-        return "select NULL as uuid, NULL as metadata_table, NULL as metadata_type, NULL as semantic_kind, NULL as extension, NULL as mime_type where false"
+        return "select NULL as uuid, NULL as metadata_table, NULL as metadata_type, NULL as extension, NULL as mime_type where false"
     return "\nunion all\n".join(selects)
 
 
@@ -227,14 +207,8 @@ def _tree_with_metadata(root_uuid: str, max_depth: int) -> pd.DataFrame:
         select
           t.*,
           coalesce(m.metadata_type, 'No metadata') as metadata_type,
-          coalesce(m.semantic_kind, 'No metadata') as semantic_kind,
           m.extension,
-          m.mime_type,
-          case
-            when m.metadata_type is null then 'No metadata'
-            when m.semantic_kind is null or m.semantic_kind = m.metadata_type then m.metadata_type
-            else m.metadata_type || ': ' || m.semantic_kind
-          end as semantic_group
+          m.mime_type
         from tree t
         left join metadata m on m.uuid = t.uuid
         """,
@@ -245,16 +219,8 @@ def _tree_with_metadata(root_uuid: str, max_depth: int) -> pd.DataFrame:
 def _summary(tree_md: pd.DataFrame) -> pd.DataFrame:
     if tree_md.empty:
         return pd.DataFrame()
-    display = tree_md.copy()
-    display["semantic_kind"] = display["semantic_kind"].map(lambda value: KIND_LABELS.get(value, value))
-    display["semantic_group"] = display.apply(
-        lambda row: row["metadata_type"]
-        if row["semantic_kind"] in {None, row["metadata_type"], "No metadata"}
-        else f"{row['metadata_type']}: {row['semantic_kind']}",
-        axis=1,
-    )
     summary = (
-        display.groupby(["depth", "semantic_group", "metadata_type", "semantic_kind", "extension", "mime_type"], dropna=False)
+        tree_md.groupby(["depth", "metadata_type", "extension", "mime_type"], dropna=False)
         .agg(files=("uuid", "nunique"), bytes=("bytecount", "sum"))
         .reset_index()
         .sort_values(["depth", "files", "bytes"], ascending=[True, False, False])
@@ -314,22 +280,20 @@ class ObservationHierarchyPage(BasePageLayout):
         k1.metric("Root children", int(root["child_count"]))
         k2.metric("Rows Shown", len(tree))
         k3.metric("Descendants Shown", descendants)
-        k4.metric("Metadata Groups", tree_md["semantic_group"].nunique() if not tree_md.empty else 0)
+        k4.metric("Metadata Types", tree_md["metadata_type"].nunique() if not tree_md.empty else 0)
 
         with st.expander("Selected Root", expanded=False):
             st.dataframe(pd.DataFrame([root]), width="stretch", hide_index=True)
 
         summary = _summary(tree_md)
-        st.subheader("Semantic Summary")
-        st.caption("Grouped by friendly metadata category plus fallback `kind` where available. This is more stable than raw MIME type for EyeON metadata.")
+        st.subheader("Metadata Summary")
+        st.caption("Grouped by friendly metadata category derived from the silver metadata tables.")
         st.dataframe(summary, width="stretch", hide_index=True)
 
-        group_options = ["all"] + sorted(tree_md["semantic_group"].dropna().unique().tolist())
-        selected_group = st.selectbox("Drill down by semantic group", group_options)
-        details = tree_md if selected_group == "all" else tree_md[tree_md["semantic_group"] == selected_group]
+        group_options = ["all"] + sorted(tree_md["metadata_type"].dropna().unique().tolist())
+        selected_group = st.selectbox("Drill down by metadata type", group_options)
+        details = tree_md if selected_group == "all" else tree_md[tree_md["metadata_type"] == selected_group]
         details = details.sort_values(["depth", "filename", "uuid"]).head(detail_limit)
-        details = details.copy()
-        details["semantic_kind"] = details["semantic_kind"].map(lambda value: KIND_LABELS.get(value, value))
 
         st.subheader("Drilldown Rows")
         st.dataframe(
@@ -338,7 +302,6 @@ class ObservationHierarchyPage(BasePageLayout):
                     "depth",
                     "filename",
                     "metadata_type",
-                    "semantic_kind",
                     "extension",
                     "mime_type",
                     "bytecount",
