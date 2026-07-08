@@ -118,6 +118,18 @@ Notes: Created a copy/paste handoff prompt and development packet for the first
   Firmware Corpus implementation slice. The handoff focuses on manifest format,
   initial candidate entries, list/fetch utility behavior, non-network default
   tests, git hygiene for downloaded firmware, and closeout updates back into the
+
+## [2026-07-07] feature-impl | Metadata Type Drift
+
+Pages created: wiki/pipeline/metadata_curation.md,
+  wiki/work/metadata-type-drift/implementation_plan.md,
+  wiki/work/metadata-type-drift/verification.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Added `gold.metadata_type_drift` (silver discovered vs gold curated) and
+  surfaced it in the Streamlit Schema Blame page to make “unmodeled metadata
+  types” obvious when new DLT metadata tables appear but dbt `all_metadata` has
+  not been updated.
   feature-work wiki pages.
 
 ## [2026-06-26] process | AGENTS operating modes

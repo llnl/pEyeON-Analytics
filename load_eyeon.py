@@ -301,18 +301,119 @@ def main(utility_id, source, depth=4, log_level="INFO") -> None:
         export_schema_path=str(resolve_dlt_path("schemas")),
     )
 
+    def _duckdb_type(dlt_type: str | None) -> str:
+        # Minimal mapping; anything unknown becomes VARCHAR.
+        match (dlt_type or "").lower():
+            case "text" | "varchar" | "string":
+                return "VARCHAR"
+            case "bigint" | "int" | "integer":
+                return "BIGINT"
+            case "double" | "float":
+                return "DOUBLE"
+            case "bool" | "boolean":
+                return "BOOLEAN"
+            case "timestamp" | "timestamp_tz" | "datetime":
+                return "TIMESTAMP"
+            case "json":
+                return "JSON"
+            case _:
+                return "VARCHAR"
+
+    def _q_ident(name: str) -> str:
+        return '"' + name.replace('"', '""') + '"'
+
+    def _ensure_destination_tables(dataset_name: str) -> None:
+        """Create missing tables/columns for the current DLT schema.
+
+        Root cause for the reported error: the local DLT schema can know about a
+        table (eg `metadata_generic_file`) while the DuckDB file doesn't have it
+        (because `schemas/schema.sql` is a snapshot and can lag). In that case
+        DLT may try to insert into a non-existent table.
+
+        We proactively create missing tables and add missing columns based on
+        the pipeline schema before running `pipeline.run()`.
+        """
+
+        schema = pipeline.default_schema
+        tables = getattr(schema, "tables", {}) or {}
+        if not tables:
+            return
+
+        conn.execute(f"create schema if not exists {_q_ident(dataset_name)}")
+
+        # Cache existing tables + columns.
+        existing_tables = {
+            r[0]
+            for r in conn.execute(
+                """
+                select table_name
+                from information_schema.tables
+                where table_schema = ?
+                """,
+                [dataset_name],
+            ).fetchall()
+        }
+
+        existing_cols: dict[str, set[str]] = {}
+        if existing_tables:
+            rows = conn.execute(
+                """
+                select table_name, column_name
+                from information_schema.columns
+                where table_schema = ?
+                """,
+                [dataset_name],
+            ).fetchall()
+            for t, c in rows:
+                existing_cols.setdefault(t, set()).add(c)
+
+        for table_name, table_def in tables.items():
+            # Skip internal tables (DLT manages those separately).
+            if str(table_name).startswith("_dlt"):
+                continue
+
+            cols_def: dict = (table_def or {}).get("columns", {}) or {}
+            if not cols_def:
+                continue
+
+            full_table = f"{_q_ident(dataset_name)}.{_q_ident(str(table_name))}"
+
+            if table_name not in existing_tables:
+                col_sql = []
+                for col_name, col in cols_def.items():
+                    dtype = _duckdb_type(col.get("data_type"))
+                    nullable = col.get("nullable")
+                    null_sql = "" if nullable or nullable is None else " NOT NULL"
+                    col_sql.append(f"{_q_ident(str(col_name))} {dtype}{null_sql}")
+                conn.execute(f"create table if not exists {full_table} ({', '.join(col_sql)})")
+                existing_tables.add(table_name)
+                existing_cols[table_name] = set(cols_def.keys())
+                continue
+
+            # Add missing columns on existing tables.
+            present = existing_cols.get(table_name, set())
+            for col_name, col in cols_def.items():
+                if col_name in present:
+                    continue
+                dtype = _duckdb_type(col.get("data_type"))
+                conn.execute(f"alter table {full_table} add column {_q_ident(str(col_name))} {dtype}")
+                present.add(col_name)
+            existing_cols[table_name] = present
+
     bronze = src.with_resources("raw_json")
     silver = src.with_resources(
         "batch_resource", "files_resource", "json_errors", "metadata_resource"
     )
 
-    bronze_info = pipeline.run(
-        bronze
-    )  # loads raw_json into bronze schema, no parsing of JSON
+    # Ensure the destination has the necessary tables before each load.
+    _ensure_destination_tables("bronze")
+    bronze_info = pipeline.run(bronze, dataset_name="bronze")
+    # loads raw_json into bronze schema, no parsing of JSON
     print_schema_changes(bronze_info, "bronze")
-    silver_info = pipeline.run(
-        silver, dataset_name="silver"
-    )  # Parses JSON into several different tables into silver schema
+
+    _ensure_destination_tables("silver")
+    silver_info = pipeline.run(silver, dataset_name="silver")
+    # Parses JSON into several different tables into silver schema
     print_schema_changes(silver_info, "silver")
 
     # Process any schema changes and perist in the database

@@ -60,6 +60,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/pipeline/base_schema_derivation]] | medium | Recovered methodology for deriving `schemas/schema.sql` from representative EyeON samples and schema_blame evidence |
 | [[wiki/pipeline/dbt_models]] | high | dbt_eyeon_gold: staging → intermediate → mart lineage |
 | [[wiki/pipeline/cert_analysis]] | medium | Certificate extraction, deduplication, expiry/key marts |
+| [[wiki/pipeline/metadata_curation]] | high | Silver discovers metadata types; gold curates known types via all_metadata; drift view highlights gaps |
 
 ## Decisions
 
@@ -87,6 +88,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 |---------|--------|---------|
 | [[wiki/work/binwalk-support/brief]] | started | Binwalk support requirements, references, design, spike, implementation, and verification skeleton |
 | [[wiki/work/firmware-corpus/brief]] | first-slice-implemented | JSON manifest, list/fetch/checksum utility, OpenWrt Binwalk smoke candidate, and expanded candidate catalog including utility/industrial sources |
+| [[wiki/work/metadata-type-drift/implementation_plan]] | implemented | Add gold.metadata_type_drift and surface it in Schema Blame to show silver-only (unmodeled) metadata types |
 
 ## Concepts
 

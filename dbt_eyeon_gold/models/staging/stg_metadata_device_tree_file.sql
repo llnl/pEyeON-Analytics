@@ -1,4 +1,4 @@
-{% set rel = safe_silver_source('metadata_java_file') %}
+{% set rel = safe_silver_source('metadata_device_tree_file') %}
 
 {% if rel is none %}
 select

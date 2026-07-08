@@ -106,6 +106,46 @@ class LandingPage(BasePageLayout):
         st.divider()
 
         # ---------------------------------------------------------------------------
+        # Metadata drift — silver discovered vs gold curated
+        # ---------------------------------------------------------------------------
+
+        st.subheader("Metadata Type Drift")
+        st.caption(
+            "Silver (DLT) discovers metadata tables dynamically; gold curates modeled types via `gold.all_metadata`. "
+            "This table highlights metadata tables present in silver but missing from gold.all_metadata."
+        )
+
+        try:
+            drift = (
+                conn.execute(
+                    """
+                    select
+                      metadata_table_name,
+                      status,
+                      is_modeled
+                    from gold.metadata_type_drift
+                    order by
+                      case status when 'unmodeled' then 0 else 1 end,
+                      metadata_table_name
+                    """
+                )
+                .df()
+            )
+        except Exception as e:
+            drift = pd.DataFrame()
+            st.warning("`gold.metadata_type_drift` is not available yet. Run dbt to materialize it.")
+            st.caption(f"{type(e).__name__}: {e}")
+
+        if not drift.empty:
+            d1, d2, d3 = st.columns(3)
+            d1.metric("Discovered types", int(drift["metadata_table_name"].nunique()))
+            d2.metric("Modeled", int((drift["status"] == "modeled").sum()))
+            d3.metric("Unmodeled", int((drift["status"] == "unmodeled").sum()))
+            st.dataframe(drift, width="stretch", hide_index=True)
+
+        st.divider()
+
+        # ---------------------------------------------------------------------------
         # Version timeline — one expander per version transition
         # ---------------------------------------------------------------------------
 

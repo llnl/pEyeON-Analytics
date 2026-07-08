@@ -7,3 +7,14 @@ models:
         tests:
           - not_null
           - unique
+
+  - name: metadata_type_drift
+    description: "Discovered (silver) vs curated (gold.all_metadata) metadata types. Highlights unmodeled silver metadata tables."
+    columns:
+      - name: metadata_table_name
+        tests:
+          - not_null
+          - unique
+      - name: status
+        tests:
+          - not_null
