@@ -66,8 +66,10 @@ def _base_metadata_tables() -> list[str]:
         select table_name
         from information_schema.tables
         where table_schema = 'silver'
-          and table_name like 'metadata_%'
-          and table_name not like '%__%'
+          -- DuckDB LIKE treats '_' as a single-character wildcard, so avoid
+          -- patterns like '%__%' which would match almost anything.
+          and left(table_name, 9) = 'metadata_'
+          and instr(table_name, '__') = 0
         order by table_name
         """
     ).fetchall()
