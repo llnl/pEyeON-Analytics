@@ -258,6 +258,7 @@ Files updated in ../pEyeON: src/eyeon/container.py, src/eyeon/parse.py,
 Contradictions flagged: none
 Notes: Integrated direct Binwalk v3 CLI support into core parse flow. Binwalk is
   invoked for firmware-like inputs (`UIMAGE` or common firmware extensions) and
+
   can be controlled with `EYEON_BINWALK`, `EYEON_BINWALK_PATH`. The original
   observation records `metadata.binwalk_file`; extracted Binwalk children are
   recursively observed with `parent` set to the firmware observation UUID. Tests
@@ -392,6 +393,36 @@ Notes: Downgraded handled filetype-identification fallback logging from ERROR to
 
 ## [2026-06-30] fix | Collision-safe observation JSON names
 
+## [2026-07-08] planning | OVF/VM appliance build (Nutanix-first)
+
+Pages created: wiki/work/ovf-vm-image-build/brief.md,
+  wiki/work/ovf-vm-image-build/design.md,
+  wiki/work/ovf-vm-image-build/implementation_plan.md,
+  wiki/work/ovf-vm-image-build/references.md,
+  wiki/work/ovf-vm-image-build/verification.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Grounded the OVF/VM build plan in the actual pEyeON container build files
+  under `../pEyeON/builds/`. Recorded decisions: appliance VM, no container-like
+  bind-mount workflow, Nutanix (qcow2) first, and a strong preference to refactor
+  Dockerfile install logic into shared scripts that are reused for VM provisioning.
+
+## [2026-07-08] implementation | Debian provision scripts + VM scaffold
+
+Pages created: none
+Pages updated: wiki/work/ovf-vm-image-build/implementation_plan.md,
+  wiki/work/ovf-vm-image-build/verification.md, wiki/index.md
+Files updated in ../pEyeON: builds/Dockerfile, builds/podman.Dockerfile,
+  builds/provision/*.sh, builds/vm/*, README.md
+Contradictions flagged: none
+Notes: Implemented Debian 12 alignment by pinning container base to
+  `python:3.13-slim-bookworm` and refactoring Dockerfiles to call shared
+  provision scripts for build deps, runtime deps, Binwalk, CMake, TLSH,
+  sasquatch, EyeON venv install, and Surfactant DB warm. Added an initial
+  Debian 12 qcow2 appliance VM build scaffold (Packer + cloud-init + wrapper),
+  and documented the VM build in the pEyeON README. Verified the refactored
+  container build locally with `eyeon`, `binwalk`, `sasquatch`, and TLSH checks.
+
 Pages created: none
 Pages updated: wiki/work/firmware-corpus/verification.md
 Files updated in ../pEyeON: src/eyeon/observe.py, src/eyeon/parse.py,
@@ -447,3 +478,25 @@ Notes: Found `extras/MinamalRows.ipynb`, which contains the remembered prototype
   JSON files into `min_files_max_schema`. DuckDB history contains the manual PE
   precursor queries for sparse columns, boolean signatures, bit masks, and
   example UUID selection.
+
+## [2026-07-09] docs | VM appliance + loader bootstrap notes
+
+Pages updated: wiki/work/ovf-vm-image-build/brief.md,
+  wiki/work/ovf-vm-image-build/design.md,
+  wiki/work/ovf-vm-image-build/references.md,
+  wiki/work/ovf-vm-image-build/implementation_plan.md,
+  wiki/work/ovf-vm-image-build/verification.md,
+  wiki/components/container.md,
+  wiki/components/load_eyeon.md,
+  wiki/pipeline/dlt_load.md,
+  wiki/index.md
+Contradictions flagged: none
+Notes: Updated the qcow2 appliance VM work packet to reflect the current Debian 12 + Packer build implementation (including analytics provisioning, networking, and Apple Silicon amd64 emulation notes). Documented dlt first-run schema bootstrap behavior for `load_eyeon.py` and noted that DuckDB CLI is installed via shared provision scripts for containers/VM.
+
+## [2026-07-09] docs | Alpha VM decisions
+
+Pages updated: wiki/work/ovf-vm-image-build/brief.md,
+  wiki/work/ovf-vm-image-build/design.md,
+  wiki/components/container.md
+Contradictions flagged: none
+Notes: Recorded alpha/debug decisions: password login is acceptable, keep the default `debian` user, ship a single VM flavor that includes pEyeON-Analytics. Clarified DuckDB CLI policy: default to DuckDB "latest" asset (optionally pin via `DUCKDB_CLI_VERSION`).

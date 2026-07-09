@@ -6,10 +6,13 @@ grounded_by:
   - ../pEyeON/README.md
   - ../pEyeON/builds/Dockerfile
   - ../pEyeON/builds/podman.Dockerfile
+  - ../pEyeON/builds/provision/install-runtime-deps-debian-docker.sh
+  - ../pEyeON/builds/provision/install-runtime-deps-debian-podman.sh
+  - ../pEyeON/builds/provision/install-duckdb-cli.sh
   - ../pEyeON/.github/workflows/test-build-container.yaml
 policy: agent-editable
 component: pEyeON-core
-last_validated: 2026-06-26
+last_validated: 2026-07-09
 tags: [docker, podman, container, entrypoint]
 ---
 
@@ -61,6 +64,19 @@ the ReFirmLabs `v3.1.0` tag in the builder stage and copy the resulting
 `binwalk` binary into the runtime image. Runtime packages include common
 extractors used by Binwalk v3, including `7z`, `sasquatch`, `unar`, `zstd`,
 `lz4`, `lzop`, `sleuthkit`, `cabextract`, and `device-tree-compiler`.
+
+Container builds are refactored to call a shared provisioning script set under
+`builds/provision/`.
+
+<!-- GROUND_TRUTH: ../pEyeON/builds/Dockerfile §COPY builds/provision/ -->
+
+## DuckDB CLI
+
+The container runtime layer installs the DuckDB CLI as `/usr/local/bin/duckdb` to make it easy to inspect the analytics database (and to support simple on-box troubleshooting). By default it pulls the DuckDB project's latest published CLI asset; `DUCKDB_CLI_VERSION` can be set to pin a specific release.
+
+<!-- GROUND_TRUTH: ../pEyeON/builds/provision/install-runtime-deps-debian-docker.sh §install-duckdb-cli.sh -->
+<!-- GROUND_TRUTH: ../pEyeON/builds/provision/install-duckdb-cli.sh §Install the DuckDB CLI binary -->
+<!-- GROUND_TRUTH: ../pEyeON/builds/provision/install-duckdb-cli.sh §DUCKDB_CLI_VERSION -->
 
 The container build CI smoke tests now verify `eyeon --help`, `binwalk --version`,
 `sasquatch`, and `7z` for both Docker and Podman build paths.

@@ -89,6 +89,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/work/binwalk-support/brief]] | started | Binwalk support requirements, references, design, spike, implementation, and verification skeleton |
 | [[wiki/work/firmware-corpus/brief]] | first-slice-implemented | JSON manifest, list/fetch/checksum utility, OpenWrt Binwalk smoke candidate, and expanded candidate catalog including utility/industrial sources |
 | [[wiki/work/metadata-type-drift/implementation_plan]] | implemented | Add gold.metadata_type_drift and surface it in Schema Blame to show silver-only (unmodeled) metadata types |
+| [[wiki/work/ovf-vm-image-build/brief]] | in-progress | Debian 12 aligned container+VM path: Dockerfile refactor into reusable provision scripts, plus Debian 12 qcow2 appliance VM build scaffold |
 
 ## Concepts
 
@@ -104,4 +105,4 @@ Master catalog of all pages. Updated by the agent on every ingest.
 
 ---
 
-*Last updated: 2026-06-30 (documented base schema derivation and schema_blame corpus clues)*
+*Last updated: 2026-07-09 (updated qcow2 appliance VM notes; refreshed loader schema-bootstrap docs; documented DuckDB CLI policy and alpha VM access decisions)*

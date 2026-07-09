@@ -4,9 +4,10 @@ type: pipeline
 confidence: high
 grounded_by:
   - ../pEyeON-Analytics/README.md
+  - ../pEyeON-Analytics/load_eyeon.py
 policy: agent-editable
 component: pEyeON-analytics
-last_validated: 2026-06-26
+last_validated: 2026-07-09
 tags: [dlt, load, bronze, silver, duckdb]
 ---
 
@@ -45,6 +46,15 @@ uv run python load_eyeon.py --utility_id UTIL_CD --source /path/to/batch --log-l
 
 <!-- GROUND_TRUTH: ../pEyeON-Analytics/README.md §load-batches-from-the-app -->
 <!-- GROUND_TRUTH: ../pEyeON-Analytics/README.md §load-a-batch-with-the-loader -->
+
+## Schema Bootstrap Note
+
+DLT persists pipeline metadata (including schemas) under the invoking user's dlt state directory (eg `~/.dlt/pipelines/eyeon_metadata/`). On a first run, `load_eyeon.py` may not have a persisted schema yet.
+
+To avoid failing on first-run, `load_eyeon.py` only attempts to pre-create destination tables when a dataset schema is present; otherwise it relies on `pipeline.run(...)` to bootstrap state.
+
+<!-- GROUND_TRUTH: ../pEyeON-Analytics/load_eyeon.py §pipeline = dlt.pipeline -->
+<!-- GROUND_TRUTH: ../pEyeON-Analytics/load_eyeon.py §_ensure_destination_tables -->
 
 ## Related
 

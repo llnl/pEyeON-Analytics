@@ -4,9 +4,10 @@ type: component
 confidence: high
 grounded_by:
   - ../pEyeON-Analytics/README.md
+  - ../pEyeON-Analytics/load_eyeon.py
 policy: agent-editable
 component: pEyeON-analytics
-last_validated: 2026-06-26
+last_validated: 2026-07-09
 tags: [dlt, duckdb, bronze, silver]
 ---
 
@@ -43,6 +44,14 @@ Useful log levels are `INFO` for normal runs and `DEBUG` for more verbose
 troubleshooting.
 
 <!-- GROUND_TRUTH: ../pEyeON-Analytics/README.md §load-a-batch-with-the-loader -->
+
+## First-Run Behavior (Fresh ~/.dlt)
+
+`load_eyeon.py` uses a local dlt pipeline state directory under the invoking user's home (eg `~/.dlt/pipelines/eyeon_metadata/`). On a fresh machine (or a fresh user), that state may not exist until the first successful `pipeline.run()`.
+
+The loader contains a helper (`_ensure_destination_tables`) that pre-creates missing DuckDB schemas/tables/columns based on the dlt schema. This helper is intentionally a no-op on a first run when the dlt schema has not been persisted yet.
+
+<!-- GROUND_TRUTH: ../pEyeON-Analytics/load_eyeon.py §_ensure_destination_tables -->
 
 ## Inputs and Outputs
 

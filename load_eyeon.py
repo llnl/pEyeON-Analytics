@@ -13,6 +13,7 @@ import duckdb
 
 import utils.schema_blame as schema_blame
 from utils.config import duckdb_path, resolve_dlt_path
+from dlt.common.storages.exceptions import SchemaNotFoundError
 
 # Validate UUIDs
 UUID_RE = re.compile(r'"uuid"\s*:\s*"([^"]+)"')
@@ -334,7 +335,13 @@ def main(utility_id, source, depth=4, log_level="INFO") -> None:
         the pipeline schema before running `pipeline.run()`.
         """
 
-        schema = pipeline.default_schema
+        # On a fresh machine/user, the pipeline may not have any persisted schema
+        # under ~/.dlt yet (it is created on the first successful pipeline.run()).
+        # In that case, skip pre-creating tables; the run will bootstrap state.
+        try:
+            schema = pipeline.schemas[dataset_name]
+        except SchemaNotFoundError:
+            return
         tables = getattr(schema, "tables", {}) or {}
         if not tables:
             return
