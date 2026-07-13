@@ -89,3 +89,25 @@ Notes / fixes applied during this iteration:
 2. AMD64 emulation stability: QEMU TCG builds require an explicit CPU model to avoid SIGILL in common Python wheels.
 
 <!-- GROUND_TRUTH: ../pEyeON/builds/vm/packer/debian12-amd64.pkr.hcl §qemuargs -->
+
+## Field Notes (libvirt / RHEL host)
+
+Observed during early libvirt validation:
+
+1. `virsh console` detach sequence: `Ctrl + ]`.
+2. If SSH fails with "Too many authentication failures" (too many keys attempted), force password auth with:
+
+```bash
+ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no eyeon@<IP>
+```
+
+3. If a guest NIC comes up DOWN under default NAT, manual recovery inside the guest is:
+
+```bash
+sudo ip link set <iface> up
+sudo dhclient -v <iface>
+```
+
+The Debian qcow2 appliance provisioning configures DHCP via systemd-networkd to avoid manual steps in normal cases.
+
+4. On RHEL-like hosts, the libguestfs tooling package is typically `libguestfs-tools` (not `guestfs-tools`).

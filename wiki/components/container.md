@@ -4,6 +4,7 @@ type: component
 confidence: high
 grounded_by:
   - ../pEyeON/README.md
+  - ../pEyeON/BUILD.md
   - ../pEyeON/builds/Dockerfile
   - ../pEyeON/builds/podman.Dockerfile
   - ../pEyeON/builds/provision/install-runtime-deps-debian-docker.sh
@@ -54,8 +55,12 @@ podman build -t peyeon -f builds/podman.Dockerfile .
 podman run --rm -it -v "$(pwd):/workdir:rw" peyeon /bin/bash
 ```
 
-<!-- GROUND_TRUTH: ../pEyeON/README.md §local-docker-build -->
-<!-- GROUND_TRUTH: ../pEyeON/README.md §local-podman-build -->
+<!-- GROUND_TRUTH: ../pEyeON/BUILD.md §Local Docker Build (Single-Arch) -->
+<!-- GROUND_TRUTH: ../pEyeON/BUILD.md §Local Podman Build (Single-Arch) -->
+
+Build details (including cross-arch and CI buildx usage) live in `../pEyeON/BUILD.md`.
+
+<!-- GROUND_TRUTH: ../pEyeON/BUILD.md §Multi-Arch / Cross-Platform Container Builds -->
 
 ## Binwalk Packaging
 

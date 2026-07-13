@@ -500,3 +500,17 @@ Pages updated: wiki/work/ovf-vm-image-build/brief.md,
   wiki/components/container.md
 Contradictions flagged: none
 Notes: Recorded alpha/debug decisions: password login is acceptable, keep the default `debian` user, ship a single VM flavor that includes pEyeON-Analytics. Clarified DuckDB CLI policy: default to DuckDB "latest" asset (optionally pin via `DUCKDB_CLI_VERSION`).
+
+## [2026-07-10] docs | Build Doc Consolidation
+
+Pages updated: wiki/components/container.md,
+  wiki/work/ovf-vm-image-build/verification.md
+Contradictions flagged: none
+Notes: Added pointers to the consolidated build documentation (`../pEyeON/BUILD.md`) and recorded additional libvirt/RHEL host troubleshooting notes (virsh console detach, SSH key override, DHCP recovery, libguestfs package naming).
+
+## [2026-07-10] docs | Builder Glossary
+
+Pages created: wiki/concepts/build_glossary.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Added a builder-focused glossary for container + qcow2 appliance build technologies, project-specific terms, and pin guidance for known problem areas.

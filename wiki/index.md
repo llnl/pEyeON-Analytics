@@ -102,6 +102,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/concepts/surfactant]] | medium | Upstream LLNL tool EyeON builds on for plugin management |
 | [[wiki/concepts/llm_assisted_feature_workflow]] | medium | Lightweight RFC/ADR/spike workflow for LLM-assisted code changes |
 | [[wiki/concepts/feature_work_template]] | medium | Reusable skeleton for new feature work folders |
+| [[wiki/concepts/build_glossary]] | medium | Builder glossary: containers, qcow2 appliance, multi-arch, and common gotchas |
 
 ---
 
