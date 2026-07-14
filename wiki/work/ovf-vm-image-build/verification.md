@@ -111,3 +111,16 @@ sudo dhclient -v <iface>
 The Debian qcow2 appliance provisioning configures DHCP via systemd-networkd to avoid manual steps in normal cases.
 
 4. On RHEL-like hosts, the libguestfs tooling package is typically `libguestfs-tools` (not `guestfs-tools`).
+
+5. One-liner to get the guest IP (works best on RHEL; does not require the guest agent):
+
+```bash
+virsh domifaddr eyeon-debian12-amd64 --source arp 2>/dev/null | awk '/ipv4/ {print $4; exit}' | cut -d/ -f1
+```
+
+If the VM is attached to the default libvirt NAT network and the ARP lookup is empty, use the MAC address against DHCP leases:
+
+```bash
+mac="$(virsh domiflist eyeon-debian12-amd64 | awk '/network/ {print $5; exit}')" \
+  && virsh net-dhcp-leases default | awk -v mac="$mac" 'tolower($0) ~ tolower(mac) {print $5}' | cut -d/ -f1
+```
