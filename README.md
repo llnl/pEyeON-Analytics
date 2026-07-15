@@ -49,6 +49,12 @@ cp EyeOnData.toml-template EyeOnData.toml
 
 At minimum, set `datasets.dataset_path` in `EyeOnData.toml` to the directory where EyeOn batch folders should be written.
 
+If you keep `EyeOnData.toml` somewhere else (e.g., an appliance VM uses `/opt/pEyeON-Analytics/EyeOnData.toml`), you can point both shell wrappers and analytics code at it with:
+
+```bash
+export EYEON_EYEONDATA_TOML=/path/to/EyeOnData.toml
+```
+
 Example:
 
 ```toml

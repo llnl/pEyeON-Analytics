@@ -6,7 +6,13 @@ from dynaconf import Dynaconf
 
 
 _DLT_DIR = Path(__file__).resolve().parents[1]
-_SETTINGS_FILE = _DLT_DIR / "EyeOnData.toml"
+
+# Prefer a single config file shared by pEyeON and pEyeON-Analytics.
+_SETTINGS_FILE = Path(
+    os.environ.get("EYEON_EYEONDATA_TOML", _DLT_DIR / "EyeOnData.toml")
+).expanduser()
+if not _SETTINGS_FILE.is_absolute():
+    _SETTINGS_FILE = (_DLT_DIR / _SETTINGS_FILE).resolve()
 
 if not _SETTINGS_FILE.is_file():
     raise FileNotFoundError(
