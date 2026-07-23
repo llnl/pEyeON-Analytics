@@ -5,15 +5,17 @@ confidence: high
 grounded_by:
   - ../pEyeON/README.md
   - ../pEyeON/BUILD.md
+  - ../pEyeON/builds/README-Deploy.md
   - ../pEyeON/builds/Dockerfile
   - ../pEyeON/builds/podman.Dockerfile
   - ../pEyeON/builds/provision/install-runtime-deps-debian-docker.sh
   - ../pEyeON/builds/provision/install-runtime-deps-debian-podman.sh
   - ../pEyeON/builds/provision/install-duckdb-cli.sh
-  - ../pEyeON/.github/workflows/test-build-container.yaml
+  - ../pEyeON/.github/workflows/ci.yaml
+  - ../pEyeON/.github/workflows/publish-container.yaml
 policy: agent-editable
 component: pEyeON-core
-last_validated: 2026-07-09
+last_validated: 2026-07-17
 tags: [docker, podman, container, entrypoint]
 ---
 
@@ -58,7 +60,7 @@ podman run --rm -it -v "$(pwd):/workdir:rw" peyeon /bin/bash
 <!-- GROUND_TRUTH: ../pEyeON/BUILD.md §Local Docker Build (Single-Arch) -->
 <!-- GROUND_TRUTH: ../pEyeON/BUILD.md §Local Podman Build (Single-Arch) -->
 
-Build details (including cross-arch and CI buildx usage) live in `../pEyeON/BUILD.md`.
+Build details (including native amd64/arm64 CI builds and publish flows) live in `../pEyeON/BUILD.md`.
 
 <!-- GROUND_TRUTH: ../pEyeON/BUILD.md §Multi-Arch / Cross-Platform Container Builds -->
 
@@ -83,8 +85,8 @@ The container runtime layer installs the DuckDB CLI as `/usr/local/bin/duckdb` t
 <!-- GROUND_TRUTH: ../pEyeON/builds/provision/install-duckdb-cli.sh §Install the DuckDB CLI binary -->
 <!-- GROUND_TRUTH: ../pEyeON/builds/provision/install-duckdb-cli.sh §DUCKDB_CLI_VERSION -->
 
-The container build CI smoke tests now verify `eyeon --help`, `binwalk --version`,
-`sasquatch`, and `7z` for both Docker and Podman build paths.
+The current CI smoke tests verify `eyeon --help`, `binwalk --version`,
+`sasquatch`, and `7z` for Docker (amd64 and arm64) and Podman (amd64) build paths.
 
 ## Recommended Runtime Path
 
@@ -94,6 +96,8 @@ parse through the wrapper rather than invoking `docker run` directly.
 
 Direct Docker and Podman runs remain useful for development, debugging, and
 image validation.
+
+For external VM consumers, deployment/import guidance for the qcow2 appliance lives in `../pEyeON/builds/README-Deploy.md`.
 
 <!-- GROUND_TRUTH: ../pEyeON/README.md §quickstart -->
 

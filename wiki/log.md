@@ -514,3 +514,25 @@ Pages created: wiki/concepts/build_glossary.md
 Pages updated: wiki/index.md
 Contradictions flagged: none
 Notes: Added a builder-focused glossary for container + qcow2 appliance build technologies, project-specific terms, and pin guidance for known problem areas.
+
+## [2026-07-17] docs | VM size reduction future task
+
+Pages created: wiki/work/vm-image-size-reduction/brief.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Added a future-work brief for reducing qcow2 appliance size. Corrected the initial intuition that X11 or a desktop stack is the likely size driver; the current Debian appliance is already cloud-image/headless, so likely reduction targets are retained build toolchains, Rust/cargo state, build trees, Python caches, and the optional analytics payload.
+
+## [2026-07-17] docs | UTM qcow2 boot note
+
+Pages updated: wiki/work/ovf-vm-image-build/verification.md
+Contradictions flagged: none
+Notes: Recorded a UTM 4.7.x caveat for macOS testing: some builds only expose `Import Existing Drive` under the `Emulate` flow, and `bootindex=0 in use` indicates UTM created multiple boot devices instead of using only the imported qcow2.
+
+## [2026-07-17] docs | External VM deployment guide
+
+Pages updated: wiki/components/container.md,
+  wiki/work/ovf-vm-image-build/brief.md,
+  wiki/work/ovf-vm-image-build/verification.md,
+  wiki/index.md
+Contradictions flagged: none
+Notes: Added references to `../pEyeON/builds/README-Deploy.md` so external deployment/import instructions for Nutanix, libvirt, UTM, Hyper-V, VMware, and VirtualBox are discoverable from both user-facing docs and the VM work packet. Also refreshed the container component's CI workflow grounding to match the current `ci.yaml` and `publish-container.yaml` files.

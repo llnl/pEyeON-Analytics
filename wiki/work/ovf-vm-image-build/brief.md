@@ -5,6 +5,7 @@ confidence: medium
 grounded_by:
   - ../pEyeON/builds/Dockerfile
   - ../pEyeON/builds/podman.Dockerfile
+  - ../pEyeON/builds/README-Deploy.md
   - ../pEyeON/builds/provision/install-build-deps-debian.sh
   - ../pEyeON/builds/provision/install-runtime-deps-debian-docker.sh
   - ../pEyeON/builds/provision/install-runtime-deps-debian-podman.sh
@@ -17,7 +18,7 @@ grounded_by:
   - ../pEyeON/builds/vm/build-qcow2.sh
   - ../pEyeON/README.md
 policy: agent-editable
-last_validated: 2026-07-09
+last_validated: 2026-07-17
 component: both
 tags: [vm, ovf, ova, qcow2, packer, nutanix, ahv, kvm, container]
 ---
@@ -53,6 +54,7 @@ Goal: add VM image outputs (Nutanix first, then VMware/VirtualBox/KVM) while avo
 1. VM base OS: Debian 12 / bookworm.
 1. Outputs: qcow2 for `arm64` and `amd64`.
 1. Provisioning reuse: container and VM builds call shared scripts under `../pEyeON/builds/provision/`.
+1. External-user deployment guidance now lives in `../pEyeON/builds/README-Deploy.md` and covers Nutanix, libvirt, UTM, Hyper-V, VMware, and VirtualBox import paths.
 1. Appliance contents include:
    - EyeON CLI + extractors (Binwalk v3, sasquatch, tlsh, etc.)
    - pEyeON-Analytics checkout under `/opt/pEyeON-Analytics` (installed with `uv`)

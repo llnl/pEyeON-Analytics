@@ -6,8 +6,9 @@ grounded_by:
   - ../pEyeON/builds/vm/build-qcow2.sh
   - ../pEyeON/builds/vm/packer/debian12-amd64.pkr.hcl
   - ../pEyeON/builds/vm/packer/debian12-arm64.pkr.hcl
+  - ../pEyeON/builds/README-Deploy.md
 policy: agent-editable
-last_validated: 2026-07-09
+last_validated: 2026-07-17
 component: both
 tags: [verification, vm, packer, qcow2]
 ---
@@ -20,6 +21,7 @@ Planning only. Populate once implementation begins.
 1. SSH login works (if enabled).
 1. `eyeon --help` works.
 1. Run a small local scan inside the VM (a small directory) and confirm JSON output.
+1. External deployment instructions remain aligned with the current qcow2 artifact and supported import targets.
 
 ## 2026-07-08 (macOS dev)
 
@@ -124,3 +126,11 @@ If the VM is attached to the default libvirt NAT network and the ARP lookup is e
 mac="$(virsh domiflist eyeon-debian12-amd64 | awk '/network/ {print $5; exit}')" \
   && virsh net-dhcp-leases default | awk -v mac="$mac" 'tolower($0) ~ tolower(mac) {print $5}' | cut -d/ -f1
 ```
+
+## Field Notes (UTM / macOS)
+
+Observed when booting the qcow2 appliance under UTM 4.7.x on macOS:
+
+1. The appliance is a bootable qcow2 disk image; there is no separate ISO or kernel/initrd to provide.
+2. On some UTM 4.7.x builds, `Import Existing Drive` may only be presented under the `Emulate` flow, even for Intel Mac + amd64 guest combinations.
+3. If UTM reports `bootindex=0 in use`, it has created multiple first-boot devices. Remove any extra kernel/initrd or installer media and leave only the imported qcow2 as the boot source.

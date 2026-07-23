@@ -28,7 +28,7 @@ Repo pointers: `../pEyeON/builds/podman.Dockerfile`
 More info: https://podman.io/
 
 Docker buildx: Docker plugin used for multi-platform builds and multi-arch manifest publishing.
-Repo pointers: `../pEyeON/.github/workflows/test-build-container.yaml`, `../pEyeON/.github/workflows/publish-multiarch-container.yaml`
+Repo pointers: `../pEyeON/.github/workflows/ci.yaml`, `../pEyeON/.github/workflows/publish-container.yaml`
 More info: https://docs.docker.com/build/building/multi-platform/
 
 Packer: Image builder that provisions a Debian cloud image into a bootable qcow2 appliance.

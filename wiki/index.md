@@ -90,6 +90,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/work/firmware-corpus/brief]] | first-slice-implemented | JSON manifest, list/fetch/checksum utility, OpenWrt Binwalk smoke candidate, and expanded candidate catalog including utility/industrial sources |
 | [[wiki/work/metadata-type-drift/implementation_plan]] | implemented | Add gold.metadata_type_drift and surface it in Schema Blame to show silver-only (unmodeled) metadata types |
 | [[wiki/work/ovf-vm-image-build/brief]] | in-progress | Debian 12 aligned container+VM path: Dockerfile refactor into reusable provision scripts, plus Debian 12 qcow2 appliance VM build scaffold |
+| [[wiki/work/vm-image-size-reduction/brief]] | proposed | Future task: reduce qcow2 size by stripping build toolchains, caches, and optional analytics payload rather than chasing nonexistent GUI/X11 weight |
 
 ## Concepts
 
@@ -106,4 +107,4 @@ Master catalog of all pages. Updated by the agent on every ingest.
 
 ---
 
-*Last updated: 2026-07-09 (updated qcow2 appliance VM notes; refreshed loader schema-bootstrap docs; documented DuckDB CLI policy and alpha VM access decisions)*
+*Last updated: 2026-07-17 (added qcow2 deployment guidance references, refreshed VM/container docs, and clarified that the Debian appliance is already headless and likely size drivers are toolchains, caches, and analytics payload)*
