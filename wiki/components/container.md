@@ -11,11 +11,12 @@ grounded_by:
   - ../pEyeON/builds/provision/install-runtime-deps-debian-docker.sh
   - ../pEyeON/builds/provision/install-runtime-deps-debian-podman.sh
   - ../pEyeON/builds/provision/install-duckdb-cli.sh
+  - ../pEyeON/builds/provision/warm-surfactant-dbs.sh
   - ../pEyeON/.github/workflows/ci.yaml
   - ../pEyeON/.github/workflows/publish-container.yaml
 policy: agent-editable
 component: pEyeON-core
-last_validated: 2026-07-17
+last_validated: 2026-08-03
 tags: [docker, podman, container, entrypoint]
 ---
 
@@ -87,6 +88,21 @@ The container runtime layer installs the DuckDB CLI as `/usr/local/bin/duckdb` t
 
 The current CI smoke tests verify `eyeon --help`, `binwalk --version`,
 `sasquatch`, and `7z` for Docker (amd64 and arm64) and Podman (amd64) build paths.
+
+## Surfactant Database Warmup
+
+Both Docker and Podman runtime images set `XDG_DATA_HOME=/opt/eyeon/share` and
+`XDG_CONFIG_HOME=/opt/eyeon/config` before running
+`builds/provision/warm-surfactant-dbs.sh`. The warm script caches Surfactant's
+ReadTheDocs-hosted `database_sources.toml` into the installed package's local
+`docs/` path, then runs `surfactant plugin update-db --all` and makes the warmed
+data/config directories world-readable. This keeps the runtime user and spawned
+parse workers pointed at the same image-global Surfactant database cache and
+avoids repeated ReadTheDocs source lookups in air-gapped or isolated runs.
+
+<!-- GROUND_TRUTH: ../pEyeON/builds/Dockerfile §XDG_DATA_HOME -->
+<!-- GROUND_TRUTH: ../pEyeON/builds/podman.Dockerfile §XDG_DATA_HOME -->
+<!-- GROUND_TRUTH: ../pEyeON/builds/provision/warm-surfactant-dbs.sh -->
 
 ## Recommended Runtime Path
 

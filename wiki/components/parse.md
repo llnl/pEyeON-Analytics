@@ -9,7 +9,7 @@ grounded_by:
   - ../pEyeON/schema/observation.schema.json
 policy: agent-editable
 component: pEyeON-core
-last_validated: 2026-06-26
+last_validated: 2026-08-03
 tags: [parse, directory, batch]
 ---
 
@@ -61,6 +61,24 @@ external RAR tooling usable by `rarfile`; ISO support depends on `7zz`, `7z`, or
 `EYEON_7Z_PATH`. The container observation receives
 `metadata.container_file` so the outer container has its own metadata in addition
 to child observations.
+
+## Multiprocessing
+
+When `threads > 1`, `Parse` uses a Python multiprocessing pool and a daemon
+monitor thread that records active worker PIDs and file paths in a shared manager
+dictionary. The pool uses the `spawn` start method by default and recycles worker
+processes after each file with `maxtasksperchild=1`; this avoids inherited native
+library/plugin state from the default `fork` behavior when parsing large Mach-O
+binaries concurrently. The start method can be overridden with
+`EYEON_MULTIPROCESS_START_METHOD` for diagnostics.
+
+Files at or above `EYEON_SERIAL_LARGE_FILE_BYTES` are processed serially even
+when `threads > 1`; the default threshold is 50 MiB. This avoids observed
+multiprocessing tail hangs on large Mach-O binaries while preserving concurrent
+processing for smaller files. Set `EYEON_SERIAL_LARGE_FILE_BYTES=0` to disable
+the split for diagnostics.
+
+<!-- GROUND_TRUTH: ../pEyeON/src/eyeon/parse.py §__call__ -->
 
 ## Optional Upload
 

@@ -536,3 +536,32 @@ Pages updated: wiki/components/container.md,
   wiki/index.md
 Contradictions flagged: none
 Notes: Added references to `../pEyeON/builds/README-Deploy.md` so external deployment/import instructions for Nutanix, libvirt, UTM, Hyper-V, VMware, and VirtualBox are discoverable from both user-facing docs and the VM work packet. Also refreshed the container component's CI workflow grounding to match the current `ci.yaml` and `publish-container.yaml` files.
+
+## [2026-08-03] fix | Core parse multiprocessing hang
+
+Pages created: wiki/work/parse-multiprocessing-hang/implementation_plan.md,
+  wiki/work/parse-multiprocessing-hang/verification.md
+Pages updated: wiki/components/parse.md, wiki/index.md
+Files updated in ../pEyeON: src/eyeon/parse.py, tests/testParse.py,
+  eyeon-parse.sh, builds/Dockerfile, builds/podman.Dockerfile,
+  builds/provision/warm-surfactant-dbs.sh
+Files updated in this repo: eyeon-parse.sh
+Contradictions flagged: none
+Notes: Diagnosed a parse hang where direct `eyeon observe` and serialized runs
+  over large Mach-O Homebrew binaries completed, but multiprocessing stalled at
+  4/5. Updated core parse multiprocessing to use a spawn context by default,
+  recycle workers after one file, and sleep in the monitor loop when no workers
+  are active. Patched both wrapper copies to allocate an interactive TTY for
+  terminal runs, pass unbuffered Python/TERM settings, and run parse at WARNING
+  log level by default so progress bars and monitor warnings appear without
+  DEBUG-level plugin noise. Hardened container Surfactant database warmup by using
+  image-global XDG data/config paths, caching `database_sources.toml` locally,
+  and making warmed DB state readable by runtime users/workers. Targeted parse
+  tests and a local five-file multiprocessing smoke test over `coder`, `helm`,
+  `k9s`, `parqeye`, and `vcluster` passed. After rebuilt-image testing still
+  stalled at 102/104 on `coder` and `k9s`, added a large-file split so files at
+  or above `EYEON_SERIAL_LARGE_FILE_BYTES` (default 50 MiB) run serially after
+  parallel small-file processing. A local five-file large-file smoke test routed
+  all five problematic binaries through the serial path and completed 5/5.
+  Container confirmation requires rebuilding `peyeon:latest` from the modified
+  core repo.

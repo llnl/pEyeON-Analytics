@@ -4,10 +4,12 @@ type: pipeline
 confidence: high
 grounded_by:
   - ../pEyeON/README.md
+  - ../pEyeON/eyeon-parse.sh
+  - eyeon-parse.sh
   - ../pEyeON-Analytics/README.md
 policy: agent-editable
 component: pEyeON-core
-last_validated: 2026-06-26
+last_validated: 2026-08-03
 tags: [wrapper, container, batch, runtime]
 ---
 
@@ -34,6 +36,11 @@ The wrapper supports both option and positional forms:
 `THREADS` defaults to `8`. If `DATASET_PATH` is not provided, the wrapper uses
 `datasets.dataset_path` from `EyeOnData.toml`; if that is unavailable, it falls
 back to `$HOME/data/eyeon`.
+
+The wrapper runs `eyeon parse` with log level `WARNING` by default so monitor
+warnings and high-value problems remain visible without DEBUG-level plugin noise.
+Use `EYEON_LOG_LEVEL` or `--log-level` to override the parse log level for a run;
+`WARN` is accepted as an alias for `WARNING`.
 
 <!-- GROUND_TRUTH: ../pEyeON/README.md §basic-usage -->
 
@@ -82,6 +89,19 @@ is set, the wrapper auto-selects only when exactly one runtime is installed; if
 both are present, it stops and asks the user to choose explicitly.
 
 <!-- GROUND_TRUTH: ../pEyeON/README.md §runtime-selection -->
+
+## Interactive Output
+
+For normal interactive terminal runs, the wrapper allocates a container TTY
+(`-it` when stdin and stdout are both terminals, or `-t` when stdout alone is a
+terminal), passes `TERM`, and sets `PYTHONUNBUFFERED=1`. This keeps
+`alive_progress` progress bars and monitor warnings visible while `eyeon parse`
+runs inside Docker or Podman. Non-interactive and redirected runs do not force a
+TTY. The wrapper's default `WARNING` log level suppresses routine Surfactant
+DEBUG output unless explicitly overridden.
+
+<!-- GROUND_TRUTH: ../pEyeON/eyeon-parse.sh §run_container_parse -->
+<!-- GROUND_TRUTH: eyeon-parse.sh §run_container_parse -->
 
 ## Ownership Behavior
 

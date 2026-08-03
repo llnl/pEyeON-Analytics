@@ -55,7 +55,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 
 | Page | Confidence | Summary |
 |------|------------|---------|
-| [[wiki/pipeline/eyeon_parse_sh]] | high | eyeon-parse.sh wrapper: batch output, image selection, runtime and ownership behavior |
+| [[wiki/pipeline/eyeon_parse_sh]] | high | eyeon-parse.sh wrapper: batch output, image selection, runtime, ownership, and interactive progress behavior |
 | [[wiki/pipeline/dlt_load]] | high | load_eyeon.py: DLT pipeline design and bronze/silver tables |
 | [[wiki/pipeline/base_schema_derivation]] | medium | Recovered methodology for deriving `schemas/schema.sql` from representative EyeON samples and schema_blame evidence |
 | [[wiki/pipeline/dbt_models]] | high | dbt_eyeon_gold: staging → intermediate → mart lineage |
@@ -91,6 +91,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/work/metadata-type-drift/implementation_plan]] | implemented | Add gold.metadata_type_drift and surface it in Schema Blame to show silver-only (unmodeled) metadata types |
 | [[wiki/work/ovf-vm-image-build/brief]] | in-progress | Debian 12 aligned container+VM path: Dockerfile refactor into reusable provision scripts, plus Debian 12 qcow2 appliance VM build scaffold |
 | [[wiki/work/vm-image-size-reduction/brief]] | proposed | Future task: reduce qcow2 size by stripping build toolchains, caches, and optional analytics payload rather than chasing nonexistent GUI/X11 weight |
+| [[wiki/work/parse-multiprocessing-hang/implementation_plan]] | implemented | Fix core parse multiprocessing hang on large Mach-O binaries by using spawn-based workers and recycling each worker after one file |
 
 ## Concepts
 
