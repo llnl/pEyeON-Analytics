@@ -1,0 +1,1066 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "id": "openwrt-ath79-carambola2-23-05-5",
+      "name": "OpenWrt 23.05.5 ath79 generic 8dev Carambola2 sysupgrade image",
+      "category": "open-source-baseline",
+      "source_url": "https://downloads.openwrt.org/releases/23.05.5/targets/ath79/generic/openwrt-23.05.5-ath79-generic-8dev_carambola2-squashfs-sysupgrade.bin",
+      "source_type": "direct-download",
+      "filename": "openwrt-23.05.5-ath79-generic-8dev_carambola2-squashfs-sysupgrade.bin",
+      "artifacts": [],
+      "license_or_terms": "OpenWrt project download; verify current OpenWrt license and download terms before redistribution.",
+      "redistributable": "unknown",
+      "expected_size": "small router firmware image; exact size not recorded",
+      "sha256": "08c9eb2d6998fd6faf9ee0b1e9415d2aca20d00c2236e99c51bb0a9dff2056fc",
+      "expected_binwalk": [
+        "Linux kernel or compressed kernel region",
+        "SquashFS filesystem"
+      ],
+      "use_cases": [
+        "integration-test",
+        "demo",
+        "spike"
+      ],
+      "subsets": [
+        "binwalk-smoke",
+        "demo"
+      ],
+      "notes": "First Binwalk spike fixture candidate. Checksum was taken from the OpenWrt 23.05.5 ath79/generic sha256sums file on 2026-06-26. Not used by default tests because fetching requires network access."
+    },
+    {
+      "id": "dvrf-praetorian-repo",
+      "name": "Damn Vulnerable Router Firmware project repository",
+      "category": "vulnerable-demo",
+      "source_url": "https://github.com/praetorian-inc/DVRF",
+      "source_type": "git-repo",
+      "filename": null,
+      "artifacts": [
+        {
+          "id": "dvrf-v03-firmware",
+          "artifact_type": "firmware-binary",
+          "path": "Firmware/DVRF_v03.bin",
+          "filename": "DVRF_v03.bin",
+          "source_url": "https://raw.githubusercontent.com/praetorian-inc/DVRF/master/Firmware/DVRF_v03.bin",
+          "sha256": "1a3442c85f589f85b922a2b7b22c46d2e3844a3f729cc4ed432138c0f7abc046",
+          "fetch": true,
+          "notes": "Firmware binary listed by the GitHub contents API on 2026-06-26; size reported as 7,754,752 bytes. SHA-256 recorded after fetch on 2026-06-26."
+        },
+        {
+          "id": "dvrf-e1550-license-html",
+          "artifact_type": "license-document",
+          "path": "Firmware/FW_LICENSE_E1550_v1.0.03.002.html",
+          "filename": "FW_LICENSE_E1550_v1.0.03.002.html",
+          "source_url": "https://raw.githubusercontent.com/praetorian-inc/DVRF/master/Firmware/FW_LICENSE_E1550_v1.0.03.002.html",
+          "sha256": null,
+          "fetch": false,
+          "notes": "License document associated with the E1550 firmware bundle; referenced for human review but not fetched by default as a firmware artifact."
+        }
+      ],
+      "license_or_terms": "No repository-level GitHub license detected from repository metadata on 2026-06-26. The Firmware directory includes FW_LICENSE_E1550_v1.0.03.002.html, which should be reviewed before redistribution or automated mirroring.",
+      "redistributable": "unknown",
+      "expected_size": "repository metadata reports roughly 414 MB; firmware artifact DVRF_v03.bin is 7,754,752 bytes",
+      "sha256": null,
+      "expected_binwalk": [
+        "TRX firmware header",
+        "gzip compressed data",
+        "SquashFS filesystem"
+      ],
+      "use_cases": [
+        "demo",
+        "spike",
+        "research"
+      ],
+      "subsets": [
+        "demo"
+      ],
+      "notes": "Purpose-built vulnerable firmware candidate from raw/binwalk/binwalk.md. The repository contains a specific firmware binary at Firmware/DVRF_v03.bin and a license HTML file in the same directory."
+    },
+    {
+      "id": "dlink-dir-605l-revb-legacy",
+      "name": "D-Link DIR-605L Rev B legacy firmware directory",
+      "category": "vendor-real-world",
+      "source_url": "https://legacyfiles.us.dlink.com/dir-605l/REVB/FIRMWARE/",
+      "source_type": "vendor-page",
+      "filename": null,
+      "artifacts": [],
+      "license_or_terms": "Official legacy vendor download page; user should review vendor terms and select a file manually.",
+      "redistributable": "user-must-download",
+      "expected_size": "unknown",
+      "sha256": null,
+      "expected_binwalk": [
+        "SquashFS filesystem"
+      ],
+      "use_cases": [
+        "demo",
+        "spike",
+        "research"
+      ],
+      "subsets": [
+        "demo"
+      ],
+      "notes": "Transport check through the development fetch tool failed on 2026-06-26, so this remains a manual vendor-page entry rather than a direct-download entry. Vulnerability claims from raw notes still need primary-source verification."
+    },
+    {
+      "id": "firmsec-dataset-index",
+      "name": "FirmSecDataset firmware link index",
+      "category": "research-dataset",
+      "source_url": "https://github.com/NESA-Lab/FirmSecDataset",
+      "source_type": "dataset-index",
+      "filename": null,
+      "artifacts": [],
+      "license_or_terms": "Research dataset index with upstream vendor links; review repository and vendor terms before bulk download.",
+      "redistributable": "user-must-download",
+      "expected_size": "bulk dataset; not suitable for default tests",
+      "sha256": null,
+      "expected_binwalk": [],
+      "use_cases": [
+        "research"
+      ],
+      "subsets": [
+        "research"
+      ],
+      "notes": "Research corpus pointer from raw/binwalk/binwalk.md. This is intentionally excluded from default fetching and tests."
+    },
+    {
+      
+      "id": "WUSTL-CSPL-dataset-index",
+      "name": "WUSTL-CSPL firmware link index",
+      "category": "research-dataset",
+      "source_url": "https://github.com/WUSTL-CSPL/Firmware-Dataset",
+      "source_type": "dataset-index",
+      "filename": null,
+      "artifacts": [],
+      "license_or_terms": "Index of ﬁrmware images from the ofﬁcial websites of vendors, open FTP sites, and open-source repositories",
+      "redistributable": "user-must-download",
+      "expected_size": "bulk dataset; not suitable for default tests",
+      "sha256": null,
+      "expected_binwalk": [],
+      "use_cases": [
+        "research"
+      ],
+      "subsets": [
+        "research"
+      ],
+      "notes": "Very large (>180K) references to firmware downloads. Also includes a small utility for downloading images. No review has been performed of this yet."
+
+    },
+    {
+      "id": "tasmota-v15-5-0-selected",
+      "name": "Tasmota v15.5.0 selected ESP8266 firmware binaries",
+      "category": "open-source-baseline",
+      "source_url": "https://github.com/arendst/Tasmota/releases/tag/v15.5.0",
+      "source_type": "archive",
+      "filename": null,
+      "artifacts": [
+        {
+          "id": "tasmota-4m-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-4M.bin",
+          "filename": "tasmota-4M.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-4M.bin",
+          "sha256": "1df15fd5ae9dfb18aa45a5781cd33fdd2540935f1c15e7f71db73f07b49fc503",
+          "fetch": true,
+          "notes": "Release asset size=743120 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-4m-bin-gz",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-4M.bin.gz",
+          "filename": "tasmota-4M.bin.gz",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-4M.bin.gz",
+          "sha256": "1eddf33d9efcea666693ac9ba55b8409fa3ad81b801e56aa96f4858293556421",
+          "fetch": true,
+          "notes": "Release asset size=521201 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-de-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-DE.bin",
+          "filename": "tasmota-DE.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-DE.bin",
+          "sha256": "55b9fe54dcfe28b54acebb880ad258e5d183122229d2926e8eeb91c2238b7673",
+          "fetch": true,
+          "notes": "Release asset size=666624 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-es-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-ES.bin",
+          "filename": "tasmota-ES.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-ES.bin",
+          "sha256": "cc8c02c91a806a8bff7600aef0f21cc8eb43c755935c348a490a51a5fc64ee78",
+          "fetch": true,
+          "notes": "Release asset size=667456 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-fr-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-FR.bin",
+          "filename": "tasmota-FR.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-FR.bin",
+          "sha256": "668b63b359b1c035a2a2868f08a059928561eea95aa4d26efad72cfc4d07d6ff",
+          "fetch": true,
+          "notes": "Release asset size=667696 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-it-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-IT.bin",
+          "filename": "tasmota-IT.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-IT.bin",
+          "sha256": "cd153567163953a3a6c7f06c86ea7848e3d1026cf2f3490d635a9c061cd5f8d0",
+          "fetch": true,
+          "notes": "Release asset size=667952 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-nl-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-NL.bin",
+          "filename": "tasmota-NL.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-NL.bin",
+          "sha256": "50629ccc370fc27156bbd7d8159196291d734ddf2ab01e252dddab3135c2926a",
+          "fetch": true,
+          "notes": "Release asset size=667088 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-pl-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-PL.bin",
+          "filename": "tasmota-PL.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-PL.bin",
+          "sha256": "66634a92aefc24c6398aea08ec901e6333a267a87519e95372dcca414a47b9ae",
+          "fetch": true,
+          "notes": "Release asset size=667760 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-pt-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-PT.bin",
+          "filename": "tasmota-PT.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-PT.bin",
+          "sha256": "0345df651a96c4c9c5d056104b9a0dd0e7ea45a521bbb9923c47e50ea4854fbc",
+          "fetch": true,
+          "notes": "Release asset size=667904 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-ru-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-RU.bin",
+          "filename": "tasmota-RU.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-RU.bin",
+          "sha256": "46d6109e248d5340c72d17d38aa5b4b319cf6f0c3dc3fad44e8a7a8e8da362fa",
+          "fetch": true,
+          "notes": "Release asset size=671584 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-display-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-display.bin",
+          "filename": "tasmota-display.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-display.bin",
+          "sha256": "8156acb3dfecfaa14918928a868046cca45d57570e23ca639175edc26f6c5fe9",
+          "fetch": true,
+          "notes": "Release asset size=627280 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-ir-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-ir.bin",
+          "filename": "tasmota-ir.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-ir.bin",
+          "sha256": "e95d8c50181889bbdd71805e2830db7be445601cda9354b96990a53dc7a7044c",
+          "fetch": true,
+          "notes": "Release asset size=681904 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-knx-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-knx.bin",
+          "filename": "tasmota-knx.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-knx.bin",
+          "sha256": "eb3e8d26f57d73005830e1bbfa9dc61ac27daed37a509ccfc0e4b900cf7bb666",
+          "fetch": true,
+          "notes": "Release asset size=662672 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-lite-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-lite.bin",
+          "filename": "tasmota-lite.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-lite.bin",
+          "sha256": "0109351c5df2492dc9c2a3c5d2c914f24c41d245232f884d830b57e0855a7c82",
+          "fetch": true,
+          "notes": "Release asset size=518656 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-minimal-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-minimal.bin",
+          "filename": "tasmota-minimal.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-minimal.bin",
+          "sha256": "b8b13b08b9248014f436e8bf5381220a818959c3f49703dd5cc55438b68ebf43",
+          "fetch": true,
+          "notes": "Release asset size=372720 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-sensors-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-sensors.bin",
+          "filename": "tasmota-sensors.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-sensors.bin",
+          "sha256": "95cea957a51e97bf19d992b1501fac64da1cf09d827d4d9f89a49dfe21cc0e84",
+          "fetch": true,
+          "notes": "Release asset size=737936 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-zbbridge-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-zbbridge.bin",
+          "filename": "tasmota-zbbridge.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-zbbridge.bin",
+          "sha256": "e707256ff6854c4fda568e57f6c4393d8e8ca40f2919c92e2417140e55ab5967",
+          "fetch": true,
+          "notes": "Release asset size=790240 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-zigbee-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota-zigbee.bin",
+          "filename": "tasmota-zigbee.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota-zigbee.bin",
+          "sha256": "df20c926f112885ac3967d43a55f4e2df81bd5ba7376b82ec7cc4c81e48301f0",
+          "fetch": true,
+          "notes": "Release asset size=861584 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-bin",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota.bin",
+          "filename": "tasmota.bin",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota.bin",
+          "sha256": "bbd28d0f67d625305fed4feac8b32eeabb40f9dc8ac8c825ff17097e54f7ac2a",
+          "fetch": true,
+          "notes": "Release asset size=666272 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "tasmota-bin-gz",
+          "artifact_type": "firmware-binary",
+          "path": "tasmota.bin.gz",
+          "filename": "tasmota.bin.gz",
+          "source_url": "https://github.com/arendst/Tasmota/releases/download/v15.5.0/tasmota.bin.gz",
+          "sha256": "9489742b77082b63beffb9fb0ba3e78d1c2f4b73b5a79971eefef47a78009587",
+          "fetch": true,
+          "notes": "Release asset size=468621 bytes; digest from GitHub release API when present."
+        }
+      ],
+      "license_or_terms": "Open-source Tasmota GitHub release assets; verify project license and asset redistribution terms before mirroring.",
+      "redistributable": "unknown",
+      "expected_size": "Selected firmware assets are roughly 0.3-0.8 MB each.",
+      "sha256": null,
+      "expected_binwalk": [
+        "ESP8266/ESP8285 firmware binary",
+        "gzip compressed data for .gz variants"
+      ],
+      "use_cases": [
+        "unit-test",
+        "integration-test",
+        "demo",
+        "spike"
+      ],
+      "subsets": [
+        "unit-small",
+        "demo-baseline",
+        "demo"
+      ],
+      "notes": "Selected small Tasmota firmware variants with GitHub-provided SHA-256 digests for fetch/checksum and demo corpus breadth."
+    },
+    {
+      "id": "esphome-26-5-1-selected",
+      "name": "ESPHome 26.5.1 selected factory and OTA binaries",
+      "category": "open-source-baseline",
+      "source_url": "https://github.com/esphome/firmware/releases/tag/26.5.1",
+      "source_type": "archive",
+      "filename": null,
+      "artifacts": [
+        {
+          "id": "esp-web-tools-example-esp32-factory-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esp-web-tools-example-esp32.factory.bin",
+          "filename": "esp-web-tools-example-esp32.factory.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esp-web-tools-example-esp32.factory.bin",
+          "sha256": "368812aeba816cfcd64e092aeea798d07573083313f5dd234ae78dc7d0d5c375",
+          "fetch": true,
+          "notes": "Release asset size=1217120 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esp-web-tools-example-esp32-ota-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esp-web-tools-example-esp32.ota.bin",
+          "filename": "esp-web-tools-example-esp32.ota.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esp-web-tools-example-esp32.ota.bin",
+          "sha256": "45c98ee88268cb02d23218341be880d00ff94ba5762a63ef433af41a8d2af503",
+          "fetch": true,
+          "notes": "Release asset size=1151584 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esp-web-tools-example-esp32c3-factory-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esp-web-tools-example-esp32c3.factory.bin",
+          "filename": "esp-web-tools-example-esp32c3.factory.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esp-web-tools-example-esp32c3.factory.bin",
+          "sha256": "64d8d0f7a9e89f2a0a799aba0493fa4e694a627d21f6bd42370514f3fb14824c",
+          "fetch": true,
+          "notes": "Release asset size=1355408 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esp-web-tools-example-esp32c3-ota-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esp-web-tools-example-esp32c3.ota.bin",
+          "filename": "esp-web-tools-example-esp32c3.ota.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esp-web-tools-example-esp32c3.ota.bin",
+          "sha256": "b1986949b0a2dfe2762289612760df32103daa9cd78b2761aa511d0e537292fc",
+          "fetch": true,
+          "notes": "Release asset size=1289872 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esp-web-tools-example-esp32c6-factory-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esp-web-tools-example-esp32c6.factory.bin",
+          "filename": "esp-web-tools-example-esp32c6.factory.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esp-web-tools-example-esp32c6.factory.bin",
+          "sha256": "97a6988a4b04507cd497e479c8da0e47283b7dbfe3d83cab1efdfb0a1fba5f75",
+          "fetch": true,
+          "notes": "Release asset size=980032 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esp-web-tools-example-esp32c6-ota-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esp-web-tools-example-esp32c6.ota.bin",
+          "filename": "esp-web-tools-example-esp32c6.ota.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esp-web-tools-example-esp32c6.ota.bin",
+          "sha256": "93edd624104bc336dc9577198a2ef94d988243ea0f9eb6c25fe33887ff2b93fc",
+          "fetch": true,
+          "notes": "Release asset size=914496 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esp-web-tools-example-esp32s2-factory-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esp-web-tools-example-esp32s2.factory.bin",
+          "filename": "esp-web-tools-example-esp32s2.factory.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esp-web-tools-example-esp32s2.factory.bin",
+          "sha256": "14a98c31b28ef4ec2e4cea280ba1d075e820fcddb19135c1f9ad685ab555b82e",
+          "fetch": true,
+          "notes": "Release asset size=833072 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esp-web-tools-example-esp32s2-ota-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esp-web-tools-example-esp32s2.ota.bin",
+          "filename": "esp-web-tools-example-esp32s2.ota.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esp-web-tools-example-esp32s2.ota.bin",
+          "sha256": "7377084d6be7d2528d6f0225179b996c790de0e467e0f089326b5ba1797f75d1",
+          "fetch": true,
+          "notes": "Release asset size=767536 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esp-web-tools-example-esp32s3-factory-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esp-web-tools-example-esp32s3.factory.bin",
+          "filename": "esp-web-tools-example-esp32s3.factory.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esp-web-tools-example-esp32s3.factory.bin",
+          "sha256": "656331e1614b29660f99c027821237a2a18e46890fd310855b1ed3d3d5a087a8",
+          "fetch": true,
+          "notes": "Release asset size=1233984 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esp-web-tools-example-esp32s3-ota-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esp-web-tools-example-esp32s3.ota.bin",
+          "filename": "esp-web-tools-example-esp32s3.ota.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esp-web-tools-example-esp32s3.ota.bin",
+          "sha256": "bdb593cf4ae27c667038983353e1d7171c47be73665c36843f4d43d31063da43",
+          "fetch": true,
+          "notes": "Release asset size=1168448 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esp-web-tools-example-esp8266-factory-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esp-web-tools-example-esp8266.factory.bin",
+          "filename": "esp-web-tools-example-esp8266.factory.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esp-web-tools-example-esp8266.factory.bin",
+          "sha256": "0748535ad1f22d4f114296c8e38dacad939d62ca7a2a450dee068baca7bdc6a6",
+          "fetch": true,
+          "notes": "Release asset size=392080 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esp-web-tools-example-esp8266-ota-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esp-web-tools-example-esp8266.ota.bin",
+          "filename": "esp-web-tools-example-esp8266.ota.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esp-web-tools-example-esp8266.ota.bin",
+          "sha256": "0748535ad1f22d4f114296c8e38dacad939d62ca7a2a450dee068baca7bdc6a6",
+          "fetch": true,
+          "notes": "Release asset size=392080 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esphome-web-esp32-factory-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esphome-web-esp32.factory.bin",
+          "filename": "esphome-web-esp32.factory.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esphome-web-esp32.factory.bin",
+          "sha256": "911eff4314d1c633ff62dd7045d7cec5820f70eac22352ba714d747b1eb52f12",
+          "fetch": true,
+          "notes": "Release asset size=1206560 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esphome-web-esp32-ota-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esphome-web-esp32.ota.bin",
+          "filename": "esphome-web-esp32.ota.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esphome-web-esp32.ota.bin",
+          "sha256": "9db9cd80b0255f8bd91b37d0ebdb539801cb99bc3a629ed0d1ca063a7a51ef8c",
+          "fetch": true,
+          "notes": "Release asset size=1141024 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esphome-web-esp32c3-factory-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esphome-web-esp32c3.factory.bin",
+          "filename": "esphome-web-esp32c3.factory.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esphome-web-esp32c3.factory.bin",
+          "sha256": "93aa5a6f2550fa5d0e8d118d97aa3afa3c5000b81d6050c051cbccad3876d09b",
+          "fetch": true,
+          "notes": "Release asset size=1343216 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esphome-web-esp32c3-ota-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esphome-web-esp32c3.ota.bin",
+          "filename": "esphome-web-esp32c3.ota.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esphome-web-esp32c3.ota.bin",
+          "sha256": "3a16e851cac5c38664da841040c5c0eb6ba61579b20b00f5d42fdfadf330493d",
+          "fetch": true,
+          "notes": "Release asset size=1277680 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esphome-web-esp32c6-factory-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esphome-web-esp32c6.factory.bin",
+          "filename": "esphome-web-esp32c6.factory.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esphome-web-esp32c6.factory.bin",
+          "sha256": "fe4f57769e8bcac1328ad33b40a81d59ff35cf313f257ffe1e939173d70e9ddb",
+          "fetch": true,
+          "notes": "Release asset size=1521184 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esphome-web-esp32c6-ota-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esphome-web-esp32c6.ota.bin",
+          "filename": "esphome-web-esp32c6.ota.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esphome-web-esp32c6.ota.bin",
+          "sha256": "c02668e81ca27d3d3dfad05f8d3800875daa22fa9c4fc60fc1fa08995a6f8ef3",
+          "fetch": true,
+          "notes": "Release asset size=1455648 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esphome-web-esp32s2-factory-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esphome-web-esp32s2.factory.bin",
+          "filename": "esphome-web-esp32s2.factory.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esphome-web-esp32s2.factory.bin",
+          "sha256": "22db323a34b4088ad5266dded0a483a140cb70f163dc7f64c175de7ecb527f2a",
+          "fetch": true,
+          "notes": "Release asset size=822768 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esphome-web-esp32s2-ota-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esphome-web-esp32s2.ota.bin",
+          "filename": "esphome-web-esp32s2.ota.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esphome-web-esp32s2.ota.bin",
+          "sha256": "7f43159fbb8b4958e18e88901260fec5fe8d3dce1cb462e3a36d8a5882b6b502",
+          "fetch": true,
+          "notes": "Release asset size=757232 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esphome-web-esp32s3-factory-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esphome-web-esp32s3.factory.bin",
+          "filename": "esphome-web-esp32s3.factory.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esphome-web-esp32s3.factory.bin",
+          "sha256": "b9be790d2c30d44a397ab64b62fafac54e3f9fc56a570c7dc9b33ccf370e75cf",
+          "fetch": true,
+          "notes": "Release asset size=1223776 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esphome-web-esp32s3-ota-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esphome-web-esp32s3.ota.bin",
+          "filename": "esphome-web-esp32s3.ota.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esphome-web-esp32s3.ota.bin",
+          "sha256": "aa4571f85f746a6529fb6a1c2d4a02c9047024ee36c5db77acb9e2fb6117aec6",
+          "fetch": true,
+          "notes": "Release asset size=1158240 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esphome-web-esp8266-factory-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esphome-web-esp8266.factory.bin",
+          "filename": "esphome-web-esp8266.factory.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esphome-web-esp8266.factory.bin",
+          "sha256": "27e4c9f17d2aebb23e94c36568bd787127d16e6306be0b93fc4c8976df3d86c4",
+          "fetch": true,
+          "notes": "Release asset size=377632 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esphome-web-esp8266-ota-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esphome-web-esp8266.ota.bin",
+          "filename": "esphome-web-esp8266.ota.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esphome-web-esp8266.ota.bin",
+          "sha256": "27e4c9f17d2aebb23e94c36568bd787127d16e6306be0b93fc4c8976df3d86c4",
+          "fetch": true,
+          "notes": "Release asset size=377632 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "esphome-web-rp2040-ota-bin",
+          "artifact_type": "firmware-binary",
+          "path": "esphome-web-rp2040.ota.bin",
+          "filename": "esphome-web-rp2040.ota.bin",
+          "source_url": "https://github.com/esphome/firmware/releases/download/26.5.1/esphome-web-rp2040.ota.bin",
+          "sha256": "129155ad6ff36f7e8c86f51397cd4b56a0888c363738974cda90d59457be3894",
+          "fetch": true,
+          "notes": "Release asset size=491288 bytes; digest from GitHub release API when present."
+        }
+      ],
+      "license_or_terms": "ESPHome firmware GitHub release assets; verify project license and asset redistribution terms before mirroring.",
+      "redistributable": "unknown",
+      "expected_size": "Selected binaries are roughly 0.4-1.5 MB each.",
+      "sha256": null,
+      "expected_binwalk": [
+        "ESP32/ESP8266 firmware binary"
+      ],
+      "use_cases": [
+        "unit-test",
+        "integration-test",
+        "demo"
+      ],
+      "subsets": [
+        "unit-small",
+        "demo-baseline",
+        "demo"
+      ],
+      "notes": "Selected factory and OTA firmware binaries across ESPHome example/web targets; GitHub release API provides SHA-256 digests."
+    },
+    {
+      "id": "iotgoat-v1-0-release",
+      "name": "OWASP IoTGoat v1.0 deliberately vulnerable firmware release assets",
+      "category": "vulnerable-demo",
+      "source_url": "https://github.com/OWASP/IoTGoat/releases/tag/v1.0",
+      "source_type": "archive",
+      "filename": null,
+      "artifacts": [
+        {
+          "id": "iotgoat-raspberry-pi2-sysupgrade-img",
+          "artifact_type": "firmware-binary",
+          "path": "IoTGoat-raspberry-pi2-sysupgrade.img",
+          "filename": "IoTGoat-raspberry-pi2-sysupgrade.img",
+          "source_url": "https://github.com/OWASP/IoTGoat/releases/download/v1.0/IoTGoat-raspberry-pi2-sysupgrade.img",
+          "sha256": null,
+          "fetch": true,
+          "notes": "Release asset size=33306530 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "iotgoat-raspberry-pi2-img",
+          "artifact_type": "firmware-binary",
+          "path": "IoTGoat-raspberry-pi2.img",
+          "filename": "IoTGoat-raspberry-pi2.img",
+          "source_url": "https://github.com/OWASP/IoTGoat/releases/download/v1.0/IoTGoat-raspberry-pi2.img",
+          "sha256": null,
+          "fetch": true,
+          "notes": "Release asset size=33306530 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "iotgoat-x86-img-gz",
+          "artifact_type": "firmware-binary",
+          "path": "IoTGoat-x86.img.gz",
+          "filename": "IoTGoat-x86.img.gz",
+          "source_url": "https://github.com/OWASP/IoTGoat/releases/download/v1.0/IoTGoat-x86.img.gz",
+          "sha256": null,
+          "fetch": true,
+          "notes": "Release asset size=8737887 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "iotgoat-x86-vdi",
+          "artifact_type": "firmware-binary",
+          "path": "IoTGoat-x86.vdi",
+          "filename": "IoTGoat-x86.vdi",
+          "source_url": "https://github.com/OWASP/IoTGoat/releases/download/v1.0/IoTGoat-x86.vdi",
+          "sha256": null,
+          "fetch": true,
+          "notes": "Release asset size=10487808 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "iotgoat-x86-vmdk",
+          "artifact_type": "firmware-binary",
+          "path": "IoTGoat-x86.vmdk",
+          "filename": "IoTGoat-x86.vmdk",
+          "source_url": "https://github.com/OWASP/IoTGoat/releases/download/v1.0/IoTGoat-x86.vmdk",
+          "sha256": null,
+          "fetch": true,
+          "notes": "Release asset size=8781824 bytes; digest from GitHub release API when present."
+        }
+      ],
+      "license_or_terms": "OWASP IoTGoat repository is MIT licensed; verify release asset redistribution terms before mirroring.",
+      "redistributable": "unknown",
+      "expected_size": "Release assets range from about 8.7 MB to 33 MB.",
+      "sha256": null,
+      "expected_binwalk": [
+        "OpenWrt-based image",
+        "disk image or compressed disk image"
+      ],
+      "use_cases": [
+        "integration-test",
+        "demo",
+        "spike",
+        "research"
+      ],
+      "subsets": [
+        "binwalk-smoke",
+        "demo-vulnerable",
+        "demo"
+      ],
+      "notes": "Deliberately insecure OpenWrt-based firmware with OWASP IoT Top 10 challenge narratives."
+    },
+    {
+      "id": "openipc-nightly-nor-lite-selected",
+      "name": "OpenIPC nightly selected NOR lite camera firmware bundles",
+      "category": "open-source-baseline",
+      "source_url": "https://github.com/OpenIPC/firmware/releases/tag/nightly",
+      "source_type": "archive",
+      "filename": null,
+      "artifacts": [
+        {
+          "id": "openipc-fh8852v100-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.fh8852v100-nor-lite.tgz",
+          "filename": "openipc.fh8852v100-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.fh8852v100-nor-lite.tgz",
+          "sha256": "9f298b629216b252a02f08a88c3c2bff332b2dd15a0f2aba35eddd32f3d1eb04",
+          "fetch": true,
+          "notes": "Release asset size=5733301 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-fh8852v200-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.fh8852v200-nor-lite.tgz",
+          "filename": "openipc.fh8852v200-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.fh8852v200-nor-lite.tgz",
+          "sha256": "a55134f4cccc95d27460d729bee4df5cfbcaa2033c0a03534e87cb7da82a235d",
+          "fetch": true,
+          "notes": "Release asset size=6131839 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-gk7102-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.gk7102-nor-lite.tgz",
+          "filename": "openipc.gk7102-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.gk7102-nor-lite.tgz",
+          "sha256": "3863954818eb26fd320272fa41994d5d5144ba682b0994e513a86627c939d8bc",
+          "fetch": true,
+          "notes": "Release asset size=5539563 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-gk7102s-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.gk7102s-nor-lite.tgz",
+          "filename": "openipc.gk7102s-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.gk7102s-nor-lite.tgz",
+          "sha256": "732bc13f9ce81b2556dbd0586656455810e25707fcafb8a1af5fc929abddf250",
+          "fetch": true,
+          "notes": "Release asset size=5529249 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-gk7205v500-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.gk7205v500-nor-lite.tgz",
+          "filename": "openipc.gk7205v500-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.gk7205v500-nor-lite.tgz",
+          "sha256": "ae65b47c4d81b4d78cc05ed6e7eb4d5d033f289bb97dcdf07a4f4fb3ae75faf7",
+          "fetch": true,
+          "notes": "Release asset size=6533529 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-gm8135-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.gm8135-nor-lite.tgz",
+          "filename": "openipc.gm8135-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.gm8135-nor-lite.tgz",
+          "sha256": "153fd052c39c3fa012a6b87b9e9981aba5e243a1ef45f475aa071b48b6d857ad",
+          "fetch": true,
+          "notes": "Release asset size=6280512 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-gm8136-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.gm8136-nor-lite.tgz",
+          "filename": "openipc.gm8136-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.gm8136-nor-lite.tgz",
+          "sha256": "45ffcfffcbea9ce86116f99f04762a4f3d0693035ce33943ea2de5472fb4978c",
+          "fetch": true,
+          "notes": "Release asset size=6280330 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-hi3516av100-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.hi3516av100-nor-lite.tgz",
+          "filename": "openipc.hi3516av100-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.hi3516av100-nor-lite.tgz",
+          "sha256": "fb281355b910f7ea8334e601d9144278fa60c26ddaa36966d3ec72079a3ace88",
+          "fetch": true,
+          "notes": "Release asset size=6173172 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-hi3516av200-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.hi3516av200-nor-lite.tgz",
+          "filename": "openipc.hi3516av200-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.hi3516av200-nor-lite.tgz",
+          "sha256": "258d257659bb1a5f61a7078b71bc9bea42255564429d38189edcb55cf9773698",
+          "fetch": true,
+          "notes": "Release asset size=6597979 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-hi3516cv100-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.hi3516cv100-nor-lite.tgz",
+          "filename": "openipc.hi3516cv100-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.hi3516cv100-nor-lite.tgz",
+          "sha256": "36e94dff1f6da51f47ace0241647156969c9cc7a58e040706fd2a65b5641a1e0",
+          "fetch": true,
+          "notes": "Release asset size=6841536 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-hi3516cv200-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.hi3516cv200-nor-lite.tgz",
+          "filename": "openipc.hi3516cv200-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.hi3516cv200-nor-lite.tgz",
+          "sha256": "b8bd63ea6a16e7b6674de6060d50625612e963dc40b940cf89e58e0955d20a9f",
+          "fetch": true,
+          "notes": "Release asset size=6771156 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-hi3516cv300-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.hi3516cv300-nor-lite.tgz",
+          "filename": "openipc.hi3516cv300-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.hi3516cv300-nor-lite.tgz",
+          "sha256": "d797c407361a3e024baa176a0d8b246321a0d7c8b1deb3ac0c9859bd7e330c55",
+          "fetch": true,
+          "notes": "Release asset size=6470557 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-hi3516dv100-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.hi3516dv100-nor-lite.tgz",
+          "filename": "openipc.hi3516dv100-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.hi3516dv100-nor-lite.tgz",
+          "sha256": "efa89ecaabb4d88eec10045264fd597cb07848d8df31a030992ddc206d17552e",
+          "fetch": true,
+          "notes": "Release asset size=6763846 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-hi3516dv200-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.hi3516dv200-nor-lite.tgz",
+          "filename": "openipc.hi3516dv200-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.hi3516dv200-nor-lite.tgz",
+          "sha256": "93e8764bd8b98b0eeee2e3b1e9a2649f19d6fa703c453c1ecc73815aacfd5f87",
+          "fetch": true,
+          "notes": "Release asset size=6574921 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-hi3516ev100-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.hi3516ev100-nor-lite.tgz",
+          "filename": "openipc.hi3516ev100-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.hi3516ev100-nor-lite.tgz",
+          "sha256": "1587196018932b338ef0a8b77e8eac9f0964701faafaec2a8cb0d56bb210c0c6",
+          "fetch": true,
+          "notes": "Release asset size=6463287 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-hi3516ev200-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.hi3516ev200-nor-lite.tgz",
+          "filename": "openipc.hi3516ev200-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.hi3516ev200-nor-lite.tgz",
+          "sha256": "b0540ddc3b14c19187e0f4f25f2e1a86d372268346daea292097a3e9dff2f2ae",
+          "fetch": true,
+          "notes": "Release asset size=6594365 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-hi3516ev300-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.hi3516ev300-nor-lite.tgz",
+          "filename": "openipc.hi3516ev300-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.hi3516ev300-nor-lite.tgz",
+          "sha256": "b9689481de5e48707e7b0d4d6fdd9cc40a9f8ca07eeec93f5890bfe43f548b33",
+          "fetch": true,
+          "notes": "Release asset size=6928837 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-hi3518cv100-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.hi3518cv100-nor-lite.tgz",
+          "filename": "openipc.hi3518cv100-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.hi3518cv100-nor-lite.tgz",
+          "sha256": "f3a623157aec54883ab4ec275a18b50b7149df68f88de557189488eac2fbfc08",
+          "fetch": true,
+          "notes": "Release asset size=6841552 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-hi3518ev100-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.hi3518ev100-nor-lite.tgz",
+          "filename": "openipc.hi3518ev100-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.hi3518ev100-nor-lite.tgz",
+          "sha256": "0d29dc8a2dc260bc0b8748be663e4e452cb382a8834c96d05d0c5575fafcb9dc",
+          "fetch": true,
+          "notes": "Release asset size=6918525 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-hi3518ev200-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.hi3518ev200-nor-lite.tgz",
+          "filename": "openipc.hi3518ev200-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.hi3518ev200-nor-lite.tgz",
+          "sha256": "b11f023a3b3860b06db66d8aee0b28aef8ffff5597d1df61177ad8e1a4759188",
+          "fetch": true,
+          "notes": "Release asset size=6783412 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-hi3520dv200-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.hi3520dv200-nor-lite.tgz",
+          "filename": "openipc.hi3520dv200-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.hi3520dv200-nor-lite.tgz",
+          "sha256": "365fa97cef8b170d6b38d1488954e6d42903a146330ac304e6142c224254290b",
+          "fetch": true,
+          "notes": "Release asset size=5800407 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-hi3536cv100-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.hi3536cv100-nor-lite.tgz",
+          "filename": "openipc.hi3536cv100-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.hi3536cv100-nor-lite.tgz",
+          "sha256": "61297c6370bbdf2ffe9059f337d08ee82ee7af36ba29a07dcb1afeb9f50f7fc4",
+          "fetch": true,
+          "notes": "Release asset size=4971173 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-hi3536dv100-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.hi3536dv100-nor-lite.tgz",
+          "filename": "openipc.hi3536dv100-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.hi3536dv100-nor-lite.tgz",
+          "sha256": "700d7275db9130a10ef69e829cfa185ea4b4aa6a8f2cea9ac9b3a961b309221e",
+          "fetch": true,
+          "notes": "Release asset size=6152906 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-nt98562-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.nt98562-nor-lite.tgz",
+          "filename": "openipc.nt98562-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.nt98562-nor-lite.tgz",
+          "sha256": "f675a2aeed1a5a761e7033910d461bbfaa7a877e0cd55cf771132e6f749be81e",
+          "fetch": true,
+          "notes": "Release asset size=6606516 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-nt98566-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.nt98566-nor-lite.tgz",
+          "filename": "openipc.nt98566-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.nt98566-nor-lite.tgz",
+          "sha256": "0524902a87113ffe220f50ffe04621f31ac173a416e468a14fc90c6150429c91",
+          "fetch": true,
+          "notes": "Release asset size=6606523 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-ssc325-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.ssc325-nor-lite.tgz",
+          "filename": "openipc.ssc325-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.ssc325-nor-lite.tgz",
+          "sha256": "0fc1208d7c72dacf1886b8ff05f2394e1660e131f421af83fb76a45fe58f9e4a",
+          "fetch": true,
+          "notes": "Release asset size=6226940 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-ssc325de-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.ssc325de-nor-lite.tgz",
+          "filename": "openipc.ssc325de-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.ssc325de-nor-lite.tgz",
+          "sha256": "4bbc9b70f3c23f3fad557efb01dd3f248c3bb6afe2a1ce5e8343e03882b6f0f8",
+          "fetch": true,
+          "notes": "Release asset size=6652850 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-t10-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.t10-nor-lite.tgz",
+          "filename": "openipc.t10-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.t10-nor-lite.tgz",
+          "sha256": "f79f6f2eead567c549dea3c6c6e650d2e276949958973079f8590809c0b05857",
+          "fetch": true,
+          "notes": "Release asset size=6189693 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-t20-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.t20-nor-lite.tgz",
+          "filename": "openipc.t20-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.t20-nor-lite.tgz",
+          "sha256": "4f7b8b379f9cae051c2363b30c9e54b698bb389c888f0e28503e9f9d69c8ad2b",
+          "fetch": true,
+          "notes": "Release asset size=5788654 bytes; digest from GitHub release API when present."
+        },
+        {
+          "id": "openipc-t21-nor-lite-tgz",
+          "artifact_type": "firmware-binary",
+          "path": "openipc.t21-nor-lite.tgz",
+          "filename": "openipc.t21-nor-lite.tgz",
+          "source_url": "https://github.com/OpenIPC/firmware/releases/download/nightly/openipc.t21-nor-lite.tgz",
+          "sha256": "ea178323fd2abd158019285a97bb6dec25c4900bed0a6458cc2e278dc9938d09",
+          "fetch": true,
+          "notes": "Release asset size=5744740 bytes; digest from GitHub release API when present."
+        }
+      ],
+      "license_or_terms": "OpenIPC GitHub release assets; verify project license and asset redistribution terms before mirroring. Nightly tag is moving; pin before long-term demos.",
+      "redistributable": "unknown",
+      "expected_size": "Selected tgz bundles are under 7 MB each.",
+      "sha256": null,
+      "expected_binwalk": [
+        "gzip compressed tar archive",
+        "camera firmware bundle"
+      ],
+      "use_cases": [
+        "integration-test",
+        "demo",
+        "research"
+      ],
+      "subsets": [
+        "demo-baseline",
+        "demo",
+        "bulk-index"
+      ],
+      "notes": "Bounded subset of small OpenIPC camera firmware bundles selected from the moving nightly release to broaden camera/physical-security demo coverage."
+    }
+  ]
+}
