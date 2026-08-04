@@ -92,6 +92,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/work/ovf-vm-image-build/brief]] | in-progress | Debian 12 aligned container+VM path: Dockerfile refactor into reusable provision scripts, plus Debian 12 qcow2 appliance VM build scaffold |
 | [[wiki/work/vm-image-size-reduction/brief]] | proposed | Future task: reduce qcow2 size by stripping build toolchains, caches, and optional analytics payload rather than chasing nonexistent GUI/X11 weight |
 | [[wiki/work/parse-multiprocessing-hang/implementation_plan]] | implemented | Fix core parse multiprocessing hang on large Mach-O binaries by using spawn-based workers and recycling each worker after one file |
+| [[wiki/work/parse-terminal-output/brief]] | proposed | Future task: centralize parse worker output in the parent process and consider Rich for stable progress plus readable logs |
 
 ## Concepts
 

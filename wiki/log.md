@@ -565,3 +565,25 @@ Notes: Diagnosed a parse hang where direct `eyeon observe` and serialized runs
   all five problematic binaries through the serial path and completed 5/5.
   Container confirmation requires rebuilding `peyeon:latest` from the modified
   core repo.
+
+Follow-up: Suppressed residual parse log noise from spawned workers by exporting
+  `LOGURU_LEVEL` from the CLI logger configuration and wrapper container
+  environment, and by explicitly configuring worker Loguru sinks from that value.
+  Added a targeted `PYTHONWARNINGS`/warnings filter for Surfactant's known
+  `FutureWarning: Possible nested set at position 81`, which comes from regex
+  handling while loading native library pattern databases. Downgraded EyeON's
+  plugin filtered-argument trace and expected generic fallback "no type" messages
+  to DEBUG. Verified CLI, parse, and generic metadata targeted tests, wrapper
+  syntax, and wrapper copy identity.
+
+## [2026-08-04] planning | Parse terminal output future work
+
+Pages created: wiki/work/parse-terminal-output/brief.md
+Pages updated: wiki/work/parse-multiprocessing-hang/implementation_plan.md,
+  wiki/index.md
+Contradictions flagged: none
+Notes: Captured future work for replacing fragile multiprocess terminal output
+  with parent-owned worker events and potentially Rich-based progress/log
+  rendering. Also documented fragile mitigations from the current fix: exact-text
+  Surfactant warning suppression, threshold-based large-file serialization, and
+  `LOGURU_LEVEL` coordination rather than a full centralized logging design.

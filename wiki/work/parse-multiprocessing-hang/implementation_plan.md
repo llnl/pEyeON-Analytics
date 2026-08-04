@@ -49,3 +49,19 @@ same large Mach-O files complete through direct serialized `observe`, parse now
 routes files at or above `EYEON_SERIAL_LARGE_FILE_BYTES` through the serial path
 after parallel small-file processing. The default threshold is 50 MiB and can be
 disabled with `EYEON_SERIAL_LARGE_FILE_BYTES=0` for diagnostics.
+
+## Fragile Mitigations To Revisit
+
+- `PYTHONWARNINGS` and CLI warning filters suppress the exact Surfactant message
+  `Possible nested set at position 81`. This is intentionally narrow, but brittle:
+  if Surfactant or the EMBA-derived regex database changes the warning text, the
+  warning may return. A durable upstream fix would identify and repair or skip
+  the specific problematic regex pattern.
+- The large-file split is threshold based rather than format/plugin aware. It is
+  pragmatic for the observed large Mach-O hang, but it may serialize unrelated
+  large files unnecessarily. Future work could use per-plugin isolation,
+  supervised futures with timeouts, or parent-owned worker event queues.
+- The wrapper and CLI now coordinate `LOGURU_LEVEL`, but this is still a logging
+  convention rather than a fully centralized multiprocessing logging design. See
+  [[wiki/work/parse-terminal-output/brief]] for a possible Rich/parent-owned
+  output redesign.

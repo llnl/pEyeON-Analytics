@@ -30,6 +30,10 @@ tags: [parse, multiprocessing, verification]
 - In `../pEyeON`: `bash -n builds/provision/warm-surfactant-dbs.sh`
 - In this repo: `bash -n eyeon-parse.sh`
 - In `../pEyeON`: `uv run eyeon parse -v WARNING -o /var/folders/gj/mckt0dsj0xv2vwr1jd1wv8nc0004ys/T/opencode/eyeon-five-results-large-serial -t 5 /var/folders/gj/mckt0dsj0xv2vwr1jd1wv8nc0004ys/T/opencode/eyeon-five-source`
+- In `../pEyeON`: `uv run python -m py_compile src/eyeon/cli/__init__.py src/eyeon/parse.py src/eyeon/observe.py`
+- In `../pEyeON`: `uv run python -m unittest tests.testCli tests.testParse.TestParseFunctions tests.testObserve.GenericMetadataTestCase`
+- In both repos: `bash -n eyeon-parse.sh`
+- Compared wrapper copies with `cmp -s`; they are identical.
 
 ## Results
 
@@ -38,4 +42,5 @@ tags: [parse, multiprocessing, verification]
 - Local five-file multiprocessing smoke test completed 5/5 and wrote JSON for `coder`, `helm`, `k9s`, `parqeye`, and `vcluster`.
 - Both wrapper copies and the Surfactant database warmup script passed shell syntax checks. The wrapper now defaults `eyeon parse` to `WARNING` via `EYEON_LOG_LEVEL`/`--log-level` instead of requiring DEBUG-level output for monitor warnings.
 - Local five-file large-file serialization smoke test routed all five problematic files through the serial path and completed 5/5, writing JSON for `coder`, `helm`, `k9s`, `parqeye`, and `vcluster`.
+- Follow-up log-noise fix: CLI configuration now exports `LOGURU_LEVEL` and filters the known Surfactant `FutureWarning: Possible nested set at position 81`; wrappers also pass `LOGURU_LEVEL` and `PYTHONWARNINGS` into containers. Spawned parse workers explicitly configure Loguru from `LOGURU_LEVEL`. Plugin argument dumps and expected generic fallback "no type" messages were downgraded to DEBUG. Targeted CLI/parse/generic metadata tests passed, both wrapper syntax checks passed, and wrapper copies remained identical.
 - Container-level confirmation still requires rebuilding `peyeon:latest` from the modified `../pEyeON` source.
