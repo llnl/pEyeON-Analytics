@@ -12,8 +12,13 @@ grounded_by:
   - /Users/johnson30/.duckdb_history
   - /Users/johnson30/.local/share/opencode/storage/session_diff/ses_273b9b28effeEn9H3N1zxXxv3u.json
 policy: agent-editable
-component: pEyeON-analytics
 last_validated: 2026-06-30
+repo_scope: pEyeON-Analytics
+implementation_area: schema
+format_domain: none
+audience: mixed
+status: draft
+source_paths: wiki/pipeline/base_schema_derivation.md
 tags: [dlt, duckdb, schema, schema-blame, corpus-selection]
 ---
 
@@ -211,6 +216,6 @@ notebook prototype operates separately over loaded silver tables.
 ## Related
 
 - [[wiki/pipeline/dlt_load]] - DLT load step that evolves the schema
-- [[wiki/schemas/silver_layer]] - DLT-loaded silver tables
-- [[wiki/schemas/gold_layer]] - downstream dbt models
+- [[wiki/schema/silver_layer]] - DLT-loaded silver tables
+- [[wiki/schema/gold_layer]] - downstream dbt models
 - [[wiki/work/firmware-corpus/brief]] - current curated corpus work that can supply replacement samples

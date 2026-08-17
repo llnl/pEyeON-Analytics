@@ -11,8 +11,13 @@ grounded_by:
   - ../pEyeON/builds/provision/install-runtime-deps-debian-podman.sh
   - ../pEyeON/builds/provision/install-peyeon-analytics-uv.sh
 policy: agent-editable
-component: both
 last_validated: 2026-07-17
+repo_scope: cross-repo
+implementation_area: container
+format_domain: none
+audience: mixed
+status: draft
+source_paths: wiki/work/vm-image-size-reduction/brief.md
 tags: [feature-work, vm, qcow2, size, packer, analytics]
 ---
 

@@ -17,7 +17,12 @@ grounded_by:
   - ../pEyeON/README.md
 policy: agent-editable
 last_validated: 2026-07-09
-component: both
+repo_scope: cross-repo
+implementation_area: container
+format_domain: none
+audience: mixed
+status: draft
+source_paths: wiki/work/ovf-vm-image-build/design.md
 tags: [vm, qcow2, packer, nutanix, ahv, kvm, ova, ovf]
 ---
 

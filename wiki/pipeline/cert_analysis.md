@@ -6,8 +6,13 @@ grounded_by:
   - ../pEyeON-Analytics/schemas/eyeon_metadata.schema.yaml
   - ../pEyeON-Analytics/dbt_eyeon_gold/models/certs/
 policy: agent-editable
-component: pEyeON-analytics
 last_validated: 2026-06-26
+repo_scope: pEyeON-Analytics
+implementation_area: dbt-gold
+format_domain: none
+audience: mixed
+status: reviewed
+source_paths: wiki/pipeline/cert_analysis.md
 tags: [certs, x509, expiry, key-size, gold]
 ---
 
@@ -118,6 +123,6 @@ internal teams sign the most binaries.
 
 ## Related
 
-- [[wiki/components/observe]] — observation-level certificate extraction
-- [[wiki/schemas/silver_layer]] — DLT silver table structure
-- [[wiki/concepts/authenticode]] — Windows PE signing and authentihash
+- [[wiki/component/observe]] — observation-level certificate extraction
+- [[wiki/schema/silver_layer]] — DLT silver table structure
+- [[wiki/concept/authenticode]] — Windows PE signing and authentihash

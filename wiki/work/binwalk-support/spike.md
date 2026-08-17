@@ -11,8 +11,13 @@ grounded_by:
   - https://raw.githubusercontent.com/wiki/ReFirmLabs/binwalk/Compile-From-Source.md
   - https://raw.githubusercontent.com/wiki/ReFirmLabs/binwalk/Supported-Signatures.md
 policy: agent-editable
-component: both
 last_validated: 2026-06-26
+repo_scope: cross-repo
+implementation_area: scanner
+format_domain: firmware
+audience: mixed
+status: draft
+source_paths: wiki/work/binwalk-support/spike.md
 tags: [feature-work, spike, binwalk, firmware]
 ---
 

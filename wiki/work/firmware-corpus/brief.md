@@ -5,8 +5,13 @@ confidence: medium
 grounded_by:
   - raw/binwalk/binwalk.md
 policy: agent-editable
-component: both
 last_validated: 2026-06-26
+repo_scope: cross-repo
+implementation_area: scanner
+format_domain: firmware
+audience: mixed
+status: draft
+source_paths: wiki/work/firmware-corpus/brief.md
 tags: [feature-work, firmware, corpus, binwalk, testing]
 ---
 

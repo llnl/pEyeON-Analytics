@@ -10,8 +10,13 @@ grounded_by:
   - ../pEyeON/src/eyeon/parse.py
   - ../pEyeON/schema/observation.schema.json
 policy: agent-editable
-component: both
 last_validated: 2026-06-26
+repo_scope: cross-repo
+implementation_area: scanner
+format_domain: firmware
+audience: mixed
+status: draft
+source_paths: wiki/work/binwalk-support/verification.md
 tags: [feature-work, verification, binwalk, firmware]
 ---
 

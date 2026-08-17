@@ -7,8 +7,13 @@ grounded_by:
   - data/firmware_corpus/manifest.json
   - utils/firmware_corpus.py
 policy: agent-editable
-component: both
 last_validated: 2026-06-26
+repo_scope: cross-repo
+implementation_area: scanner
+format_domain: firmware
+audience: mixed
+status: draft
+source_paths: wiki/work/firmware-corpus/implementation_plan.md
 tags: [feature-work, implementation, firmware, corpus]
 ---
 
@@ -19,7 +24,7 @@ tags: [feature-work, implementation, firmware, corpus]
 Build a small, manifest-driven firmware corpus workflow that can support Binwalk
 development before full Binwalk integration is implemented.
 
-For the code-development handoff, see [[wiki/work/firmware-corpus/dev_handoff]].
+For the Developer handoff, see [[wiki/work/firmware-corpus/dev_handoff]].
 
 ## Steps
 

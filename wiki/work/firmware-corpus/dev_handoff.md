@@ -9,19 +9,27 @@ grounded_by:
   - wiki/work/firmware-corpus/references.md
   - raw/binwalk/binwalk.md
 policy: agent-editable
-component: both
 last_validated: 2026-06-26
+repo_scope: cross-repo
+implementation_area: scanner
+format_domain: firmware
+audience: mixed
+status: draft
+source_paths: wiki/work/firmware-corpus/dev_handoff.md
 tags: [feature-work, handoff, firmware, corpus]
 ---
 
 # Dev Handoff: Firmware Corpus
 
+**Status:** Approved
+**Architect Approval:** Grandfathered (handoff pre-dates the approval header convention introduced 2026-08-17)
+
 ## Copy/Paste Prompt
 
-Use this prompt to hand the work to a code-development agent:
+Use this prompt to hand the work to a Developer session:
 
 ```text
-Switch to code-development mode for the Firmware Corpus feature.
+As the Developer, implement the feature: firmware-corpus.
 
 Use these wiki files as the handoff context:
 
@@ -49,7 +57,7 @@ First slice:
 - Update wiki/work/firmware-corpus/verification.md with commands run and results.
 - Update wiki/work/firmware-corpus/implementation_plan.md checkboxes as work completes.
 
-Before editing code, read AGENTS.md and confirm that code-development mode is active for this task.
+Before editing code, read AGENTS.md and confirm this handoff is Approved.
 ```
 
 ## Handoff Summary
@@ -163,7 +171,7 @@ Final ignored paths should match the implementation's chosen cache layout.
 
 ## Closeout Instructions
 
-When the dev agent finishes the first slice:
+When the Developer finishes the first slice:
 
 - Update [[wiki/work/firmware-corpus/verification]] with commands run and results.
 - Update [[wiki/work/firmware-corpus/implementation_plan]] done checklist.
@@ -171,15 +179,16 @@ When the dev agent finishes the first slice:
 - Append a concise entry to `wiki/log.md`.
 - If durable behavior is established, update canonical wiki pages such as pipeline/component docs.
 
-## Operating Mode Note
+## Role Note
 
-`AGENTS.md` now distinguishes wiki-maintainer mode from code-development mode.
-This handoff is intended to be used with the explicit trigger:
+`AGENTS.md` defines the Architect / Engineer / Developer roles. This handoff
+is intended to be used with the explicit trigger:
 
 ```text
-Switch to code-development mode for the Firmware Corpus feature.
+As the Developer, implement the feature: firmware-corpus.
 ```
 
-In that mode, the development agent may modify source code, tests, configs,
-scripts, documentation, and wiki files in this repository as needed. `raw/` and
-`../pEyeON` remain protected unless separately authorized.
+In the Developer role, the agent may modify source code, tests, configs,
+scripts, and documentation in this repository as needed, plus this feature's
+`verification.md`, `implementation_plan.md` checklist, and `wiki/log.md`.
+`raw/` and `../pEyeON` remain protected unless separately authorized.

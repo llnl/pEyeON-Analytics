@@ -5,8 +5,13 @@ confidence: high
 grounded_by:
   - ../pEyeON-Analytics/README.md
 policy: agent-editable
-component: pEyeON-analytics
 last_validated: 2026-06-26
+repo_scope: pEyeON-Analytics
+implementation_area: analytics
+format_domain: none
+audience: mixed
+status: reviewed
+source_paths: wiki/overview/data_flow.md
 tags: [bronze, silver, gold, dlt, dbt]
 ---
 
@@ -70,7 +75,7 @@ uv run dbt build --project-dir dbt_eyeon_gold --profiles-dir dbt_eyeon_gold
 
 ## Related
 
-- [[wiki/components/load_eyeon]] — DLT loader component
-- [[wiki/components/dbt_gold]] — dbt project component
-- [[wiki/components/streamlit_app]] — app-led normal workflow
-- [[wiki/decisions/bronze_silver_gold]] — layer architecture decision
+- [[wiki/component/load_eyeon]] — DLT loader component
+- [[wiki/component/dbt_gold]] — dbt project component
+- [[wiki/component/streamlit_app]] — app-led normal workflow
+- [[wiki/decision/bronze_silver_gold]] — layer architecture decision

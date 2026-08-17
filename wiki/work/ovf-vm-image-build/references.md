@@ -18,7 +18,12 @@ grounded_by:
   - ../pEyeON/README.md
 policy: agent-editable
 last_validated: 2026-07-09
-component: both
+repo_scope: cross-repo
+implementation_area: container
+format_domain: none
+audience: mixed
+status: reviewed
+source_paths: wiki/work/ovf-vm-image-build/references.md
 tags: [references, container, vm]
 ---
 

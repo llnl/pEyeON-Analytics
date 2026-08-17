@@ -6,8 +6,13 @@ grounded_by:
   - ../pEyeON/README.md
   - ../pEyeON-Analytics/README.md
 policy: agent-editable
-component: both
 last_validated: 2026-06-26
+repo_scope: cross-repo
+implementation_area: analytics
+format_domain: none
+audience: mixed
+status: reviewed
+source_paths: wiki/overview/project.md
 tags: [overview, motivation, supply-chain, ot-ics]
 ---
 
@@ -35,7 +40,7 @@ on supply chain risks.
 
 The split is deliberate: the scanner is kept lightweight and deployable in
 constrained environments; analytics requires heavier Python dependencies and
-is run separately on collected data. See [[wiki/decisions/two_repo_split]].
+is run separately on collected data. See [[wiki/decision/two_repo_split]].
 
 ## Core Workflow
 
@@ -76,7 +81,7 @@ Every observation produces:
 - Cryptographic hashes: `md5`, `sha1`, `sha256`
 - Fuzzy hashes: `ssdeep` (all files), `imphash` (PE), `telfhash` (ELF)
 - `uuid` (uuid4, generated at scan time)
-- `filetype` array (can be multiple — see [[wiki/tensions/filetype_multi]])
+- `filetype` array (can be multiple — see [[wiki/tension/filetype_multi]])
 - `magic` string (libmagic output)
 - Format-specific `metadata` block
 

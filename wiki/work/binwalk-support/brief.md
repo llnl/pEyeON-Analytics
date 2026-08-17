@@ -4,8 +4,13 @@ type: concept
 confidence: medium
 grounded_by: []
 policy: agent-editable
-component: both
 last_validated: 2026-06-26
+repo_scope: cross-repo
+implementation_area: scanner
+format_domain: firmware
+audience: mixed
+status: draft
+source_paths: wiki/work/binwalk-support/brief.md
 tags: [feature-work, binwalk, firmware]
 ---
 
@@ -66,8 +71,8 @@ the extracted files.
 
 - [[wiki/work/binwalk-support/references]]
 - [[wiki/work/firmware-corpus/brief]]
-- [[wiki/concepts/llm_assisted_feature_workflow]]
-- [[wiki/concepts/feature_work_template]]
+- [[wiki/concept/llm_assisted_feature_workflow]]
+- [[wiki/concept/feature_work_template]]
 
 ## Open Questions
 
@@ -77,7 +82,7 @@ the extracted files.
 - What temporary and final directory layout should hold extracted files during parsing?
 - What recursion, size, timeout, and safety limits are required for extraction?
 - What minimal parent/child information, if any, must be emitted before the larger lineage design is resolved?
-- How should this feature update or depend on [[wiki/tensions/parent_field]] and [[wiki/tensions/archive_recursion]]?
+- How should this feature update or depend on [[wiki/tension/parent_field]] and [[wiki/tension/archive_recursion]]?
 - Should the implementation target Binwalk v3 directly, the `binwalk3` Python compatibility package, or both?
 - How should Binwalk v3 and/or `binwalk3` be installed in the published container image and local development environments?
 - Which fixture from [[wiki/work/firmware-corpus/brief]] should be used as the first Binwalk spike sample?

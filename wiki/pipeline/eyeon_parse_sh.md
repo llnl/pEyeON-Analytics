@@ -8,8 +8,13 @@ grounded_by:
   - eyeon-parse.sh
   - ../pEyeON-Analytics/README.md
 policy: agent-editable
-component: pEyeON-core
 last_validated: 2026-08-03
+repo_scope: pEyeON
+implementation_area: scanner
+format_domain: none
+audience: mixed
+status: reviewed
+source_paths: wiki/pipeline/eyeon_parse_sh.md
 tags: [wrapper, container, batch, runtime]
 ---
 
@@ -127,6 +132,6 @@ and writes the intended parse command to `/tmp/eyeon-debug-command.sh`.
 
 ## Related
 
-- [[wiki/components/container]] — image contents, build paths, runtime matrix
-- [[wiki/components/parse]] — core `eyeon parse` behavior
+- [[wiki/component/container]] — image contents, build paths, runtime matrix
+- [[wiki/component/parse]] — core `eyeon parse` behavior
 - [[wiki/pipeline/dlt_load]] — loading parse batches into analytics tables
