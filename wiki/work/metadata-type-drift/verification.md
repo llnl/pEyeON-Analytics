@@ -7,7 +7,12 @@ grounded_by:
   - pages/Schema_Blame.py
 policy: agent-editable
 last_validated: 2026-07-07
-component: pEyeON-analytics
+repo_scope: pEyeON-Analytics
+implementation_area: schema
+format_domain: none
+audience: mixed
+status: draft
+source_paths: wiki/work/metadata-type-drift/verification.md
 tags: [dbt, streamlit, gold]
 ---
 

@@ -6,8 +6,13 @@ grounded_by:
   - ../pEyeON/README.md
   - ../pEyeON-Analytics/README.md
 policy: agent-editable
-component: both
 last_validated: 2026-06-26
+repo_scope: cross-repo
+implementation_area: analytics
+format_domain: none
+audience: mixed
+status: draft
+source_paths: wiki/overview/architecture.md
 tags: [architecture, data-flow, overview]
 ---
 
@@ -85,6 +90,6 @@ silver -> dbt_eyeon_gold -> gold.* -> Streamlit pages
 - [[wiki/overview/project]] — project motivation and two-repo structure
 - [[wiki/overview/data_flow]] — analytics bronze/silver/gold flow
 - [[wiki/pipeline/eyeon_parse_sh]] — wrapper details
-- [[wiki/components/observe]] — single-file observation
-- [[wiki/components/parse]] — directory-level scanning
-- [[wiki/components/box_integration]] — optional result sharing
+- [[wiki/component/observe]] — single-file observation
+- [[wiki/component/parse]] — directory-level scanning
+- [[wiki/component/box_integration]] — optional result sharing

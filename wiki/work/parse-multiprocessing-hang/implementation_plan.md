@@ -7,7 +7,12 @@ grounded_by:
   - ../pEyeON/tests/testParse.py
 policy: agent-editable
 last_validated: 2026-08-03
-component: pEyeON-core
+repo_scope: pEyeON
+implementation_area: scanner
+format_domain: none
+audience: mixed
+status: reviewed
+source_paths: wiki/work/parse-multiprocessing-hang/implementation_plan.md
 tags: [parse, multiprocessing, mach-o, hang]
 ---
 

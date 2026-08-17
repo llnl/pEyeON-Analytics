@@ -25,9 +25,9 @@ Notes: Full scaffold grounded directly in live repo contents. Five genuine open
 
 Pages created: none
 Pages updated: wiki/overview/project.md, wiki/overview/architecture.md,
-  wiki/components/parse.md, wiki/components/checksum.md,
-  wiki/components/box_integration.md, wiki/components/container.md,
-  wiki/pipeline/eyeon_parse_sh.md, wiki/decisions/two_repo_split.md,
+  wiki/component/parse.md, wiki/component/checksum.md,
+  wiki/component/box_integration.md, wiki/component/container.md,
+  wiki/pipeline/eyeon_parse_sh.md, wiki/decision/two_repo_split.md,
   wiki/index.md
 Contradictions flagged: none
 Notes: Replaced README-backed stubs with grounded content for the field
@@ -39,12 +39,12 @@ Notes: Replaced README-backed stubs with grounded content for the field
 
 Pages created: none
 Pages updated: wiki/overview/project.md, wiki/overview/architecture.md,
-  wiki/overview/data_flow.md, wiki/components/load_eyeon.md,
-  wiki/components/dbt_gold.md, wiki/components/streamlit_app.md,
+  wiki/overview/data_flow.md, wiki/component/load_eyeon.md,
+  wiki/component/dbt_gold.md, wiki/component/streamlit_app.md,
   wiki/pipeline/dlt_load.md, wiki/pipeline/dbt_models.md,
-  wiki/pipeline/eyeon_parse_sh.md, wiki/schemas/silver_layer.md,
-  wiki/schemas/gold_layer.md, wiki/decisions/duckdb_dlt_dbt.md,
-  wiki/decisions/bronze_silver_gold.md, wiki/index.md
+  wiki/pipeline/eyeon_parse_sh.md, wiki/schema/silver_layer.md,
+  wiki/schema/gold_layer.md, wiki/decision/duckdb_dlt_dbt.md,
+  wiki/decision/bronze_silver_gold.md, wiki/index.md
 Contradictions flagged: none
 Notes: Populated analytics workflow pages from the local README: Python/uv
   quickstart, EyeOnData.toml dataset/database configuration, Streamlit-led
@@ -53,9 +53,9 @@ Notes: Populated analytics workflow pages from the local README: Python/uv
 
 ## [2026-06-26] process | LLM-assisted feature workflow
 
-Pages created: wiki/concepts/llm_assisted_feature_workflow.md,
-  wiki/concepts/feature_work_template.md,
-  wiki/decisions/feature_work_artifacts.md
+Pages created: wiki/concept/llm_assisted_feature_workflow.md,
+  wiki/concept/feature_work_template.md,
+  wiki/decision/feature_work_artifacts.md
 Pages updated: wiki/index.md
 Contradictions flagged: none
 Notes: Recorded the agreed lightweight feature workflow for LLM-assisted coding:
@@ -219,8 +219,8 @@ Notes: Extended the corpus manifest to support per-entry artifacts, including
 ## [2026-06-29] implementation | Core container extraction pattern
 
 Pages created: none
-Pages updated: wiki/components/parse.md, wiki/file_formats/archives.md,
-  wiki/tensions/parent_field.md, wiki/tensions/archive_recursion.md,
+Pages updated: wiki/component/parse.md, wiki/file_format/archives.md,
+  wiki/tension/parent_field.md, wiki/tension/archive_recursion.md,
   wiki/index.md
 Files updated in ../pEyeON: src/eyeon/container.py, src/eyeon/parse.py,
   src/eyeon/observe.py, schema/observation.schema.json, tests/testParse.py,
@@ -236,8 +236,8 @@ Notes: Implemented the first core archive recursion slice in pEyeON. Supported
 ## [2026-06-29] implementation | Core RAR ISO Docker container expansion
 
 Pages created: none
-Pages updated: wiki/components/parse.md, wiki/file_formats/archives.md,
-  wiki/tensions/archive_recursion.md, wiki/index.md
+Pages updated: wiki/component/parse.md, wiki/file_format/archives.md,
+  wiki/tension/archive_recursion.md, wiki/index.md
 Files updated in ../pEyeON: src/eyeon/container.py, tests/testParse.py
 Contradictions flagged: none
 Notes: Expanded the core container extraction helper to include Docker tar/gzip,
@@ -269,7 +269,7 @@ Notes: Integrated direct Binwalk v3 CLI support into core parse flow. Binwalk is
 ## [2026-06-29] implementation | Binwalk container packaging
 
 Pages created: none
-Pages updated: wiki/components/container.md,
+Pages updated: wiki/component/container.md,
   wiki/work/binwalk-support/verification.md
 Files updated in ../pEyeON: builds/Dockerfile, builds/podman.Dockerfile,
   .github/workflows/test-build-container.yaml, README.md
@@ -352,7 +352,7 @@ Notes: Expanded the source-controlled corpus manifest with Tasmota, ESPHome,
 ## [2026-06-30] implementation | Core generic metadata fallback
 
 Pages created: none
-Pages updated: wiki/components/observe.md, wiki/schemas/observation_schema.md,
+Pages updated: wiki/component/observe.md, wiki/schema/observation_schema.md,
   wiki/work/firmware-corpus/verification.md
 Files updated in ../pEyeON: src/eyeon/observe.py,
   schema/observation.schema.json, tests/testObserve.py
@@ -369,7 +369,7 @@ Notes: Added EyeON-owned generic metadata fallback logic without adding surfacta
 ## [2026-06-30] refactor | Core generic metadata module
 
 Pages created: none
-Pages updated: wiki/components/observe.md,
+Pages updated: wiki/component/observe.md,
   wiki/work/firmware-corpus/verification.md
 Files updated in ../pEyeON: src/eyeon/generic_metadata.py,
   src/eyeon/observe.py
@@ -439,7 +439,7 @@ Notes: Made core EyeON JSON output collision-safe. The default output filename
 ## [2026-06-30] implementation | Streamlit observation hierarchy page
 
 Pages created: none
-Pages updated: wiki/components/streamlit_app.md,
+Pages updated: wiki/component/streamlit_app.md,
   wiki/work/firmware-corpus/verification.md
 Files updated: pages/ObservationHierarchy.py, pages/pages.py
 Contradictions flagged: none
@@ -454,7 +454,7 @@ Notes: Added a Streamlit page for browsing `silver.raw_obs` parent/child
 
 Pages created: wiki/pipeline/base_schema_derivation.md
 Pages updated: wiki/index.md, wiki/pipeline/dlt_load.md,
-  wiki/schemas/silver_layer.md
+  wiki/schema/silver_layer.md
 Contradictions flagged: none
 Notes: Recovered and documented the prior DLT base-schema spike. Grounded the
   workflow in `schemas/schema.sql`, `load_eyeon.py`, `utils/schema_blame.py`,
@@ -486,8 +486,8 @@ Pages updated: wiki/work/ovf-vm-image-build/brief.md,
   wiki/work/ovf-vm-image-build/references.md,
   wiki/work/ovf-vm-image-build/implementation_plan.md,
   wiki/work/ovf-vm-image-build/verification.md,
-  wiki/components/container.md,
-  wiki/components/load_eyeon.md,
+  wiki/component/container.md,
+  wiki/component/load_eyeon.md,
   wiki/pipeline/dlt_load.md,
   wiki/index.md
 Contradictions flagged: none
@@ -497,20 +497,20 @@ Notes: Updated the qcow2 appliance VM work packet to reflect the current Debian 
 
 Pages updated: wiki/work/ovf-vm-image-build/brief.md,
   wiki/work/ovf-vm-image-build/design.md,
-  wiki/components/container.md
+  wiki/component/container.md
 Contradictions flagged: none
 Notes: Recorded alpha/debug decisions: password login is acceptable, keep the default `debian` user, ship a single VM flavor that includes pEyeON-Analytics. Clarified DuckDB CLI policy: default to DuckDB "latest" asset (optionally pin via `DUCKDB_CLI_VERSION`).
 
 ## [2026-07-10] docs | Build Doc Consolidation
 
-Pages updated: wiki/components/container.md,
+Pages updated: wiki/component/container.md,
   wiki/work/ovf-vm-image-build/verification.md
 Contradictions flagged: none
 Notes: Added pointers to the consolidated build documentation (`../pEyeON/BUILD.md`) and recorded additional libvirt/RHEL host troubleshooting notes (virsh console detach, SSH key override, DHCP recovery, libguestfs package naming).
 
 ## [2026-07-10] docs | Builder Glossary
 
-Pages created: wiki/concepts/build_glossary.md
+Pages created: wiki/concept/build_glossary.md
 Pages updated: wiki/index.md
 Contradictions flagged: none
 Notes: Added a builder-focused glossary for container + qcow2 appliance build technologies, project-specific terms, and pin guidance for known problem areas.
@@ -530,7 +530,7 @@ Notes: Recorded a UTM 4.7.x caveat for macOS testing: some builds only expose `I
 
 ## [2026-07-17] docs | External VM deployment guide
 
-Pages updated: wiki/components/container.md,
+Pages updated: wiki/component/container.md,
   wiki/work/ovf-vm-image-build/brief.md,
   wiki/work/ovf-vm-image-build/verification.md,
   wiki/index.md
@@ -541,7 +541,7 @@ Notes: Added references to `../pEyeON/builds/README-Deploy.md` so external deplo
 
 Pages created: wiki/work/parse-multiprocessing-hang/implementation_plan.md,
   wiki/work/parse-multiprocessing-hang/verification.md
-Pages updated: wiki/components/parse.md, wiki/index.md
+Pages updated: wiki/component/parse.md, wiki/index.md
 Files updated in ../pEyeON: src/eyeon/parse.py, tests/testParse.py,
   eyeon-parse.sh, builds/Dockerfile, builds/podman.Dockerfile,
   builds/provision/warm-surfactant-dbs.sh
@@ -587,3 +587,25 @@ Notes: Captured future work for replacing fragile multiprocess terminal output
   rendering. Also documented fragile mitigations from the current fix: exact-text
   Surfactant warning suppression, threshold-based large-file serialization, and
   `LOGURU_LEVEL` coordination rather than a full centralized logging design.
+
+## [2026-08-17] migration | Loreforge role model and wiki convention upgrade
+
+Pages created: wiki/work/update-loreforge/{brief,references,design,implementation_plan,dev_handoff,verification}.md
+Pages updated: AGENTS.md (rewritten), all wiki pages (frontmatter backfill +
+  singular path links), wiki/concept/llm_assisted_feature_workflow.md and
+  wiki/concept/feature_work_template.md (rewritten to latest loreforge versions),
+  wiki/work/firmware-corpus/dev_handoff.md and implementation_plan.md
+  (Developer-role invocation), wiki/index.md
+Contradictions flagged: none
+Notes: Architect/Engineer/Developer roles replace wiki-maintainer/code-development
+  modes; global role prompts (~/.config/opencode/prompts/engineer.md, developer.md)
+  mapped onto this repo's layout via the AGENTS.md path-mapping table. Wiki
+  directories renamed to singular (component, concept, decision, tension, schema,
+  file_format). New frontmatter fields (repo_scope, implementation_area,
+  format_domain, audience, status, source_paths) backfilled on all pages;
+  component: field replaced by repo_scope. dev_handoff.md now carries
+  Status/Architect Approval headers (instruction document); verification.md is
+  the audit artifact with full output and Deviations From Handoff. SYNTHESIS
+  marker, domain context, and EyeON-specific reasoning lint rules added.
+  Executed on branch grantj-update-loreforge; historical log entries above
+  retain pre-migration mode names and plural paths as historical record.

@@ -5,8 +5,13 @@ confidence: high
 grounded_by:
   - ../pEyeON-Analytics/README.md
 policy: agent-editable
-component: pEyeON-analytics
 last_validated: 2026-06-26
+repo_scope: pEyeON-Analytics
+implementation_area: dbt-gold
+format_domain: none
+audience: mixed
+status: reviewed
+source_paths: wiki/pipeline/dbt_models.md
 tags: [dbt, lineage, gold, staging]
 ---
 
@@ -46,6 +51,6 @@ Detailed model-by-model lineage requires reading the dbt project files directly.
 
 ## Related
 
-- [[wiki/components/dbt_gold]] — dbt component
-- [[wiki/schemas/gold_layer]] — gold schema documentation
+- [[wiki/component/dbt_gold]] — dbt component
+- [[wiki/schema/gold_layer]] — gold schema documentation
 - [[wiki/overview/data_flow]] — full pipeline overview

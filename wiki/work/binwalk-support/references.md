@@ -4,8 +4,13 @@ type: concept
 confidence: medium
 grounded_by: []
 policy: agent-editable
-component: both
 last_validated: 2026-06-26
+repo_scope: cross-repo
+implementation_area: scanner
+format_domain: firmware
+audience: mixed
+status: draft
+source_paths: wiki/work/binwalk-support/references.md
 tags: [feature-work, references, binwalk, firmware]
 ---
 
@@ -32,14 +37,14 @@ tags: [feature-work, references, binwalk, firmware]
 
 - [[wiki/work/firmware-corpus/brief]]
 - [[wiki/work/firmware-corpus/references]]
-- [[wiki/components/observe]]
-- [[wiki/components/parse]]
-- [[wiki/components/container]]
-- [[wiki/components/surfactant_plugins]]
-- [[wiki/schemas/observation_schema]]
+- [[wiki/component/observe]]
+- [[wiki/component/parse]]
+- [[wiki/component/container]]
+- [[wiki/component/surfactant_plugins]]
+- [[wiki/schema/observation_schema]]
 - [[wiki/overview/data_flow]]
-- [[wiki/tensions/parent_field]]
-- [[wiki/tensions/archive_recursion]]
+- [[wiki/tension/parent_field]]
+- [[wiki/tension/archive_recursion]]
 
 ## Libraries And APIs
 

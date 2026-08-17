@@ -6,8 +6,13 @@ grounded_by:
   - ../pEyeON-Analytics/README.md
   - ../pEyeON-Analytics/load_eyeon.py
 policy: agent-editable
-component: pEyeON-analytics
 last_validated: 2026-07-09
+repo_scope: pEyeON-Analytics
+implementation_area: dlt-pipeline
+format_domain: none
+audience: mixed
+status: reviewed
+source_paths: wiki/pipeline/dlt_load.md
 tags: [dlt, load, bronze, silver, duckdb]
 ---
 
@@ -58,7 +63,7 @@ To avoid failing on first-run, `load_eyeon.py` only attempts to pre-create desti
 
 ## Related
 
-- [[wiki/components/load_eyeon]] — loader component
+- [[wiki/component/load_eyeon]] — loader component
 - [[wiki/pipeline/base_schema_derivation]] — base-schema derivation and schema_blame corpus-selection notes
 - [[wiki/overview/data_flow]] — full data flow
 - [[wiki/pipeline/dbt_models]] — downstream dbt model build

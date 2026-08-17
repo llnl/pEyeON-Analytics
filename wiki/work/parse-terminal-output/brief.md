@@ -8,7 +8,12 @@ grounded_by:
   - ../pEyeON/src/eyeon/observe.py
 policy: agent-editable
 last_validated: 2026-08-04
-component: pEyeON-core
+repo_scope: pEyeON
+implementation_area: scanner
+format_domain: none
+audience: mixed
+status: draft
+source_paths: wiki/work/parse-terminal-output/brief.md
 tags: [parse, logging, progress, rich, terminal]
 ---
 

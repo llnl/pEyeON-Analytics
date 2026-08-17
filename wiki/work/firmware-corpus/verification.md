@@ -8,8 +8,13 @@ grounded_by:
   - utils/firmware_corpus.py
   - tests/test_firmware_corpus.py
 policy: agent-editable
-component: both
 last_validated: 2026-06-26
+repo_scope: cross-repo
+implementation_area: scanner
+format_domain: firmware
+audience: mixed
+status: draft
+source_paths: wiki/work/firmware-corpus/verification.md
 tags: [feature-work, verification, firmware, corpus]
 ---
 

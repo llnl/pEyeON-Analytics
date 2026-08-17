@@ -8,8 +8,13 @@ grounded_by:
   - ../pEyeON/schema/observation.schema.json
   - wiki/work/binwalk-support/spike.md
 policy: agent-editable
-component: both
 last_validated: 2026-06-26
+repo_scope: cross-repo
+implementation_area: scanner
+format_domain: firmware
+audience: mixed
+status: draft
+source_paths: wiki/work/binwalk-support/design.md
 tags: [feature-work, design, binwalk, firmware]
 ---
 

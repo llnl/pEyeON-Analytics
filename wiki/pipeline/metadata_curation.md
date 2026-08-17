@@ -9,7 +9,12 @@ grounded_by:
   - pages/Schema_Blame.py
 policy: agent-editable
 last_validated: 2026-07-07
-component: pEyeON-analytics
+repo_scope: pEyeON-Analytics
+implementation_area: analytics
+format_domain: none
+audience: mixed
+status: reviewed
+source_paths: wiki/pipeline/metadata_curation.md
 tags: [dlt, dbt, silver, gold, streamlit, metadata]
 ---
 

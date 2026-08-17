@@ -9,7 +9,12 @@ grounded_by:
   - ../pEyeON/builds/vm/packer/debian12-arm64.pkr.hcl
 policy: agent-editable
 last_validated: 2026-07-09
-component: both
+repo_scope: cross-repo
+implementation_area: container
+format_domain: none
+audience: mixed
+status: draft
+source_paths: wiki/work/ovf-vm-image-build/implementation_plan.md
 tags: [plan, packer, qcow2, scripts, refactor]
 ---
 

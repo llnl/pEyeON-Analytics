@@ -14,42 +14,42 @@ Master catalog of all pages. Updated by the agent on every ingest.
 
 ## Components
 
-| Page | Component | Confidence | Summary |
+| Page | Repo Scope | Confidence | Summary |
 |------|-----------|------------|---------|
-| [[wiki/components/observe]] | pEyeON-core | high | Observe class: single-file metadata extraction |
-| [[wiki/components/parse]] | pEyeON-core | high | Recursive directory scanning via Parse |
-| [[wiki/components/load_eyeon]] | pEyeON-analytics | high | DLT loader: EyeOn JSON batches → DuckDB bronze/silver |
-| [[wiki/components/dbt_gold]] | pEyeON-analytics | high | dbt project: silver tables → gold reporting/exploration models |
-| [[wiki/components/streamlit_app]] | pEyeON-analytics | high | EyeOnData.py: preferred batch loading and exploration UI |
-| [[wiki/components/container]] | pEyeON-core | high | Published image, local builds, Docker/Podman runtime matrix |
-| [[wiki/components/surfactant_plugins]] | pEyeON-core | medium | pluggy-based metadata extraction architecture |
-| [[wiki/components/checksum]] | pEyeON-core | high | Checksum verification (md5/sha1/sha256) |
-| [[wiki/components/box_integration]] | pEyeON-core | high | Box auth, list, delete, upload, and parse --upload workflows |
+| [[wiki/component/observe]] | pEyeON | high | Observe class: single-file metadata extraction |
+| [[wiki/component/parse]] | pEyeON | high | Recursive directory scanning via Parse |
+| [[wiki/component/load_eyeon]] | pEyeON-Analytics | high | DLT loader: EyeOn JSON batches → DuckDB bronze/silver |
+| [[wiki/component/dbt_gold]] | pEyeON-Analytics | high | dbt project: silver tables → gold reporting/exploration models |
+| [[wiki/component/streamlit_app]] | pEyeON-Analytics | high | EyeOnData.py: preferred batch loading and exploration UI |
+| [[wiki/component/container]] | pEyeON | high | Published image, local builds, Docker/Podman runtime matrix |
+| [[wiki/component/surfactant_plugins]] | pEyeON | medium | pluggy-based metadata extraction architecture |
+| [[wiki/component/checksum]] | pEyeON | high | Checksum verification (md5/sha1/sha256) |
+| [[wiki/component/box_integration]] | pEyeON | high | Box auth, list, delete, upload, and parse --upload workflows |
 
 ## Schemas
 
 | Page | Confidence | Summary |
 |------|------------|---------|
-| [[wiki/schemas/observation_schema]] | high | Full observation JSON schema (observation.schema.json) |
-| [[wiki/schemas/silver_layer]] | high | DLT-loaded silver tables: raw_obs and metadata tables |
-| [[wiki/schemas/gold_layer]] | high | dbt-built gold.* models for reporting and exploration |
+| [[wiki/schema/observation_schema]] | high | Full observation JSON schema (observation.schema.json) |
+| [[wiki/schema/silver_layer]] | high | DLT-loaded silver tables: raw_obs and metadata tables |
+| [[wiki/schema/gold_layer]] | high | dbt-built gold.* models for reporting and exploration |
 
 ## File Formats
 
 | Page | Filetype Enum | dbt Staging Model | Confidence |
 |------|--------------|-------------------|------------|
-| [[wiki/file_formats/pe]] | PE, Malformed PE, DOS | stg_metadata_pe_file | high |
-| [[wiki/file_formats/elf]] | ELF | stg_metadata_elf_file | high |
-| [[wiki/file_formats/macho]] | MACHO32, MACHO64, MACHOFAT, MACHOFAT64, EFIFAT | stg_metadata_mach_o_file | medium |
-| [[wiki/file_formats/coff]] | COFF, XCOFF32, XCOFF64, ECOFF | stg_metadata_coff_file | medium |
-| [[wiki/file_formats/java]] | JAVACLASS, JAR, WAR, EAR, APK, IPA, MSIX | stg_metadata_java_file | medium |
-| [[wiki/file_formats/javascript]] | (js detection via magic) | stg_metadata_js_file | low |
-| [[wiki/file_formats/ole]] | OLE, MSCAB, ISCAB | stg_metadata_ole_file | medium |
-| [[wiki/file_formats/uimage]] | UIMAGE | stg_metadata_uimage_file | medium |
-| [[wiki/file_formats/native_lib]] | AR_LIB, OMF_LIB | stg_metadata_native_lib | low |
-| [[wiki/file_formats/archives]] | ZIP, TAR, GZIP, BZIP2, XZ, RAR, ZSTANDARD, CPIO_* | `metadata.container_file` for first-slice extraction | high |
-| [[wiki/file_formats/rpm]] | RPM Package | (no staging model yet) | low |
-| [[wiki/file_formats/docker]] | DOCKER_GZIP, DOCKER_TAR | (SPDX output) | low |
+| [[wiki/file_format/pe]] | PE, Malformed PE, DOS | stg_metadata_pe_file | high |
+| [[wiki/file_format/elf]] | ELF | stg_metadata_elf_file | high |
+| [[wiki/file_format/macho]] | MACHO32, MACHO64, MACHOFAT, MACHOFAT64, EFIFAT | stg_metadata_mach_o_file | medium |
+| [[wiki/file_format/coff]] | COFF, XCOFF32, XCOFF64, ECOFF | stg_metadata_coff_file | medium |
+| [[wiki/file_format/java]] | JAVACLASS, JAR, WAR, EAR, APK, IPA, MSIX | stg_metadata_java_file | medium |
+| [[wiki/file_format/javascript]] | (js detection via magic) | stg_metadata_js_file | low |
+| [[wiki/file_format/ole]] | OLE, MSCAB, ISCAB | stg_metadata_ole_file | medium |
+| [[wiki/file_format/uimage]] | UIMAGE | stg_metadata_uimage_file | medium |
+| [[wiki/file_format/native_lib]] | AR_LIB, OMF_LIB | stg_metadata_native_lib | low |
+| [[wiki/file_format/archives]] | ZIP, TAR, GZIP, BZIP2, XZ, RAR, ZSTANDARD, CPIO_* | `metadata.container_file` for first-slice extraction | high |
+| [[wiki/file_format/rpm]] | RPM Package | (no staging model yet) | low |
+| [[wiki/file_format/docker]] | DOCKER_GZIP, DOCKER_TAR | (SPDX output) | low |
 
 ## Pipeline
 
@@ -66,21 +66,21 @@ Master catalog of all pages. Updated by the agent on every ingest.
 
 | Page | Status | Summary |
 |------|--------|---------|
-| [[wiki/decisions/two_repo_split]] | accepted | Core scanner vs. analytics in separate repos |
-| [[wiki/decisions/surfactant_plugins]] | accepted | pluggy for extensible format detection |
-| [[wiki/decisions/duckdb_dlt_dbt]] | accepted | DuckDB + DLT + dbt as local analytics stack |
-| [[wiki/decisions/bronze_silver_gold]] | accepted | Three-layer medallion architecture for EyeON data |
-| [[wiki/decisions/feature_work_artifacts]] | accepted | Standard wiki artifacts for LLM-assisted feature work |
+| [[wiki/decision/two_repo_split]] | accepted | Core scanner vs. analytics in separate repos |
+| [[wiki/decision/surfactant_plugins]] | accepted | pluggy for extensible format detection |
+| [[wiki/decision/duckdb_dlt_dbt]] | accepted | DuckDB + DLT + dbt as local analytics stack |
+| [[wiki/decision/bronze_silver_gold]] | accepted | Three-layer medallion architecture for EyeON data |
+| [[wiki/decision/feature_work_artifacts]] | accepted | Standard wiki artifacts for LLM-assisted feature work |
 
 ## Tensions
 
 | Page | Status | Summary |
 |------|--------|---------|
-| [[wiki/tensions/parent_field]] | resolved | `parent` is the UUID of the containing file observation for extracted children |
-| [[wiki/tensions/archive_recursion]] | resolved | ZIP/TAR/GZIP/BZIP2/XZ, Docker tar/gzip, RAR, and ISO now use the container extraction pattern |
-| [[wiki/tensions/rpm_no_staging]] | open | RPM metadata extracted but no gold staging model exists |
-| [[wiki/tensions/box_vs_local]] | open | Box upload path vs. fully local operation |
-| [[wiki/tensions/filetype_multi]] | open | filetype is an array — multiple types per file; gold models handle this inconsistently |
+| [[wiki/tension/parent_field]] | resolved | `parent` is the UUID of the containing file observation for extracted children |
+| [[wiki/tension/archive_recursion]] | resolved | ZIP/TAR/GZIP/BZIP2/XZ, Docker tar/gzip, RAR, and ISO now use the container extraction pattern |
+| [[wiki/tension/rpm_no_staging]] | open | RPM metadata extracted but no gold staging model exists |
+| [[wiki/tension/box_vs_local]] | open | Box upload path vs. fully local operation |
+| [[wiki/tension/filetype_multi]] | open | filetype is an array — multiple types per file; gold models handle this inconsistently |
 
 ## Feature Work
 
@@ -93,20 +93,21 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/work/vm-image-size-reduction/brief]] | proposed | Future task: reduce qcow2 size by stripping build toolchains, caches, and optional analytics payload rather than chasing nonexistent GUI/X11 weight |
 | [[wiki/work/parse-multiprocessing-hang/implementation_plan]] | implemented | Fix core parse multiprocessing hang on large Mach-O binaries by using spawn-based workers and recycling each worker after one file |
 | [[wiki/work/parse-terminal-output/brief]] | proposed | Future task: centralize parse worker output in the parent process and consider Rich for stable progress plus readable logs |
+| [[wiki/work/update-loreforge/brief]] | implemented | Migrate AGENTS.md and wiki to the loreforge Engineer/Developer role model, singular directories, and new frontmatter schema (reverse-engineered workflow record) |
 
 ## Concepts
 
 | Page | Confidence | Summary |
 |------|------------|---------|
-| [[wiki/concepts/supply_chain_risk]] | medium | OT/ICS software supply chain threat landscape |
-| [[wiki/concepts/sbom]] | medium | Software Bill of Materials; EyeON as SBOM-adjacent tooling |
-| [[wiki/concepts/fuzzy_hashing]] | high | ssdeep, telfhash, imphash — purpose and use in EyeON |
-| [[wiki/concepts/authenticode]] | medium | Windows PE signing: authentihash, LIEF verification |
-| [[wiki/concepts/surfactant]] | medium | Upstream LLNL tool EyeON builds on for plugin management |
-| [[wiki/concepts/llm_assisted_feature_workflow]] | medium | Lightweight RFC/ADR/spike workflow for LLM-assisted code changes |
-| [[wiki/concepts/feature_work_template]] | medium | Reusable skeleton for new feature work folders |
-| [[wiki/concepts/build_glossary]] | medium | Builder glossary: containers, qcow2 appliance, multi-arch, and common gotchas |
+| [[wiki/concept/supply_chain_risk]] | medium | OT/ICS software supply chain threat landscape |
+| [[wiki/concept/sbom]] | medium | Software Bill of Materials; EyeON as SBOM-adjacent tooling |
+| [[wiki/concept/fuzzy_hashing]] | high | ssdeep, telfhash, imphash — purpose and use in EyeON |
+| [[wiki/concept/authenticode]] | medium | Windows PE signing: authentihash, LIEF verification |
+| [[wiki/concept/surfactant]] | medium | Upstream LLNL tool EyeON builds on for plugin management |
+| [[wiki/concept/llm_assisted_feature_workflow]] | medium | Lightweight RFC/ADR/spike workflow for LLM-assisted code changes |
+| [[wiki/concept/feature_work_template]] | medium | Reusable skeleton for new feature work folders |
+| [[wiki/concept/build_glossary]] | medium | Builder glossary: containers, qcow2 appliance, multi-arch, and common gotchas |
 
 ---
 
-*Last updated: 2026-07-17 (added qcow2 deployment guidance references, refreshed VM/container docs, and clarified that the Debian appliance is already headless and likely size drivers are toolchains, caches, and analytics payload)*
+*Last updated: 2026-08-17 (loreforge migration: Architect/Engineer/Developer roles replace operating modes, singular wiki directories, new frontmatter schema backfilled on all pages, updated feature workflow with dev_handoff/verification as instruction/audit artifacts)*
