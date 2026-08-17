@@ -8,7 +8,7 @@ grounded_by:
   - ../pEyeON-Analytics/pages/ObservationHierarchy.py
   - ../pEyeON-Analytics/pages/Schema_Blame.py
   - ../pEyeON-Analytics/utils/search_forms.py
-  - ../pEyeON-Analytics/utils/utils.py
+  - ../pEyeON-Analytics/utils/batches.py
 policy: agent-editable
 last_validated: 2026-08-17
 repo_scope: pEyeON-Analytics

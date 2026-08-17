@@ -78,3 +78,26 @@ Single commit on `grantj-cleanup-streamlit`; revert the commit.
 - [x] Smoke launch attempted and results recorded (AppTest, old-vs-new baseline)
 - [x] verification.md updated; log.md entry appended
 - [x] Committed on grantj-cleanup-streamlit
+
+## Phase 2 Steps (shared-code refactor, settled 2026-08-17)
+
+Per [[wiki/work/cleanup-streamlit-app/refactoring_candidates]]: all three
+slices approved by the Architect, plus the `list_dirs` fix ride-along.
+
+1. Slice A: `utils/metadata_catalog.py` (MetadataCatalog class),
+   `utils/queries.py` (Query façade), `utils/sqlutil.py`; migrate all
+   duplicated discovery/naming/query sites.
+2. Slice B: `utils/st_widgets.py` (select_rows, metric_row,
+   shadow_init/shadow_sync); extend sqlutil (ilike_pattern); parameterize
+   search_forms user input.
+3. Slice C: split `utils/utils.py` → `utils/{batches,loader,app_init,sidebar}.py`;
+   fix `list_dirs` empty-frame columns.
+
+## Phase 2 Done Checklist
+
+- [x] Slice A implemented, migrated, AppTest clean (commit a774056)
+- [x] Slice B implemented, migrated, AppTest clean (commit 6933fd0)
+- [x] Slice C implemented, utils/utils.py retired, AppTest clean (commit 85ef486)
+- [x] list_dirs fix verified against the previously failing repro
+- [x] verification.md Phase 2 section recorded; log.md entry appended
+- [x] Committed on grantj-cleanup-streamlit

@@ -4,8 +4,8 @@ type: concept
 confidence: high
 grounded_by:
   - ../pEyeON-Analytics/EyeOnData.py
-  - ../pEyeON-Analytics/utils/utils.py
-  - ../pEyeON-Analytics/pages/pages.py
+  - ../pEyeON-Analytics/utils/app_init.py
+  - ../pEyeON-Analytics/utils/loader.py
 policy: agent-editable
 last_validated: 2026-08-17
 repo_scope: pEyeON-Analytics

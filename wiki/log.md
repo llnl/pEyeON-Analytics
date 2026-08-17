@@ -658,3 +658,21 @@ Notes: Engineer pass over pages/ + utils/ for cross-page code sharing.
   MetadataCatalog class, Query facade class, st_widgets + sqlutil function
   modules, utils/utils.py cohesion split. Sequenced into three slices;
   awaiting Architect selection.
+
+## [2026-08-17] implement | Cleanup Streamlit App — Phase 2 (3 slices)
+
+Pages created: none
+Pages updated: wiki/work/cleanup-streamlit-app/{design,implementation_plan,verification,brief,current_state,refactoring_candidates}.md,
+  wiki/component/streamlit_app.md (grounded_by refreshed)
+Contradictions flagged: none
+Notes: Architect approved all three refactor slices + list_dirs fix.
+  Slice A (a774056): utils/metadata_catalog.py MetadataCatalog class +
+  utils/queries.py Query facade + utils/sqlutil.py; migrated 7 duplicated
+  metadata-discovery/naming sites and all guarded-query patterns; certs
+  preflight ordering fixed; cache cleared after loads. Slice B (6933fd0):
+  utils/st_widgets.py (select_rows, metric_row, shadow helpers); search_forms
+  user input now parameterized. Slice C (85ef486): utils/utils.py retired
+  into utils/{batches,loader,app_init,sidebar}.py; list_dirs empty-frame
+  directory_path bug fixed and verified against the previously failing
+  repro. AppTest clean after every slice; entrypoint behavior parity with
+  Phase 1 baseline.

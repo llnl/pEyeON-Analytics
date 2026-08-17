@@ -100,6 +100,77 @@ Behavior parity confirmed on both paths.
 
 ## Follow-Ups
 
-- Fix `list_dirs` empty-frame columns (with Architect approval).
-- Phase 2+: UIX direction, utils/utils.py split, coupling/schema-chooser
-  fixes, `common/`/`extras/` dispositions (see brief).
+- ~~Fix `list_dirs` empty-frame columns~~ — approved and fixed in Phase 2
+  Slice C.
+- Phase 3+: UIX direction, coupling/schema-chooser fixes,
+  `common/`/`extras/` dispositions (see brief).
+
+---
+
+## Phase 2 — shared-code refactor, 3 slices (2026-08-17)
+
+Commits: a774056 (Slice A), 6933fd0 (Slice B), 85ef486 (Slice C).
+Same environment workaround as Phase 1 (`/tmp/eyeon-venv`).
+
+## Test Commands (Phase 2)
+
+After every slice:
+1. `python3 -m py_compile EyeOnData.py pages/*.py utils/*.py`
+2. AST unused-import scan over changed files.
+3. AppTest direct runs of the five standalone-safe pages plus
+   EyeOnSummary, with a valid dataset path.
+After Slice C additionally:
+4. AppTest of the entrypoint on both startup paths.
+5. AppTest of EyeOnSummary with the repo's real `EyeOnData.toml`
+   (nonexistent dataset path) — the `list_dirs` bug repro.
+6. `grep` for any remaining `utils.utils` references.
+
+## Results (Phase 2)
+
+```
+compile OK (every slice)
+unused-import scan: clean (after removing pd from BrowseDltData, EyeOnSummary)
+
+AppTest after each slice — all of:
+pages/certs.py: exceptions=none
+pages/ObservationHierarchy.py: exceptions=none
+pages/Schema_Blame.py: exceptions=none
+pages/debug_page.py: exceptions=none
+pages/EyeOnSummary.py: exceptions=none
+
+Entrypoint after Slice C:
+no-db path (init form): exceptions=0 (form renders, 3 text inputs)
+db-present path: exceptions=1 — identical pre-existing
+  CannotRestorePipelineException (missing local dlt state; matches the
+  Phase 1 old-code baseline)
+
+list_dirs repro (real toml, nonexistent dataset path):
+before fix: DuckDB Binder Error 'Table "d" does not have a column named
+  "directory_path"' — after fix: exceptions=[] and the page renders.
+
+utils.utils references remaining: none
+```
+
+## Deviations From Handoff (Phase 2)
+
+- `pages/certs.py`: the missing-models preflight now runs before the
+  `fct_observation_certificates` count query — the original ordering
+  queried a gold model before checking whether models exist, so a missing
+  model crashed the page instead of showing the intended warning.
+- `utils/loader.py §load_me_some_data` clears `st.cache_data` after dbt
+  runs so cached MetadataCatalog discovery sees newly loaded types (the
+  catalog now shares one cache where previously only search_forms cached).
+- Display consistency: Schema_Blame's heatmap short names now also strip
+  the `_file` suffix (shared `catalog.short_name`), and BrowseDltData's
+  "table not found" message renders as `st.warning` instead of `st.write`.
+- `list_dirs` fix extended to the scandir-found-nothing path (same
+  missing-column defect), not just the guard-clause empty frame.
+
+## Known Gaps (Phase 2)
+
+- `search_forms.search_raw_obs` now returns the SQL with a
+  `/* params=[...] */` suffix so BrowseDltData's query-signature hashing
+  distinguishes filters; any future caller wanting executable SQL alone
+  should split on the comment.
+- Full end-to-end run with real dlt state still requires the Architect's
+  machine (unchanged from Phase 1).
