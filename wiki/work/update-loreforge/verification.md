@@ -99,6 +99,10 @@ Lint conventions established during this pass (for future LINT runs):
 
 ## Follow-Ups
 
+- ~~Anchor the `.gitignore` firmware-corpus patterns so
+  `wiki/work/firmware-corpus/` is no longer silently ignored~~ — done
+  2026-08-17: patterns anchored to repo root (`/firmware-corpus/` etc.);
+  verified root cache dirs remain ignored and wiki paths no longer match.
 - Link orphaned work artifacts from their feature briefs.
 - Consider promoting the lint script into a committed `uv run` tool so LINT
   is reproducible rather than re-written per session.
