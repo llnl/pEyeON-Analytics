@@ -676,3 +676,26 @@ Notes: Architect approved all three refactor slices + list_dirs fix.
   directory_path bug fixed and verified against the previously failing
   repro. AppTest clean after every slice; entrypoint behavior parity with
   Phase 1 baseline.
+
+## [2026-08-17] implement | Cleanup Streamlit App — Phase 3 dashboard pages (uncommitted)
+
+Pages created: wiki/work/cleanup-streamlit-app/dashboard_ideas.md
+Pages updated: wiki/work/cleanup-streamlit-app/{design,verification}.md
+Contradictions flagged: none
+Notes: Architect approved dashboard ideas 1-9; implemented as five new
+  Streamlit pages (Inventory, SecurityPosture, DataQuality, ChangeDetection,
+  VariantClusters) plus gold.mart_batch_changes dbt model, sectioned
+  navigation (Overview/Analysis/Admin), and a Posture & Quality KPI row on
+  EyeOnSummary. Verified with AppTest against the local eyeon.duckdb (real
+  data). Data caveats recorded: imphash/telfhash placeholder values,
+  gold_files is per-uuid not per-content. Left UNCOMMITTED per Architect
+  direction pending sample-dataset testing.
+
+## [2026-08-17] commit | Cleanup Streamlit App — Phase 3 committed
+
+Pages updated: wiki/work/cleanup-streamlit-app/{design,implementation_plan}.md
+Contradictions flagged: none
+Notes: Architect tested the Phase 3 dashboard pages with sample datasets,
+  reported the missing sidebar nav (root cause: legacy
+  client.showSidebarNavigation=false suppressing the st.navigation menu;
+  fixed), and approved. Committed.

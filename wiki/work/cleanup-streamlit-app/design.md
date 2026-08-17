@@ -143,6 +143,24 @@ inventory, packaging table, and sequencing in
 `MetadataCatalog` (class), `Query` façade (class), `st_widgets` +
 `sqlutil` helper modules, and a cohesion split of `utils/utils.py`.
 
+## Phase 3 (settled by Architect 2026-08-17): dashboard feature pages
+
+All nine ideas from [[wiki/work/cleanup-streamlit-app/dashboard_ideas]]
+approved and implemented as new pages; committed 2026-08-17 after Architect
+testing with sample datasets:
+
+- **New pages**: `Inventory.py` (overlap, filetypes, top artifacts, OS/arch,
+  containers/firmware), `SecurityPosture.py` (signing + cert hygiene),
+  `DataQuality.py` (coverage/errors/multi-type/drift + load timeline),
+  `ChangeDetection.py`, `VariantClusters.py`.
+- **New dbt model**: `gold.mart_batch_changes` — new/disappeared hashes
+  between consecutive batches per utility (first batch = baseline).
+- **Navigation** grouped into sections: Overview / Analysis / Admin.
+- **EyeOnSummary** gains a "Posture & Quality" KPI row linking to the new
+  pages; `st_widgets.page_link` degrades to a caption on direct page runs.
+- All queries guarded via `Query.try_df` so missing gold models warn
+  instead of crash.
+
 ## Open Questions
 
 Later-phase questions remain in [[wiki/work/cleanup-streamlit-app/brief]]

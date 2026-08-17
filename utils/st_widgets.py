@@ -48,6 +48,16 @@ def shadow_init(key: str, default):
     return st.session_state[shadow]
 
 
+def page_link(page: str, label: str) -> None:
+    """st.page_link that degrades to a caption when the target page is not
+    registered — i.e. when a page script is run directly instead of through
+    the EyeOnData.py navigation entrypoint."""
+    try:
+        st.page_link(page, label=label)
+    except Exception:
+        st.caption(label)
+
+
 def shadow_sync(key: str):
     """Cross-page widget persistence, step 2: on_change callback that copies
     the widget's value into its shadow key."""

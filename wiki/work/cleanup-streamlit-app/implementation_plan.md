@@ -93,6 +93,17 @@ slices approved by the Architect, plus the `list_dirs` fix ride-along.
 3. Slice C: split `utils/utils.py` → `utils/{batches,loader,app_init,sidebar}.py`;
    fix `list_dirs` empty-frame columns.
 
+## Phase 3 Done Checklist (dashboard pages)
+
+- [x] Five new pages (Inventory, SecurityPosture, DataQuality,
+      ChangeDetection, VariantClusters) implemented with guarded queries
+- [x] gold.mart_batch_changes dbt model added and validated on real data
+- [x] Sectioned navigation (Overview/Analysis/Admin) in EyeOnData.py
+- [x] EyeOnSummary Posture & Quality KPI row with page links
+- [x] showSidebarNavigation regression found by Architect and fixed
+- [x] AppTest clean on all ten pages; artifacts updated
+- [x] Committed after Architect sample-dataset testing
+
 ## Phase 2 Done Checklist
 
 - [x] Slice A implemented, migrated, AppTest clean (commit a774056)

@@ -2,7 +2,7 @@ from utils.batches import list_all_batches
 from utils.loader import load_me_some_data
 from utils.metadata_catalog import MetadataCatalog
 from utils.queries import Query
-from utils.st_widgets import metric_row, select_rows
+from utils.st_widgets import metric_row, page_link, select_rows
 from utils.config import settings
 import streamlit as st
 
@@ -90,6 +90,38 @@ def main():
 
             with tabs[1]:
                 st.dataframe(batches, width="stretch", hide_index=True)
+
+    with st.expander("Posture & Quality", expanded=True):
+        posture = q.try_df(
+            """
+            select
+              (select count(*) filter (authenticode_integrity = 'OK')
+                 from gold.gold_files where list_contains(filetypes, 'PE')) as signed_ok,
+              (select count(*) from gold.dim_certificates
+                 where expires_on < current_timestamp) as expired_certs,
+              (select count(*) from gold.dim_certificates
+                 where try_cast(regexp_extract(rsa_key_size, '[0-9]+') as int) < 2048) as weak_keys,
+              (select count(*) from silver.metadata_error) as md_errors
+            """,
+            missing_msg="Posture models are not available yet. Run dbt to materialize them.",
+        )
+        if not posture.empty:
+            p0 = posture.iloc[0]
+            metric_row(
+                {
+                    "Signed PE (OK)": int(p0["signed_ok"] or 0),
+                    "Expired Certs": int(p0["expired_certs"] or 0),
+                    "Weak RSA Keys": int(p0["weak_keys"] or 0),
+                    "Metadata Errors": int(p0["md_errors"] or 0),
+                }
+            )
+            l1, l2, l3 = st.columns(3)
+            with l1:
+                page_link("pages/SecurityPosture.py", "Security Posture →")
+            with l2:
+                page_link("pages/Inventory.py", "Software Inventory →")
+            with l3:
+                page_link("pages/DataQuality.py", "Data Quality →")
 
     with st.expander("All Batches", expanded=True):
         batch_dirs = list_all_batches(settings.datasets.dataset_path)

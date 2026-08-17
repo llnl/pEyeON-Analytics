@@ -25,14 +25,25 @@ def main():
 
     if db.exists():
         pg = st.navigation(
-            [
-                st.Page("pages/EyeOnSummary.py", title="EyeOn Summary", default=True),
-                st.Page("pages/certs.py", title="X509 Certificates"),
-                st.Page("pages/ObservationHierarchy.py", title="Observation Hierarchy"),
-                st.Page("pages/BrowseDltData.py", title="Browse/Search Observations"),
-                st.Page("pages/Schema_Blame.py", title="Schema Inspector"),
-                st.Page("pages/debug_page.py", title="Debug Tools"),
-            ]
+            {
+                "Overview": [
+                    st.Page("pages/EyeOnSummary.py", title="EyeOn Summary", default=True),
+                ],
+                "Analysis": [
+                    st.Page("pages/Inventory.py", title="Software Inventory"),
+                    st.Page("pages/SecurityPosture.py", title="Security Posture"),
+                    st.Page("pages/VariantClusters.py", title="Variant Clusters"),
+                    st.Page("pages/ChangeDetection.py", title="Change Detection"),
+                    st.Page("pages/certs.py", title="X509 Certificates"),
+                    st.Page("pages/ObservationHierarchy.py", title="Observation Hierarchy"),
+                    st.Page("pages/BrowseDltData.py", title="Browse/Search Observations"),
+                ],
+                "Admin": [
+                    st.Page("pages/DataQuality.py", title="Data Quality"),
+                    st.Page("pages/Schema_Blame.py", title="Schema Inspector"),
+                    st.Page("pages/debug_page.py", title="Debug Tools"),
+                ],
+            }
         )
         # Render the schema/root-table controls on every page, as before.
         sidebar_db_chooser()

@@ -166,6 +166,78 @@ utils.utils references remaining: none
 - `list_dirs` fix extended to the scandir-found-nothing path (same
   missing-column defect), not just the guard-clause empty frame.
 
+---
+
+## Phase 3 — dashboard feature pages (2026-08-17, UNCOMMITTED)
+
+Implemented per Architect approval of dashboard ideas 1–9; intentionally
+left uncommitted for Architect testing with sample datasets.
+
+## Test Commands (Phase 3)
+
+1. Local schema/value-domain inspection of `database/eyeon.duckdb`
+   (read-only) to ground SQL: PE/ELF column names, `authenticode_integrity`
+   values, hash placeholder values, cert mart columns.
+2. Change-detection SQL validated read-only against silver before writing
+   the dbt model; then `dbt run --select mart_batch_changes` materialized
+   only the new view into the local DB.
+3. `python3 -m py_compile` on all pages + entrypoint.
+4. AppTest direct runs of all five new pages + updated EyeOnSummary +
+   the four prior pages, against the local DB (real data: 4 utilities,
+   4,861 observations).
+
+## Results (Phase 3)
+
+```
+dbt: PASS=1 (mart_batch_changes)
+AppTest — all pages exceptions=none, real metrics rendered:
+Inventory: Unique Content 2,529 / Observed Files 4,861 / Dedup 1.92x /
+  Shared Binaries 172 / Containers 15 / Max Depth 3
+SecurityPosture: PE 7 / Signed OK 2 / Problems 5 / Certs 3 / Expired 1 /
+  Files w/ Expired Cert 7
+ChangeDetection: 3 batches compared / 718 new / 2,557 disappeared (test utility)
+VariantClusters: 5 telfhash clusters (largest 8 variants) after
+  placeholder filtering; no real imphash clusters in this dataset
+DataQuality: Coverage 73.5% / Errors 1 / Multi-Type 2,119 / Unmodeled 2
+```
+
+Issues found and fixed during verification:
+
+- Initial "Unique Files" KPI conflated uuids with content; corrected to
+  `count(distinct sha256)` with an explicit dedup-factor definition.
+- imphash/telfhash placeholder values (`N/A`, `-`, `tnull`, `''`) formed
+  one giant fake cluster; now excluded (see dashboard_ideas caveats).
+- `st.page_link` raised on direct page runs (no navigation context);
+  wrapped as `st_widgets.page_link` which degrades to a caption.
+
+## Deviations From Handoff (Phase 3)
+
+- Navigation grouped into Overview/Analysis/Admin sections (11 pages were
+  unwieldy as a flat list) — easily flattened if the Architect prefers.
+- Load timeline (a review finding, not one of the numbered ideas) included
+  on the Data Quality page.
+- `gold.mart_batch_changes` was materialized into the local DB via a
+  targeted dbt run so verification used real data — the same idempotent
+  action the app's loader performs.
+
+## Known Gaps (Phase 3)
+
+- **Architect-reported regression (fixed 2026-08-17):** the sidebar nav
+  menu never rendered — `.streamlit/config.toml` had
+  `client.showSidebarNavigation = false`, set in the pre-`st.navigation`
+  era to hide the auto-generated `pages/` nav in favor of the hand-drawn
+  `page_link` menu. That setting also suppresses the `st.navigation` menu.
+  Flipped to `true`. Root cause of the test escape: AppTest exercises page
+  scripts, not client-side sidebar chrome, so Phase 1's parity checks could
+  not see the missing menu.
+- Entrypoint-context navigation could not be AppTested on this box (the
+  pre-existing missing-dlt-state failure in the sidebar chooser persists);
+  direct page runs + nav registration compile are the verification here.
+- ssdeep is displayed but not pairwise-scored in Variant Clusters.
+- Change detection keys on sha256 only; renamed-but-identical files are
+  invisible to it by design, and content-similar (rebuilt) files appear as
+  new+disappeared pairs.
+
 ## Known Gaps (Phase 2)
 
 - `search_forms.search_raw_obs` now returns the SQL with a
