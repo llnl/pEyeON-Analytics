@@ -7,12 +7,17 @@ import utils.db as db
 import pandas as pd
 import streamlit as st
 import altair as alt
+from utils.metadata_catalog import MetadataCatalog
+from utils.queries import Query
 from utils.schema_blame import (
     DLT_INTERNAL_COLUMNS,
     materialize_schema_blame,
     blame_summary,
     blame_for_column,
 )
+
+catalog = MetadataCatalog()
+q = Query()
 
 
 
@@ -101,26 +106,19 @@ def main():
         "This table highlights metadata tables present in silver but missing from gold.all_metadata."
     )
 
-    try:
-        drift = (
-            conn.execute(
-                """
-                select
-                  metadata_table_name,
-                  status,
-                  is_modeled
-                from gold.metadata_type_drift
-                order by
-                  case status when 'unmodeled' then 0 else 1 end,
-                  metadata_table_name
-                """
-            )
-            .df()
-        )
-    except Exception as e:
-        drift = pd.DataFrame()
-        st.warning("`gold.metadata_type_drift` is not available yet. Run dbt to materialize it.")
-        st.caption(f"{type(e).__name__}: {e}")
+    drift = q.try_df(
+        """
+        select
+          metadata_table_name,
+          status,
+          is_modeled
+        from gold.metadata_type_drift
+        order by
+          case status when 'unmodeled' then 0 else 1 end,
+          metadata_table_name
+        """,
+        missing_msg="`gold.metadata_type_drift` is not available yet. Run dbt to materialize it.",
+    )
 
     if not drift.empty:
         d1, d2, d3 = st.columns(3)
@@ -260,10 +258,8 @@ def main():
     )
     heat_df["version_to"] = "v" + heat_df["version_to"].astype(str)
 
-    # strip leading "metadata_" for brevity
-    heat_df["table_short"] = heat_df["table_name"].str.replace(
-        r"^metadata_", "", regex=True
-    )
+    # shorten table names for brevity, consistently with the rest of the app
+    heat_df["table_short"] = heat_df["table_name"].map(catalog.short_name)
 
     # order tables by total changes so the busiest rise to the top
     table_order = (

@@ -2,13 +2,14 @@ import hashlib
 from pathlib import Path
 import subprocess
 
-import duckdb
-import pandas as pd
 import streamlit as st
 
 import utils.db as db
+from utils.queries import Query
 from utils.schema_ext import EnrichedTable
 import utils.search_forms as sf
+
+q = Query()
 
 
 
@@ -68,23 +69,12 @@ def main():
                         hack = "bronze.raw_json"
                     else:
                         hack = table_name
-                    results = (
-                        db.get_conn()
-                        .execute(f"select * from {hack} where {filter}")
-                        .df()
-                    )
+                    results = q.df(f"select * from {hack} where {filter}")
                 else:
-                    try:
-                        results = (
-                            db.get_conn()
-                            .execute(f"SELECT * FROM {table_name}")
-                            .df()
-                        )
-                    except duckdb.CatalogException:
-                        st.write(
-                            "Table not found. Check the selected schema in the sidebar."
-                        )
-                        results = pd.DataFrame()
+                    results = q.try_df(
+                        f"SELECT * FROM {table_name}",
+                        missing_msg="Table not found. Check the selected schema in the sidebar.",
+                    )
         else:
             # Child query filtered by parent
             # TODO:
@@ -95,13 +85,9 @@ def main():
                 parent_column = "_dlt_parent_id"
                 parent_id = parent_row["_dlt_id"]
             query_signature = f"child:{table_name}:{parent_column}:{parent_id}"
-            results = (
-                db.get_conn()
-                .execute(
-                    f"SELECT * FROM {table_name} WHERE {parent_column} = ? LIMIT 100",
-                    [parent_id],
-                )
-                .df()
+            results = q.df(
+                f"SELECT * FROM {table_name} WHERE {parent_column} = ? LIMIT 100",
+                [parent_id],
             )
 
         return results, query_signature

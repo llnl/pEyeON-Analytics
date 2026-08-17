@@ -3,92 +3,11 @@ from __future__ import annotations
 import pandas as pd
 import streamlit as st
 
-import utils.db as db
+from utils.metadata_catalog import MetadataCatalog
+from utils.queries import Query
 
-
-METADATA_LABELS = {
-    "metadata_binwalk_file": "Binwalk scan",
-    "metadata_container_file": "Container",
-    "metadata_device_tree_file": "Device tree",
-    "metadata_elf_file": "ELF binary",
-    "metadata_error": "Error",
-    "metadata_generic_file": "Generic file",
-    "metadata_java_file": "Java",
-    "metadata_js_file": "JavaScript",
-    "metadata_mach_o_file": "Mach-O",
-    "metadata_native_lib_file": "Native library",
-    "metadata_ole_file": "OLE document",
-    "metadata_opkg_file": "OpenWrt package metadata",
-    "metadata_pe_file": "PE binary",
-    "metadata_symlink_file": "Symlink",
-    "metadata_text_file": "Text/config/script",
-    "metadata_uimage_file": "U-Boot image",
-    "metadata_unknown": "Unknown",
-    "metadata_web_asset": "Web asset",
-}
-
-
-def _sql_literal(value: str) -> str:
-    return "'" + value.replace("'", "''") + "'"
-
-
-def _metadata_label(table_name: str) -> str:
-    return METADATA_LABELS.get(
-        table_name,
-        table_name.removeprefix("metadata_").removesuffix("_file").replace("_", " ").title(),
-    )
-
-
-def _base_metadata_tables() -> list[str]:
-    rows = db.get_conn().execute(
-        """
-        select table_name
-        from information_schema.tables
-        where table_schema = 'silver'
-          -- DuckDB LIKE treats '_' as a single-character wildcard, so avoid
-          -- patterns like '%__%' which would match almost anything.
-          and left(table_name, 9) = 'metadata_'
-          and instr(table_name, '__') = 0
-        order by table_name
-        """
-    ).fetchall()
-    return [row[0] for row in rows]
-
-
-def _table_columns(table_name: str) -> set[str]:
-    rows = db.get_conn().execute(
-        """
-        select column_name
-        from information_schema.columns
-        where table_schema = 'silver'
-          and table_name = ?
-        """,
-        [table_name],
-    ).fetchall()
-    return {row[0] for row in rows}
-
-
-def _metadata_union_sql() -> str:
-    selects = []
-    for table_name in _base_metadata_tables():
-        columns = _table_columns(table_name)
-        metadata_label = _metadata_label(table_name)
-        extension_expr = "cast(extension as varchar)" if "extension" in columns else "NULL"
-        mime_expr = "cast(mime_type as varchar)" if "mime_type" in columns else "NULL"
-        selects.append(
-            f"""
-            select
-              uuid,
-              '{table_name}' as metadata_table,
-              {_sql_literal(metadata_label)} as metadata_type,
-              {extension_expr} as extension,
-              {mime_expr} as mime_type
-            from silver.{table_name}
-            """
-        )
-    if not selects:
-        return "select NULL as uuid, NULL as metadata_table, NULL as metadata_type, NULL as extension, NULL as mime_type where false"
-    return "\nunion all\n".join(selects)
+catalog = MetadataCatalog()
+q = Query()
 
 
 def _roots(include_leaf_roots: bool, filename_filter: str) -> pd.DataFrame:
@@ -100,7 +19,7 @@ def _roots(include_leaf_roots: bool, filename_filter: str) -> pd.DataFrame:
     if not include_leaf_roots:
         where.append("coalesce(c.child_count, 0) > 0")
     where_sql = "where " + " and ".join(where) if where else ""
-    return db.get_conn().execute(
+    return q.df(
         f"""
         with child_counts as (
           select parent as uuid, count(*) as child_count
@@ -124,11 +43,11 @@ def _roots(include_leaf_roots: bool, filename_filter: str) -> pd.DataFrame:
         limit 500
         """,
         params,
-    ).df()
+    )
 
 
 def _tree(root_uuid: str, max_depth: int) -> pd.DataFrame:
-    return db.get_conn().execute(
+    return q.df(
         """
         with recursive tree as (
           select
@@ -168,12 +87,12 @@ def _tree(root_uuid: str, max_depth: int) -> pd.DataFrame:
         order by depth, filename, uuid
         """,
         [root_uuid, max_depth],
-    ).df()
+    )
 
 
 def _tree_with_metadata(root_uuid: str, max_depth: int) -> pd.DataFrame:
-    metadata_sql = _metadata_union_sql()
-    return db.get_conn().execute(
+    metadata_sql = catalog.detail_union_sql()
+    return q.df(
         f"""
         with recursive tree as (
           select
@@ -210,7 +129,7 @@ def _tree_with_metadata(root_uuid: str, max_depth: int) -> pd.DataFrame:
         left join metadata m on m.uuid = t.uuid
         """,
         [root_uuid, max_depth],
-    ).df()
+    )
 
 
 def _summary(tree_md: pd.DataFrame) -> pd.DataFrame:

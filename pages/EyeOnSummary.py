@@ -1,9 +1,13 @@
-import utils.db as db
+from utils.metadata_catalog import MetadataCatalog
+from utils.queries import Query
 from utils.utils import list_all_batches, load_me_some_data
 from utils.config import settings
 import streamlit as st
 
 import pandas as pd
+
+catalog = MetadataCatalog()
+q = Query()
 
 
 
@@ -12,16 +16,10 @@ def main():
 
     with st.expander("Loaded Data", expanded=True):
         # Hosts, labels, etc over time. Produces a constant vertical size, so its a good default for any size data set
-        try:
-            batches = (
-                db.get_conn()
-                .sql("from gold.batch_summary order by utility_id")
-                .df()
-            )
-        except Exception as e:
-            st.warning("Batch summary is not available yet.")
-            st.caption(f"{type(e).__name__}: {e}")
-            batches = pd.DataFrame()
+        batches = q.try_df(
+            "from gold.batch_summary order by utility_id",
+            missing_msg="Batch summary is not available yet.",
+        )
 
         if batches.empty:
             st.info("No batch summary rows found in `gold.batch_summary`.")
@@ -37,22 +35,7 @@ def main():
                 k1.metric("Utilities", f"{total_utilities}")
                 k2.metric("Batches", f"{total_batches}")
                 k3.metric("Observations", f"{total_obs}")
-                tables = (
-                    db.get_conn()
-                    .execute(
-                        "select list_sort(list(distinct _metadata_table_name)) from gold.all_metadata"
-                    )
-                    .fetchone()[0]
-                )
-                if tables is None:
-                    type_names = ["_None_"]
-                else:
-                    type_names = [
-                        s.removeprefix("metadata_").removesuffix("_file")
-                        for s in tables
-                    ]
-                total_md_types = f"{', '.join(type_names)}"
-                k4.metric("Metadata Types", f"{total_md_types}")
+                k4.metric("Metadata Types", ", ".join(catalog.loaded_type_names()))
 
                 left, right = st.columns([2, 1])
                 with left:

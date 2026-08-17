@@ -201,6 +201,9 @@ def load_me_some_data(selected_rows: list[dict]) -> None:
         # DBT only needs to be run once for all batches
         st.write("Running DBT...")
         run_dbt()
+        # New batches can introduce new metadata types/tables; drop cached
+        # discovery (e.g. MetadataCatalog) so pages see them immediately.
+        st.cache_data.clear()
         status.update(label="Processing complete!", state="complete", expanded=False)
         st.rerun()
 

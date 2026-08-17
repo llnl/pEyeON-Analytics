@@ -1,8 +1,9 @@
-import utils.db as db
+from utils.queries import Query
 import pandas as pd
 import streamlit as st
 import altair as alt
 
+q = Query()
 
 REQUIRED_MODELS = [
     "dim_certificates",
@@ -17,32 +18,8 @@ REQUIRED_MODELS = [
 ]
 
 
-def _query_df(sql: str) -> pd.DataFrame:
-    return db.get_conn().sql(sql).df()
-
-
-def _existing_gold_models() -> set[str]:
-    rows = (
-        db.get_conn()
-        .sql(
-            """
-        select table_name
-        from information_schema.tables
-        where table_schema = 'gold'
-        """
-        )
-        .fetchall()
-    )
-    return {row[0] for row in rows}
-
-
-def _missing_models() -> list[str]:
-    existing = _existing_gold_models()
-    return [model for model in REQUIRED_MODELS if model not in existing]
-
-
 def _summary_metrics() -> dict[str, object]:
-    summary = _query_df(
+    summary = q.df(
         """
         select
           count(*) as certificate_count,
@@ -52,7 +29,7 @@ def _summary_metrics() -> dict[str, object]:
         """
     ).iloc[0]
 
-    obs = _query_df(
+    obs = q.df(
         """
         select
           count(*) as certificate_observation_rows,
@@ -93,7 +70,7 @@ def _render_summary() -> None:
 
 def _render_feature_summary() -> None:
     st.subheader("Signature Feature Summary")
-    features_df = _query_df(
+    features_df = q.df(
         """
         select
           is_ca,
@@ -109,7 +86,7 @@ def _render_feature_summary() -> None:
 
 def _render_observations_by_utility() -> None:
     st.subheader("Observations Containing Certificates")
-    locations_df = _query_df(
+    locations_df = q.df(
         """
         select
           location as utility_id,
@@ -128,7 +105,7 @@ def _render_observations_by_utility() -> None:
 
 def _render_key_sizes() -> None:
     st.subheader("RSA Key Sizes")
-    key_sizes_df = _query_df(
+    key_sizes_df = q.df(
         """
         select
           coalesce(rsa_key_size, 'Unknown') as rsa_key_size,
@@ -155,14 +132,14 @@ def _render_key_sizes() -> None:
 
 def _render_issue_expiry_years() -> None:
     st.subheader("Certificate Issue and Expiry Dates")
-    exp_years_df = _query_df(
+    exp_years_df = q.df(
         """
         select expiry_year, expiring_certs
         from gold.mart_cert_expiration_years
         order by expiry_year
         """
     )
-    issue_years_df = _query_df(
+    issue_years_df = q.df(
         """
         select issue_year, issued_certs
         from gold.mart_cert_issue_years
@@ -211,7 +188,7 @@ def _render_states_and_orgs() -> None:
 
     with left:
         st.subheader("Certificate Subject States")
-        states_df = _query_df(
+        states_df = q.df(
             """
             select state, num_rows
             from gold.mart_cert_subject_states
@@ -225,7 +202,7 @@ def _render_states_and_orgs() -> None:
 
     with right:
         st.subheader("Certificate Organizations")
-        orgs_df = _query_df(
+        orgs_df = q.df(
             """
             select organization, num_rows
             from gold.mart_cert_organizations
@@ -241,7 +218,7 @@ def _render_states_and_orgs() -> None:
 
 def _render_certificate_details() -> None:
     st.subheader("Certificate Detail")
-    detail_df = _query_df(
+    detail_df = q.df(
         """
         select
           cert_sha256,
@@ -265,13 +242,7 @@ def _render_certificate_details() -> None:
 def main():
     st.header("Certificate Data Visualization")
 
-    missing = _missing_models()
-    any_certs = (
-        db.get_conn()
-        .execute("select count(*) from gold.fct_observation_certificates")
-        .fetchone()[0]
-    )
-
+    missing = q.missing_tables("gold", REQUIRED_MODELS)
     if missing:
         st.warning("Certificate dbt models are not available yet.")
         st.code(
@@ -283,6 +254,8 @@ def main():
         )
         return
 
+    # Queried only after the preflight so a missing model can't crash the page.
+    any_certs = q.scalar("select count(*) from gold.fct_observation_certificates")
     if any_certs == 0:
         st.warning("No certificates found on any observations")
         return
