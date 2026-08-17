@@ -1,7 +1,3 @@
-from pages._base_page import BasePageLayout
-from pages.pages import app_pages
-from utils.utils import sidebar_config
-from utils.config import settings
 import utils.db as db
 import pandas as pd
 import streamlit as st
@@ -265,64 +261,50 @@ def _render_certificate_details() -> None:
     st.dataframe(detail_df, hide_index=True, width="stretch")
 
 
-class LandingPage(BasePageLayout):
-    def __init__(self):
-        super().__init__()
-
-    def page_content(self):
-        st.set_page_config(
-            page_icon=settings.app.logo,
-            page_title="Certificates Summary",
-            layout="wide",
-        )
-        sidebar_config(app_pages())
-        st.header("Certificate Data Visualization")
-
-        missing = _missing_models()
-        any_certs = (
-            db.get_conn()
-            .execute("select count(*) from gold.fct_observation_certificates")
-            .fetchone()[0]
-        )
-
-        if missing:
-            st.warning("Certificate dbt models are not available yet.")
-            st.code(
-                "Missing gold models:\n- " + "\n- ".join(missing),
-                language="text",
-            )
-            st.caption(
-                "Run the dbt project so the certificate marts are materialized in the `gold` schema."
-            )
-            return
-
-        if any_certs == 0:
-            st.warning("No certificates found on any observations")
-            return
-
-        _render_summary()
-        st.divider()
-        _render_feature_summary()
-        st.divider()
-
-        top_left, top_right = st.columns([1, 1])
-        with top_left:
-            _render_observations_by_utility()
-        with top_right:
-            _render_key_sizes()
-
-        st.divider()
-        _render_issue_expiry_years()
-        st.divider()
-        _render_states_and_orgs()
-        st.divider()
-        _render_certificate_details()
-
 
 def main():
-    page = LandingPage()
-    page.page_content()
+    st.header("Certificate Data Visualization")
+
+    missing = _missing_models()
+    any_certs = (
+        db.get_conn()
+        .execute("select count(*) from gold.fct_observation_certificates")
+        .fetchone()[0]
+    )
+
+    if missing:
+        st.warning("Certificate dbt models are not available yet.")
+        st.code(
+            "Missing gold models:\n- " + "\n- ".join(missing),
+            language="text",
+        )
+        st.caption(
+            "Run the dbt project so the certificate marts are materialized in the `gold` schema."
+        )
+        return
+
+    if any_certs == 0:
+        st.warning("No certificates found on any observations")
+        return
+
+    _render_summary()
+    st.divider()
+    _render_feature_summary()
+    st.divider()
+
+    top_left, top_right = st.columns([1, 1])
+    with top_left:
+        _render_observations_by_utility()
+    with top_right:
+        _render_key_sizes()
+
+    st.divider()
+    _render_issue_expiry_years()
+    st.divider()
+    _render_states_and_orgs()
+    st.divider()
+    _render_certificate_details()
 
 
-if __name__ == "__main__":
+if __name__ in ("__main__", "__page__"):
     main()

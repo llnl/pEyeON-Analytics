@@ -626,3 +626,19 @@ Notes: Started via the LLM-assisted feature workflow on branch
   (cytoscape + x509 cert-chain notebook), Box browsing page,
   observation-timeline query. UIX design to be directed by the Architect;
   design.md and implementation_plan.md deferred until those sessions.
+
+## [2026-08-17] implement | Cleanup Streamlit App — Phase 1
+
+Pages created: wiki/work/cleanup-streamlit-app/{design,implementation_plan,verification}.md
+Pages updated: none (canonical streamlit_app.md update deferred until phases settle)
+Contradictions flagged: none
+Notes: Developer slice per Architect direction: migrated EyeOnData.py to
+  st.navigation/st.Page (six pages, Summary default, init form as sole page
+  when no DB); de-boilerplated all pages (removed per-page set_page_config,
+  sidebar_config, LandingPage/BasePageLayout wrappers); deleted
+  pages/pages.py and pages/_base_page.py; removed dead run_eyeon and
+  superseded app_base_config/sidebar_config from utils/utils.py. Fragile
+  coupling, schema chooser, and auth untouched per scope. Verified via
+  AppTest old-vs-new baseline (behavior parity; sole db-present failure is
+  pre-existing missing local dlt state). Discovered pre-existing list_dirs
+  empty-frame bug (directory_path column missing) — reported, not fixed.

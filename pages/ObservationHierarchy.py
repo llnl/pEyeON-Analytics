@@ -4,9 +4,6 @@ import pandas as pd
 import streamlit as st
 
 import utils.db as db
-from pages._base_page import BasePageLayout
-from pages.pages import app_pages
-from utils.utils import sidebar_config
 
 
 METADATA_LABELS = {
@@ -243,84 +240,77 @@ def _render_tree_preview(tree: pd.DataFrame, max_rows: int) -> None:
     st.markdown("\n".join(lines))
 
 
-class ObservationHierarchyPage(BasePageLayout):
-    def page_content(self):
-        st.set_page_config(page_title="Observation Hierarchy", layout="wide")
-        sidebar_config(app_pages())
-        st.title("Observation Hierarchy")
-        st.caption(
-            "Browse parent/child observations with summary groups so large containers do not render as thousands of rows by default."
-        )
-
-        with st.sidebar.expander("Hierarchy Controls", expanded=True):
-            include_leaf_roots = st.checkbox("Include roots with no children", value=False)
-            filename_filter = st.text_input("Root filename filter", placeholder="openwrt, DVRF, *.bin")
-            max_depth = st.slider("Max depth", min_value=1, max_value=8, value=4)
-            preview_rows = st.slider("Tree preview rows", min_value=25, max_value=500, value=100, step=25)
-            detail_limit = st.slider("Drilldown row limit", min_value=25, max_value=1000, value=200, step=25)
-
-        roots = _roots(include_leaf_roots, filename_filter)
-        if roots.empty:
-            st.info("No root observations matched the current filters.")
-            return
-
-        root_labels = [
-            f"{row.filename} | children={row.child_count} | {row.uuid[:8]}"
-            for row in roots.itertuples(index=False)
-        ]
-        selected_label = st.selectbox("Root observation", root_labels)
-        selected_idx = root_labels.index(selected_label)
-        root = roots.iloc[selected_idx]
-
-        tree = _tree(root["uuid"], max_depth)
-        tree_md = _tree_with_metadata(root["uuid"], max_depth)
-        descendants = max(len(tree) - 1, 0)
-
-        k1, k2, k3, k4 = st.columns(4)
-        k1.metric("Root children", int(root["child_count"]))
-        k2.metric("Rows Shown", len(tree))
-        k3.metric("Descendants Shown", descendants)
-        k4.metric("Metadata Types", tree_md["metadata_type"].nunique() if not tree_md.empty else 0)
-
-        with st.expander("Selected Root", expanded=False):
-            st.dataframe(pd.DataFrame([root]), width="stretch", hide_index=True)
-
-        summary = _summary(tree_md)
-        st.subheader("Metadata Summary")
-        st.caption("Grouped by friendly metadata category derived from the silver metadata tables.")
-        st.dataframe(summary, width="stretch", hide_index=True)
-
-        group_options = ["all"] + sorted(tree_md["metadata_type"].dropna().unique().tolist())
-        selected_group = st.selectbox("Drill down by metadata type", group_options)
-        details = tree_md if selected_group == "all" else tree_md[tree_md["metadata_type"] == selected_group]
-        details = details.sort_values(["depth", "filename", "uuid"]).head(detail_limit)
-
-        st.subheader("Drilldown Rows")
-        st.dataframe(
-            details[
-                [
-                    "depth",
-                    "filename",
-                    "metadata_type",
-                    "extension",
-                    "mime_type",
-                    "bytecount",
-                    "magic",
-                    "uuid",
-                    "parent",
-                ]
-            ],
-            width="stretch",
-            hide_index=True,
-        )
-
-        _render_tree_preview(tree, preview_rows)
-
 
 def main():
-    page = ObservationHierarchyPage()
-    page.page_content()
+    st.title("Observation Hierarchy")
+    st.caption(
+        "Browse parent/child observations with summary groups so large containers do not render as thousands of rows by default."
+    )
+
+    with st.sidebar.expander("Hierarchy Controls", expanded=True):
+        include_leaf_roots = st.checkbox("Include roots with no children", value=False)
+        filename_filter = st.text_input("Root filename filter", placeholder="openwrt, DVRF, *.bin")
+        max_depth = st.slider("Max depth", min_value=1, max_value=8, value=4)
+        preview_rows = st.slider("Tree preview rows", min_value=25, max_value=500, value=100, step=25)
+        detail_limit = st.slider("Drilldown row limit", min_value=25, max_value=1000, value=200, step=25)
+
+    roots = _roots(include_leaf_roots, filename_filter)
+    if roots.empty:
+        st.info("No root observations matched the current filters.")
+        return
+
+    root_labels = [
+        f"{row.filename} | children={row.child_count} | {row.uuid[:8]}"
+        for row in roots.itertuples(index=False)
+    ]
+    selected_label = st.selectbox("Root observation", root_labels)
+    selected_idx = root_labels.index(selected_label)
+    root = roots.iloc[selected_idx]
+
+    tree = _tree(root["uuid"], max_depth)
+    tree_md = _tree_with_metadata(root["uuid"], max_depth)
+    descendants = max(len(tree) - 1, 0)
+
+    k1, k2, k3, k4 = st.columns(4)
+    k1.metric("Root children", int(root["child_count"]))
+    k2.metric("Rows Shown", len(tree))
+    k3.metric("Descendants Shown", descendants)
+    k4.metric("Metadata Types", tree_md["metadata_type"].nunique() if not tree_md.empty else 0)
+
+    with st.expander("Selected Root", expanded=False):
+        st.dataframe(pd.DataFrame([root]), width="stretch", hide_index=True)
+
+    summary = _summary(tree_md)
+    st.subheader("Metadata Summary")
+    st.caption("Grouped by friendly metadata category derived from the silver metadata tables.")
+    st.dataframe(summary, width="stretch", hide_index=True)
+
+    group_options = ["all"] + sorted(tree_md["metadata_type"].dropna().unique().tolist())
+    selected_group = st.selectbox("Drill down by metadata type", group_options)
+    details = tree_md if selected_group == "all" else tree_md[tree_md["metadata_type"] == selected_group]
+    details = details.sort_values(["depth", "filename", "uuid"]).head(detail_limit)
+
+    st.subheader("Drilldown Rows")
+    st.dataframe(
+        details[
+            [
+                "depth",
+                "filename",
+                "metadata_type",
+                "extension",
+                "mime_type",
+                "bytecount",
+                "magic",
+                "uuid",
+                "parent",
+            ]
+        ],
+        width="stretch",
+        hide_index=True,
+    )
+
+    _render_tree_preview(tree, preview_rows)
 
 
-if __name__ == "__main__":
+if __name__ in ("__main__", "__page__"):
     main()

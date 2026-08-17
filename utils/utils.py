@@ -4,7 +4,6 @@ import duckdb
 from pathlib import Path
 import os
 import re
-import subprocess
 
 from dbt.cli.main import dbtRunner, dbtRunnerResult
 import pandas as pd
@@ -14,23 +13,6 @@ import load_eyeon
 import utils.db as db
 from utils.config import duckdb_path, resolve_dlt_path, settings, update_eyeondata_toml
 from utils.schema_ext import EnrichedTable
-
-
-def app_base_config():
-    st.set_page_config(
-        # Page_title actually sets the tab name
-        page_title=settings.app.page_title,
-        initial_sidebar_state="expanded",
-    )
-    if db.exists():
-        # This content is generated as the "virtual welcome page" when a user first connects. There doesn't appear
-        #  to be any way to get back to it once you navigate to another page.
-        st.switch_page("pages/EyeOnSummary.py")
-        #  Sometimes, programmitc navigation doesn't work, so display a message, just in case.
-        st.markdown("Virtual Main Page: Select a page from the sidebar!!")
-
-    else:
-        init_app_form()
 
 
 def init_app_form():
@@ -223,16 +205,6 @@ def load_me_some_data(selected_rows: list[dict]) -> None:
         st.rerun()
 
 
-def sidebar_config(pages):
-    st.sidebar.image(settings.app.logo, width=120)
-    st.sidebar.title(settings.app.page_title)
-    st.sidebar.header("Menu")
-    # Add pages that you want to expose on the sidebar here. They'll be listed in the order added.
-    for page in pages:
-        st.sidebar.page_link(page.filename, label=page.label)
-    sidebar_db_chooser()
-
-
 def _db_settings():
     schema_list = [
         s[0]
@@ -295,34 +267,6 @@ def _db_settings():
     if st.button("🔄 Clear All Selections"):
         st.session_state.selections = {}
         st.rerun()
-
-
-def run_eyeon():
-    with st.spinner("Running eyeon..."):
-        try:
-            result = subprocess.run(
-                [
-                    str(resolve_dlt_path("eyeon-parse.sh")),
-                    settings.defaults.utility_id,
-                    st.session_state.data_dir,
-                ],
-                capture_output=True,
-                text=True,
-                check=True,  # Raise an exception if the command fails
-                encoding="utf-8",
-            )
-            # Display the standard output in a code block
-            st.subheader("Command Output")
-            st.code(result.stdout, language="bash")
-
-        except subprocess.CalledProcessError as e:
-            # Display any errors if the command fails
-            st.subheader("Error")
-            st.error(f"Command failed with return code {e.returncode}:")
-            st.code(e.stderr, language="bash")
-        except Exception as e:
-            # Handle other potential errors
-            st.error(f"An unexpected error occurred: {e}")
 
 
 def run_dbt():
