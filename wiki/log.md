@@ -609,3 +609,20 @@ Notes: Architect/Engineer/Developer roles replace wiki-maintainer/code-developme
   marker, domain context, and EyeON-specific reasoning lint rules added.
   Executed on branch grantj-update-loreforge; historical log entries above
   retain pre-migration mode names and plural paths as historical record.
+
+## [2026-08-17] feature-start | Cleanup Streamlit App
+
+Pages created: wiki/work/cleanup-streamlit-app/{brief,references,current_state}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Started via the LLM-assisted feature workflow on branch
+  grantj-cleanup-streamlit. Engineer analysis of EyeOnData.py + pages/ found:
+  vestigial BasePageLayout/registry boilerplate (st.navigation candidate),
+  grab-bag utils/utils.py, dead run_eyeon(), fragile cross-page session-state
+  coupling, inconsistent conventions. Untracked common/ is the orphaned
+  pre-DLT parquet-era app layer (Wintappy ancestry); untracked extras/ holds
+  prototypes. Missed-feature candidates catalogued: OneID auth gate,
+  dataset/db chooser, widget-state helpers, named-SQL pattern, graph viz
+  (cytoscape + x509 cert-chain notebook), Box browsing page,
+  observation-timeline query. UIX design to be directed by the Architect;
+  design.md and implementation_plan.md deferred until those sessions.
