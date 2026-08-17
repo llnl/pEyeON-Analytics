@@ -642,3 +642,19 @@ Notes: Developer slice per Architect direction: migrated EyeOnData.py to
   AppTest old-vs-new baseline (behavior parity; sole db-present failure is
   pre-existing missing local dlt state). Discovered pre-existing list_dirs
   empty-frame bug (directory_path column missing) — reported, not fixed.
+
+## [2026-08-17] design | Cleanup Streamlit App — refactoring candidates pass
+
+Pages created: wiki/work/cleanup-streamlit-app/refactoring_candidates.md
+Pages updated: wiki/work/cleanup-streamlit-app/design.md
+Contradictions flagged: none
+Notes: Engineer pass over pages/ + utils/ for cross-page code sharing.
+  Strongest evidence: metadata-type catalog logic re-implemented at 7 sites
+  (two verbatim duplicates: silver metadata_* discovery SQL, and the
+  gold.all_metadata list_sort + prefix-strip block); guarded query->df
+  patterns on every page (~25 raw db.get_conn() sites); duplicated
+  row-selection/metric-row/shadow-state widget code; wildcard-ilike dance x3
+  plus injection-prone interpolation in search_forms. Proposed packaging:
+  MetadataCatalog class, Query facade class, st_widgets + sqlutil function
+  modules, utils/utils.py cohesion split. Sequenced into three slices;
+  awaiting Architect selection.

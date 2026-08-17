@@ -135,8 +135,15 @@ Unchanged; page-level guards (missing models, empty tables) stay as they are.
   the registry's only consumer was the hand-rolled sidebar; keeping it adds
   indirection `st.navigation` already provides.
 
+## Phase 2 (proposed — awaiting Architect direction)
+
+Shared-code refactor packaged as a few utility/library classes; full
+inventory, packaging table, and sequencing in
+[[wiki/work/cleanup-streamlit-app/refactoring_candidates]]. Candidates:
+`MetadataCatalog` (class), `Query` façade (class), `st_widgets` +
+`sqlutil` helper modules, and a cohesion split of `utils/utils.py`.
+
 ## Open Questions
 
 Later-phase questions remain in [[wiki/work/cleanup-streamlit-app/brief]]
-(UIX direction, auth, `common/`/`extras/` dispositions, `utils/utils.py`
-split).
+(UIX direction, auth, `common/`/`extras/` dispositions).
