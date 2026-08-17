@@ -9,6 +9,7 @@ import streamlit as st
 import altair as alt
 from utils.metadata_catalog import MetadataCatalog
 from utils.queries import Query
+from utils.st_widgets import metric_row
 from utils.schema_blame import (
     DLT_INTERNAL_COLUMNS,
     materialize_schema_blame,
@@ -88,11 +89,14 @@ def main():
 
     st.title("Schema Blame")
 
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Schema versions", df_all["version_to"].nunique())
-    c2.metric("Total changes", len(df_all))
-    c3.metric("New tables", len(df_all[df_all.change_type == "new_table"]))
-    c4.metric("New columns", len(df_all[df_all.change_type == "new_column"]))
+    metric_row(
+        {
+            "Schema versions": df_all["version_to"].nunique(),
+            "Total changes": len(df_all),
+            "New tables": len(df_all[df_all.change_type == "new_table"]),
+            "New columns": len(df_all[df_all.change_type == "new_column"]),
+        }
+    )
 
     st.divider()
 
@@ -121,10 +125,13 @@ def main():
     )
 
     if not drift.empty:
-        d1, d2, d3 = st.columns(3)
-        d1.metric("Discovered types", int(drift["metadata_table_name"].nunique()))
-        d2.metric("Modeled", int((drift["status"] == "modeled").sum()))
-        d3.metric("Unmodeled", int((drift["status"] == "unmodeled").sum()))
+        metric_row(
+            {
+                "Discovered types": int(drift["metadata_table_name"].nunique()),
+                "Modeled": int((drift["status"] == "modeled").sum()),
+                "Unmodeled": int((drift["status"] == "unmodeled").sum()),
+            }
+        )
         st.dataframe(drift, width="stretch", hide_index=True)
 
     st.divider()

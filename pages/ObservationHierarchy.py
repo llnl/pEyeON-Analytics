@@ -5,6 +5,7 @@ import streamlit as st
 
 from utils.metadata_catalog import MetadataCatalog
 from utils.queries import Query
+from utils.sqlutil import ilike_pattern
 
 catalog = MetadataCatalog()
 q = Query()
@@ -15,7 +16,7 @@ def _roots(include_leaf_roots: bool, filename_filter: str) -> pd.DataFrame:
     params = []
     if filename_filter:
         where.append("r.filename ilike ?")
-        params.append(f"%{filename_filter.replace('*', '%')}%")
+        params.append(ilike_pattern(filename_filter))
     if not include_leaf_roots:
         where.append("coalesce(c.child_count, 0) > 0")
     where_sql = "where " + " and ".join(where) if where else ""

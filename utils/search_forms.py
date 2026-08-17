@@ -2,6 +2,8 @@ import streamlit as st
 
 from utils.metadata_catalog import MetadataCatalog
 from utils.queries import Query
+from utils.sqlutil import ilike_pattern
+from utils.st_widgets import metric_row
 
 catalog = MetadataCatalog()
 q = Query()
@@ -35,13 +37,17 @@ def search_raw_obs(table_name, table, key_prefix=""):
         raw_obs_summary()
 
         # Build up a complete SQL WHERE clause
-        # AND conditions together
+        # AND conditions together; user-supplied text is always bound as a
+        # parameter, never interpolated into the SQL string.
         conditions = []
+        params = []
         if filter_uuid:
-            conditions.append(f"uuid ilike '%{filter_uuid.replace('*', '%')}%'")
+            conditions.append("uuid ilike ?")
+            params.append(ilike_pattern(filter_uuid))
 
         if filter_text:
-            conditions.append(f"filename ilike '%{filter_text.replace('*', '%')}%'")
+            conditions.append("filename ilike ?")
+            params.append(ilike_pattern(filter_text))
 
         if filter_metadata:
             if filter_metadata in {"any", "no_metadata"}:
@@ -64,9 +70,11 @@ def search_raw_obs(table_name, table, key_prefix=""):
         if len(conditions) > 0:
             where_clause = " and ".join([f"({c})" for c in conditions])
             sql += f" where {where_clause}"
-        results = q.df(sql)
+        results = q.df(sql, params or None)
 
-    return results, sql
+    # Include bound params so callers using this as a query signature see
+    # distinct filters as distinct queries.
+    return results, f"{sql} /* params={params} */"
 
 
 def raw_obs_summary():
@@ -75,15 +83,11 @@ def raw_obs_summary():
     """
     with st.container(border=True):
         st.markdown("For all observations:")
-        col1, col2 = st.columns([0.2, 0.8])
-
         # High level stats
-        with col1:
-            st.metric(
-                "Observations",
-                q.scalar("select count(*) from silver.raw_obs"),
-            )
-
-        with col2:
-            # Metadata types with loaded data, simplified for display.
-            st.metric("Types", ", ".join(catalog.loaded_type_names()))
+        metric_row(
+            {
+                "Observations": q.scalar("select count(*) from silver.raw_obs"),
+                "Types": ", ".join(catalog.loaded_type_names()),
+            },
+            weights=[0.2, 0.8],
+        )

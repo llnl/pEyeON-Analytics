@@ -13,6 +13,7 @@ import load_eyeon
 import utils.db as db
 from utils.config import duckdb_path, resolve_dlt_path, settings, update_eyeondata_toml
 from utils.schema_ext import EnrichedTable
+from utils.st_widgets import select_rows
 
 
 def init_app_form():
@@ -142,24 +143,7 @@ def batch_selector(dataset_path: str) -> list[dict]:
             st.info("No batch directories found for the selected dataset path.")
             return []
 
-        event = st.dataframe(
-            batch_dirs,
-            width="stretch",
-            hide_index=True,
-            on_select="rerun",
-            selection_mode="multi-row",
-            key="dataset_dirs",
-        )
-
-        selected_rows: list[dict] = []
-        if event.selection.rows:
-            selected_rows = (
-                batch_dirs.iloc[event.selection.rows]
-                .copy()
-                .replace({pd.NA: None})
-                .to_dict(orient="records")
-            )
-        return selected_rows
+        return select_rows(batch_dirs, key="dataset_dirs")
 
 
 # 20260326T153450Z_MAC -> ts=2026-03-26T15:34:50Z, utility_id=MAC

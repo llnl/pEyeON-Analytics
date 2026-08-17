@@ -1,5 +1,6 @@
 import streamlit as st
 import utils.db as db
+from utils.st_widgets import shadow_init, shadow_sync
 
 
 
@@ -9,23 +10,14 @@ def main():
     with st.expander("Session State"):
         st.json(st.session_state)
 
-    # Widgets update session_state using the "key" attribute. Awesome.
-    # But, in multipage apps, they also clear out session_state when leaving the page!
-    # Suggested hack is to persist the value in a shadow variable.
-    # Ref: https://docs.streamlit.io/develop/concepts/multipage-apps/widgets
-
-    # Initialize shadow for first execution
-    if "_debug_sql" not in st.session_state:
-        st.session_state._debug_sql = "summarize silver.raw_obs"
-
-    def change_sql():
-        st.session_state._debug_sql = st.session_state.debug_sql
-
+    # Widgets update session_state using the "key" attribute, but multipage
+    # apps clear widget keys when leaving the page — persist via shadow
+    # helpers (see utils.st_widgets).
     st.text_input(
         "SQL",
-        value=st.session_state._debug_sql,
+        value=shadow_init("debug_sql", "summarize silver.raw_obs"),
         key="debug_sql",
-        on_change=change_sql,
+        on_change=shadow_sync("debug_sql"),
     )
     try:
         st.dataframe(
@@ -34,13 +26,10 @@ def main():
     except Exception as e:
         st.error(e)
 
-    # Shadow state, the app’s source of truth across pages
-    if "_duckdb_ui" not in st.session_state:
-        st.session_state["_duckdb_ui"] = False
-
-    # Widget state, used only for the control
-    if "duckdb_ui" not in st.session_state:
-        st.session_state["duckdb_ui"] = st.session_state["_duckdb_ui"]
+    # Shadow state is the app's source of truth across pages; the widget key
+    # is re-seeded from it on each page entry. on_change stays custom here
+    # because toggling has a side effect that must succeed before committing.
+    st.session_state.setdefault("duckdb_ui", shadow_init("duckdb_ui", False))
 
     def change_duckdb_ui():
         desired = st.session_state["duckdb_ui"]

@@ -1,4 +1,5 @@
 from utils.queries import Query
+from utils.st_widgets import metric_row
 import pandas as pd
 import streamlit as st
 import altair as alt
@@ -55,12 +56,15 @@ def _summary_metrics() -> dict[str, object]:
 
 def _render_summary() -> None:
     metrics = _summary_metrics()
-    col1, col2, col3, col4, col5 = st.columns(5)
-    col1.metric("Certificates", f"{metrics['certificate_count']:,}")
-    col2.metric("Issuers", f"{metrics['issuer_count']:,}")
-    col3.metric("CA Certs", f"{metrics['ca_count']:,}")
-    col4.metric("Signed Observations", f"{metrics['signed_observation_count']:,}")
-    col5.metric("Utilities", f"{metrics['utility_count']:,}")
+    metric_row(
+        {
+            "Certificates": f"{metrics['certificate_count']:,}",
+            "Issuers": f"{metrics['issuer_count']:,}",
+            "CA Certs": f"{metrics['ca_count']:,}",
+            "Signed Observations": f"{metrics['signed_observation_count']:,}",
+            "Utilities": f"{metrics['utility_count']:,}",
+        }
+    )
 
     min_ts = metrics["min_observation_ts"]
     max_ts = metrics["max_observation_ts"]

@@ -1,10 +1,9 @@
 from utils.metadata_catalog import MetadataCatalog
 from utils.queries import Query
+from utils.st_widgets import metric_row, select_rows
 from utils.utils import list_all_batches, load_me_some_data
 from utils.config import settings
 import streamlit as st
-
-import pandas as pd
 
 catalog = MetadataCatalog()
 q = Query()
@@ -31,11 +30,15 @@ def main():
             total_obs = int(batches["num_rows"].fillna(0).sum())
 
             with tabs[0]:
-                k1, k2, k3, k4 = st.columns([0.1, 0.1, 0.1, 0.7])
-                k1.metric("Utilities", f"{total_utilities}")
-                k2.metric("Batches", f"{total_batches}")
-                k3.metric("Observations", f"{total_obs}")
-                k4.metric("Metadata Types", ", ".join(catalog.loaded_type_names()))
+                metric_row(
+                    {
+                        "Utilities": f"{total_utilities}",
+                        "Batches": f"{total_batches}",
+                        "Observations": f"{total_obs}",
+                        "Metadata Types": ", ".join(catalog.loaded_type_names()),
+                    },
+                    weights=[0.1, 0.1, 0.1, 0.7],
+                )
 
                 left, right = st.columns([2, 1])
                 with left:
@@ -76,15 +79,12 @@ def main():
                     ]
                     if not row.empty:
                         r0 = row.iloc[0]
-                        m1, m2, m3 = st.columns(3)
-                        m1.metric(
-                            "Batches",
-                            f"{int(r0.get('num_batches', 0) or 0)}",
-                        )
-                        m2.metric("Obs", f"{int(r0.get('num_rows', 0) or 0)}")
-                        m3.metric(
-                            "MD Types",
-                            f"{int(r0.get('num_md_types', 0) or 0)}",
+                        metric_row(
+                            {
+                                "Batches": f"{int(r0.get('num_batches', 0) or 0)}",
+                                "Obs": f"{int(r0.get('num_rows', 0) or 0)}",
+                                "MD Types": f"{int(r0.get('num_md_types', 0) or 0)}",
+                            }
                         )
 
             with tabs[1]:
@@ -93,23 +93,7 @@ def main():
     with st.expander("All Batches", expanded=True):
         batch_dirs = list_all_batches(settings.datasets.dataset_path)
 
-        event = st.dataframe(
-            batch_dirs,
-            width="stretch",
-            hide_index=True,
-            on_select="rerun",
-            selection_mode="multi-row",
-            key="all_batches_df",
-        )
-
-        selected_rows: list[dict] = []
-        if event.selection.rows:
-            selected_rows = (
-                batch_dirs.iloc[event.selection.rows]
-                .copy()
-                .replace({pd.NA: None})
-                .to_dict(orient="records")
-            )
+        selected_rows = select_rows(batch_dirs, key="all_batches_df")
 
         if st.button(
             "Load Selected",
