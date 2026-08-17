@@ -1,8 +1,9 @@
 import streamlit as st
 
 import utils.db as db
+from utils.app_init import init_app_form
 from utils.config import settings
-from utils.utils import init_app_form, sidebar_db_chooser
+from utils.sidebar import sidebar_db_chooser
 
 
 def init_page():

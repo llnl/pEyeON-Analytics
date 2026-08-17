@@ -1,7 +1,8 @@
+from utils.batches import list_all_batches
+from utils.loader import load_me_some_data
 from utils.metadata_catalog import MetadataCatalog
 from utils.queries import Query
 from utils.st_widgets import metric_row, select_rows
-from utils.utils import list_all_batches, load_me_some_data
 from utils.config import settings
 import streamlit as st
 
