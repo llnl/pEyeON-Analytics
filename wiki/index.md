@@ -90,7 +90,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 |---------|--------|---------|
 | [[wiki/work/binwalk-support/brief]] | started | Binwalk support requirements, references, design, spike, implementation, and verification skeleton |
 | [[wiki/work/implement-a-report-generator-ability/brief]] | closed | Report-generation tool selected: Typst (ADR 2026-08-27) after 12-candidate matrix + WeasyPrint/Typst spikes on real data; first feature closed under the interview + Velocity workflow (11.2×, Low confidence) |
-| [[wiki/work/report-generator-implementation/brief]] | handoff-pending-approval | Implement the Typst report ability: reports/ package, eyeon-report CLI, Streamlit Reports page (batch changes + dossier, PDF, plotly charts); Developer session implements from approved handoff |
+| [[wiki/work/report-generator-implementation/brief]] | handoff-approved | Implement the Typst report ability: reports/ package, eyeon-report CLI, Streamlit Reports page (batch changes + dossier, PDF, plotly charts); Developer session implements from approved handoff (2026-08-27) |
 | [[wiki/work/firmware-corpus/brief]] | first-slice-implemented | JSON manifest, list/fetch/checksum utility, OpenWrt Binwalk smoke candidate, and expanded candidate catalog including utility/industrial sources |
 | [[wiki/work/metadata-type-drift/implementation_plan]] | implemented | Add gold.metadata_type_drift and surface it in Schema Blame to show silver-only (unmodeled) metadata types |
 | [[wiki/work/ovf-vm-image-build/brief]] | in-progress | Debian 12 aligned container+VM path: Dockerfile refactor into reusable provision scripts, plus Debian 12 qcow2 appliance VM build scaffold |

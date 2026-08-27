@@ -723,3 +723,12 @@ Notes: Follow-on to the Typst ADR, opened via two interview rounds. Scope:
   independent pair restored; human sealed answers recorded verbatim
   ("2 days" solo, "<1 day" AI). Per-unit estimates recorded at handoff
   drafting (rgi-01..04), fixing the prior feature's process deviation.
+
+## [2026-08-27] handoff-approved | Report Generator Implementation
+
+Pages updated: wiki/work/report-generator-implementation/dev_handoff.md
+  (Status: Approved, 2026-08-27), wiki/index.md
+Contradictions flagged: none
+Notes: Architect approved the dev handoff as drafted (module layout, CLI
+  shape, page surface, deps, test plan unchanged). Ready for a Developer
+  session via the handoff's copy/paste prompt.
