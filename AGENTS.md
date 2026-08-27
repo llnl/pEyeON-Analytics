@@ -351,9 +351,10 @@ Start a new feature using the LLM-assisted feature workflow: <feature name>
 ```
 
 Artifacts live under `wiki/work/<feature-slug>/`. Only `brief.md` is always
-required; add `references.md`, `design.md`, `spike.md`,
-`implementation_plan.md`, `dev_handoff.md`, `verification.md`, or a
-research-thread `index.md` as they earn their keep.
+required; add `interview.md`, `references.md`, `design.md`, `spike.md`,
+`implementation_plan.md`, `dev_handoff.md`, `verification.md`, `metrics.md`
+(Velocity results — see `wiki/decision/2026-08-27-adopt-velocity-mini-lab.md`),
+or a research-thread `index.md` as they earn their keep.
 
 - `dev_handoff.md` is the **instruction document**: it carries
   `Status: Draft | Approved` and `Architect Approval:` header lines, and must

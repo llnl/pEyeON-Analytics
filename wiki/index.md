@@ -71,6 +71,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/decision/duckdb_dlt_dbt]] | accepted | DuckDB + DLT + dbt as local analytics stack |
 | [[wiki/decision/bronze_silver_gold]] | accepted | Three-layer medallion architecture for EyeON data |
 | [[wiki/decision/feature_work_artifacts]] | accepted | Standard wiki artifacts for LLM-assisted feature work |
+| [[wiki/decision/2026-08-27-adopt-velocity-mini-lab]] | accepted | Adopt the interview stage and Velocity metrics overlay from the Wintap ecosystem |
 
 ## Tensions
 
@@ -104,10 +105,18 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/concept/fuzzy_hashing]] | high | ssdeep, telfhash, imphash — purpose and use in EyeON |
 | [[wiki/concept/authenticode]] | medium | Windows PE signing: authentihash, LIEF verification |
 | [[wiki/concept/surfactant]] | medium | Upstream LLNL tool EyeON builds on for plugin management |
-| [[wiki/concept/llm_assisted_feature_workflow]] | medium | Lightweight RFC/ADR/spike workflow for LLM-assisted code changes |
-| [[wiki/concept/feature_work_template]] | medium | Reusable skeleton for new feature work folders |
+| [[wiki/concept/llm_assisted_feature_workflow]] | medium | Lightweight RFC/ADR/spike workflow for LLM-assisted code changes, with interview stage and Velocity metrics overlay |
+| [[wiki/concept/feature_work_template]] | medium | Reusable skeleton for new feature work folders (incl. interview.md, metrics.md) |
+| [[wiki/concept/velocity-metric]] | high | Velocity = solo-hours / (5.714 × days): one number for AI-assisted delivery speed |
+| [[wiki/concept/metrics-template]] | high | Per-feature metrics.md format: Results scorecard + canonical YAML record |
 | [[wiki/concept/build_glossary]] | medium | Builder glossary: containers, qcow2 appliance, multi-arch, and common gotchas |
+
+## Metrics
+
+| Page | Confidence | Summary |
+|------|------------|---------|
+| [[wiki/metrics]] | high | Cross-feature Velocity rollup: one row per closed feature |
 
 ---
 
-*Last updated: 2026-08-17 (loreforge migration: Architect/Engineer/Developer roles replace operating modes, singular wiki directories, new frontmatter schema backfilled on all pages, updated feature workflow with dev_handoff/verification as instruction/audit artifacts)*
+*Last updated: 2026-08-27 (adopted interview stage + Velocity metrics overlay from the Wintap ecosystem: new ADR, velocity-metric and metrics-template concepts, wiki/metrics rollup; workflow and template pages updated)*

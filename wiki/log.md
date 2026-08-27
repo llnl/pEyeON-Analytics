@@ -609,3 +609,24 @@ Notes: Architect/Engineer/Developer roles replace wiki-maintainer/code-developme
   marker, domain context, and EyeON-specific reasoning lint rules added.
   Executed on branch grantj-update-loreforge; historical log entries above
   retain pre-migration mode names and plural paths as historical record.
+
+## [2026-08-27] adopt | Interview stage + Velocity metrics overlay (from Wintap ecosystem)
+
+Pages created: wiki/decision/2026-08-27-adopt-velocity-mini-lab.md,
+  wiki/concept/velocity-metric.md, wiki/concept/metrics-template.md,
+  wiki/metrics.md
+Pages updated: wiki/concept/llm_assisted_feature_workflow.md (Interview Stage
+  section, stages table, sealed questions, no-interview invocation variant,
+  metrics close-out), wiki/concept/feature_work_template.md (interview.md and
+  metrics.md skeletons), wiki/index.md
+Contradictions flagged: none
+Notes: Architect directed full adoption of both Wintap-Analytics workflow
+  additions (commits 1016c01 interview stage; b806028..e8a8bcc Velocity
+  v2.1). Formula, field names, and sealed-question phrasing kept identical to
+  the Wintap v2.1 protocol for cross-ecosystem comparability. Local
+  adaptations recorded in the ADR: role mapping (human=Architect), seal-broken
+  handling as the expected single-session case (ai_est_* null), availability
+  anchor = dated verification.md entry, re-domained interview question areas,
+  standing rules live in the ADR (Engineer does not edit AGENTS.md — pointer
+  proposed to Architect separately). In-flight features (cleanup-streamlit-app)
+  not retrofitted.
