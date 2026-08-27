@@ -72,6 +72,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/decision/bronze_silver_gold]] | accepted | Three-layer medallion architecture for EyeON data |
 | [[wiki/decision/feature_work_artifacts]] | accepted | Standard wiki artifacts for LLM-assisted feature work |
 | [[wiki/decision/2026-08-27-adopt-velocity-mini-lab]] | accepted | Adopt the interview stage and Velocity metrics overlay from the Wintap ecosystem |
+| [[wiki/decision/2026-08-27-report-generation-typst]] | accepted | Typst (via typst pip bindings) is the EyeON report-generation engine; WeasyPrint runner-up, Jasper fallback |
 
 ## Tensions
 
@@ -88,6 +89,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | Feature | Status | Summary |
 |---------|--------|---------|
 | [[wiki/work/binwalk-support/brief]] | started | Binwalk support requirements, references, design, spike, implementation, and verification skeleton |
+| [[wiki/work/implement-a-report-generator-ability/brief]] | closed | Report-generation tool selected: Typst (ADR 2026-08-27) after 12-candidate matrix + WeasyPrint/Typst spikes on real data; first feature closed under the interview + Velocity workflow (11.2×, Low confidence) |
 | [[wiki/work/firmware-corpus/brief]] | first-slice-implemented | JSON manifest, list/fetch/checksum utility, OpenWrt Binwalk smoke candidate, and expanded candidate catalog including utility/industrial sources |
 | [[wiki/work/metadata-type-drift/implementation_plan]] | implemented | Add gold.metadata_type_drift and surface it in Schema Blame to show silver-only (unmodeled) metadata types |
 | [[wiki/work/ovf-vm-image-build/brief]] | in-progress | Debian 12 aligned container+VM path: Dockerfile refactor into reusable provision scripts, plus Debian 12 qcow2 appliance VM build scaffold |

@@ -28,7 +28,7 @@ attached. The trend across features, not any single point, is the product.
 
 | Feature | Lead time (days) | Solo estimate (h) | Feature Velocity (± uncertainty) | Comparability flag | Metrics |
 |---|---|---|---|---|---|
-| *(none yet — first row lands at the first close-out after 2026-08-27)* | | | | | |
+| implement-a-report-generator-ability | 1 (same-day; day-grain minimum) | 64 (sealed "8 days", hours interpreted) | **11.2** (5.6–22) — single sealed estimate (AI seal broken); Low confidence | none: Q3 "Yes" — plain counterfactual; counts in the fitted trend | [[wiki/work/implement-a-report-generator-ability/metrics]] |
 
 Features already in flight at adoption (e.g. cleanup-streamlit-app) are not
 retrofitted; see the ADR's Consequences.

@@ -630,3 +630,79 @@ Notes: Architect directed full adoption of both Wintap-Analytics workflow
   standing rules live in the ADR (Engineer does not edit AGENTS.md — pointer
   proposed to Architect separately). In-flight features (cleanup-streamlit-app)
   not retrofitted.
+
+## [2026-08-27] feature-open | Implement a Report Generator Ability
+
+Pages created: wiki/work/implement-a-report-generator-ability/{interview,brief,metrics}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: First feature opened under the newly adopted interview + Velocity
+  workflow. Three interview rounds resolved: scope = tool decision only
+  (comparison matrix + 1-2 finalist spikes on real eyeon.duckdb data + ADR);
+  PDF-first output; both Streamlit and CLI render contexts; all four report
+  kinds anchor the evaluation; constraints = open-source only, fully offline
+  design+render, Python-first with JVM (Jasper) admitted under burden of
+  proof; GUI designer developer-operated nice-to-have. Acceptance criteria
+  frozen in brief.md. Sealed human estimates recorded verbatim in
+  interview.md ("8 days" solo / "2 days" AI — unit interpretation flagged
+  for close-out). AI-side seal broken (same session ran the interview);
+  ai_est_* null per ADR adaptation 2. Candidate research delegated to the
+  Engineer; design.md next.
+
+## [2026-08-27] design | Report generator tool evaluation — candidate matrix
+
+Pages created: wiki/work/implement-a-report-generator-ability/{design,references}.md
+Pages updated: none
+Contradictions flagged: none
+Notes: Engineer research pass (web snapshot 2026-08-27) over 12 candidates
+  against the frozen constraint set (OSS, offline, DuckDB/SQL, PDF-first,
+  Python-first). Proposed finalists: Jinja2+WeasyPrint (BSD, active v69,
+  dual PDF/HTML from one template) and Typst via typst pip bindings
+  (Apache-2.0, in-process compile, fast batch PDF; offline package
+  vendoring caveat). JasperReports healthy (LGPL, 7.0.6, active 2026) with
+  the field's best GUI designer, but pyreportjasper is inactive and the
+  JVM+subprocess bridge cost fails the "clearly better" bar while the GUI
+  is nice-to-have — kept as fallback. BIRT rejected (governance wobbles,
+  dominated by Jasper). Spike plan: both finalists render a batch
+  change-detection report + dossier fragment from real eyeon.duckdb data.
+  Awaiting Architect review of finalists before spiking.
+
+## [2026-08-27] spike | Report generator finalists — WeasyPrint vs Typst (both pass)
+
+Pages created: wiki/work/implement-a-report-generator-ability/spike.md
+Pages updated: wiki/work/implement-a-report-generator-ability/metrics.md
+  (units recorded; estimate-before-implementation deviation logged)
+Contradictions flagged: none
+Notes: Both approved finalists rendered identical real-data reports (batch
+  change detection from gold.mart_batch_changes + signed-EFI observation
+  dossier with Sectigo certs) from database/eyeon.duckdb. Standard report:
+  WeasyPrint 1.40s/5pp/47KB (+ free HTML sibling from the same template);
+  Typst 0.03s/3pp/137KB. Full 3,275-row report: WeasyPrint 11.36s/125pp/
+  708KB; Typst 1.21s/86pp/4.1MB. Offline verified via strace (0 network
+  connects both). Typst defect found+fixed: unbreakable 64-char hash raw()
+  overflowed its table cell (chunking helper). Engineer lean: WeasyPrint
+  (one template -> PDF+HTML; maturity; summary-sized reports make the speed
+  gap moot). Environment fix recorded: repo is sshfs-mounted from macOS with
+  unresolvable Mac-side .venv symlinks; venv rebuilt on local disk via
+  UV_PROJECT_ENVIRONMENT. Spike deps kept out of pyproject (uv run --with).
+  Awaiting Architect decision -> ADR.
+
+## [2026-08-27] decision + close-out | Report generator: Typst selected; feature closed
+
+Pages created: wiki/decision/2026-08-27-report-generation-typst.md
+Pages updated: wiki/work/implement-a-report-generator-ability/{metrics,brief}.md,
+  wiki/metrics.md (first rollup row), wiki/index.md
+Contradictions flagged: none
+Notes: Architect chose Typst over the Engineer's WeasyPrint lean, weighting
+  render speed at scale (~9x), pip-only deployment, and the in-process
+  bytes API; WeasyPrint recorded as runner-up/fallback, Jasper as JVM
+  fallback. All three frozen acceptance criteria satisfied same-day
+  (matrix, both spikes, accepted ADR). Velocity close-out: 11.2x
+  (plausible range ~5.6-22x), confidence Low (single sealed estimate — AI
+  seal broken; "8 days" hours-interpreted; same-day close on a day-grain
+  denominator, so 11.2 is the conservative reading). Q3 comparability:
+  "Yes" — counts in the fitted trend. First feature closed under the
+  interview + Velocity workflow; process lessons logged in metrics.md
+  (per-unit estimates missed before spike implementation). Follow-on
+  implementation feature will productionize templates, HTML path, and
+  distribution.

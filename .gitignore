@@ -218,3 +218,6 @@ dbt_eyeon_gold/.user.yml
 
 # Local Obsidian app state
 .obsidian/
+
+# Report-generator spike rendered artifacts (regenerable; see extras/spike_report_*.py)
+/extras/spike_report_out/
