@@ -706,3 +706,20 @@ Notes: Architect chose Typst over the Engineer's WeasyPrint lean, weighting
   (per-unit estimates missed before spike implementation). Follow-on
   implementation feature will productionize templates, HTML path, and
   distribution.
+
+## [2026-08-27] feature-open + handoff-draft | Report Generator Implementation
+
+Pages created: wiki/work/report-generator-implementation/{interview,brief,implementation_plan,dev_handoff,metrics}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Follow-on to the Typst ADR, opened via two interview rounds. Scope:
+  productionize the two spike reports (batch changes, dossier) as a
+  reports/ package + eyeon-report console script + Streamlit Reports page;
+  PDF only (HTML deferred); download + -o distribution; deps approved by
+  Architect: typst + plotly/kaleido (NOT matplotlib — chart port required).
+  Implementation by a SEPARATE Developer session from the handoff
+  (Status: Draft, awaiting Architect approval). Metrics: AI-side estimates
+  written to metrics.md BEFORE the sealed questions were asked this time —
+  independent pair restored; human sealed answers recorded verbatim
+  ("2 days" solo, "<1 day" AI). Per-unit estimates recorded at handoff
+  drafting (rgi-01..04), fixing the prior feature's process deviation.
