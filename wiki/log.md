@@ -699,3 +699,20 @@ Notes: Architect tested the Phase 3 dashboard pages with sample datasets,
   reported the missing sidebar nav (root cause: legacy
   client.showSidebarNavigation=false suppressing the st.navigation menu;
   fixed), and approved. Committed.
+
+## [2026-08-27] spike + commit | Cleanup Streamlit App — hierarchy spike recorded; reference material committed; feature paused
+
+Pages created: wiki/work/cleanup-streamlit-app/spike.md
+Pages updated: wiki/work/cleanup-streamlit-app/implementation_plan.md
+Contradictions flagged: none
+Notes: Recorded the raw_obs nested-table hierarchy display spike (prototype
+  at extras/spike_hierarchy_views.py; hybrid recommendation: bronze/silver
+  document detail view + JsonColumn grid cells + keep master-detail;
+  AG Grid rejected — Enterprise-only features). Committed the previously
+  untracked reference material onto grantj-cleanup-streamlit so grounded_by
+  paths resolve from git: TODO.md, common/ (orphaned pre-DLT legacy layer,
+  dispositions pending), extras/{spike_hierarchy_views.py,
+  streamlit_box_ui.py, x509-graphs.ipynb, Schema.ipynb, DataLoading.drawio}.
+  Feature paused; resume points recorded in implementation_plan.md
+  (spike follow-ups, common/extras dispositions, auth question, TODO.md
+  overlaps).

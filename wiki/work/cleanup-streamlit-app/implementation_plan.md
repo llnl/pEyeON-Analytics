@@ -5,7 +5,7 @@ confidence: high
 grounded_by:
   - ../pEyeON-Analytics/EyeOnData.py
 policy: agent-editable
-last_validated: 2026-08-17
+last_validated: 2026-08-27
 repo_scope: pEyeON-Analytics
 implementation_area: streamlit
 format_domain: none
@@ -112,3 +112,31 @@ slices approved by the Architect, plus the `list_dirs` fix ride-along.
 - [x] list_dirs fix verified against the previously failing repro
 - [x] verification.md Phase 2 section recorded; log.md entry appended
 - [x] Committed on grantj-cleanup-streamlit
+
+## Status: Paused 2026-08-27 — Resume Points
+
+Phases 1–3 are implemented, verified, and committed on
+`grantj-cleanup-streamlit`. The hierarchy-display spike
+([[wiki/work/cleanup-streamlit-app/spike]]) is complete with a hybrid
+recommendation, and the previously untracked reference material (`TODO.md`,
+legacy `common/`, `extras/` prototypes and notebooks) is now committed on
+this branch so the feature docs' `grounded_by` paths resolve from git.
+
+Remaining work when this feature resumes:
+
+- [ ] Spike follow-ups (Architect decisions): try
+      `extras/spike_hierarchy_views.py`, pick which surfaces get the
+      document view first (BrowseDltData, ObservationHierarchy, or a new
+      page), and choose the default detail source (bronze vs silver).
+- [ ] If the spike is adopted: promote the generic re-nester into `utils/`
+      (next to `schema_ext`) with tests, per spike.md follow-ups.
+- [ ] Execute `common/` and `extras/` per-file dispositions (brief
+      acceptance criterion; candidate table in
+      [[wiki/work/cleanup-streamlit-app/current_state]]) — port, spin off,
+      or discard each.
+- [ ] Settle the open auth question (OneID `st.login` from legacy
+      `common/page_frags.py`).
+- [ ] Overlapping `TODO.md` items: mount-path feedback in the init form,
+      container-hierarchy correctness in ObservationHierarchy.
+- [ ] On completion: promote durable facts to
+      [[wiki/component/streamlit_app]] per the brief's Done When.
