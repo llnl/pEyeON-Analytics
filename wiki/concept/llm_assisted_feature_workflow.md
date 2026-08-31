@@ -156,6 +156,29 @@ the seal (see [[wiki/decision/2026-08-27-adopt-velocity-mini-lab]]) depends
 on the answers living in a marked section that estimating agents can avoid
 reading.
 
+## Lightweight Variant
+
+When a feature emerges from a live working session — typically a diagnostic
+or design conversation in which the Architect and Engineer have already
+built the shared context the interview stage exists to create — the workflow
+may run in a **lightweight** form (first used by
+[[wiki/work/dlt-state-consistency/brief]], 2026-08-31):
+
+- The interview is the conversation itself; no `interview.md` is kept. The
+  brief must say so and capture the decisions/constraints that emerged.
+- The Velocity metrics overlay is skipped (no sealed estimates).
+- The artifact set is `brief.md` + `implementation_plan.md` +
+  `dev_handoff.md` + `verification.md`.
+- Architect approval of the handoff may be given in-session ("Proceed");
+  the handoff records the approval verbatim with its date. Implementation
+  may then continue in the same session — the Developer still implements
+  from the written handoff, and `verification.md` remains the audit
+  artifact.
+
+Use it only when the Architect explicitly invokes it and the design is
+settled in-session; anything with open architectural questions takes the
+full workflow.
+
 ## Operating Rule
 
 Feature work artifacts are scaffolding, not the final source of truth. Once a

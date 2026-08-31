@@ -763,3 +763,17 @@ Notes: Implemented in-session per the approved lightweight handoff. New
   end-to-end incident regression; 18/18 pass. Refinements found by tests:
   per-dataset root-table scoping (bronze owns raw_json) and columns-only
   staging checks. Follow-ups in verification.md.
+
+## [2026-08-31] closeout | DLT State Consistency
+
+Pages created: wiki/diagnostic/dlt-three-store-consistency.md
+Pages updated: wiki/index.md (status → implemented; new Diagnostics section),
+  wiki/concept/llm_assisted_feature_workflow.md (Lightweight Variant section),
+  README.md (--doctor usage, dev DB reset recipe, yaml revert-don't-commit note)
+Contradictions flagged: none
+Notes: Durable facts promoted to the canonical diagnostic page. Architect
+  decisions recorded: schemas/schema.sql keeps the current base but no longer
+  creates _dlt_* bookkeeping tables (Architect edit, committed); local churn
+  of schemas/eyeon_metadata.schema.yaml (v24→v68) reverted rather than
+  committed — the export snapshot is documentation, devs revert incidental
+  permutations. Lightweight workflow variant documented as a sanctioned path.

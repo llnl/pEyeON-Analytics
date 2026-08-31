@@ -62,6 +62,12 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/pipeline/cert_analysis]] | medium | Certificate extraction, deduplication, expiry/key marts |
 | [[wiki/pipeline/metadata_curation]] | high | Silver discovers metadata types; gold curates known types via all_metadata; drift view highlights gaps |
 
+## Diagnostics
+
+| Page | Confidence | Summary |
+|------|------------|---------|
+| [[wiki/diagnostic/dlt-three-store-consistency]] | high | The three stores of DLT state, the self-heal/reconcile layer (utils/dlt_state.py), `load_eyeon.py --doctor`, `_meta.consistency_log`, and the dev DB reset recipe |
+
 ## Decisions
 
 | Page | Status | Summary |
@@ -98,7 +104,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/work/parse-multiprocessing-hang/implementation_plan]] | implemented | Fix core parse multiprocessing hang on large Mach-O binaries by using spawn-based workers and recycling each worker after one file |
 | [[wiki/work/parse-terminal-output/brief]] | proposed | Future task: centralize parse worker output in the parent process and consider Rich for stable progress plus readable logs |
 | [[wiki/work/update-loreforge/brief]] | implemented | Migrate AGENTS.md and wiki to the loreforge Engineer/Developer role model, singular directories, and new frontmatter schema (reverse-engineered workflow record) |
-| [[wiki/work/dlt-state-consistency/brief]] | handoff-approved | Heal/detect/explain/record dlt three-store state drift (deleted dev DB + surviving pending packages → Binder Error); lightweight workflow variant, in-session interview + approval (2026-08-31) |
+| [[wiki/work/dlt-state-consistency/brief]] | implemented | Heal/detect/explain/record dlt three-store state drift (deleted dev DB + surviving pending packages → Binder Error); lightweight workflow variant, in-session interview + approval; durable facts promoted to [[wiki/diagnostic/dlt-three-store-consistency]] (2026-08-31) |
 
 ## Concepts
 
