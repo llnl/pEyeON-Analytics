@@ -105,6 +105,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/work/parse-terminal-output/brief]] | proposed | Future task: centralize parse worker output in the parent process and consider Rich for stable progress plus readable logs |
 | [[wiki/work/update-loreforge/brief]] | implemented | Migrate AGENTS.md and wiki to the loreforge Engineer/Developer role model, singular directories, and new frontmatter schema (reverse-engineered workflow record) |
 | [[wiki/work/dlt-state-consistency/brief]] | implemented | Heal/detect/explain/record dlt three-store state drift (deleted dev DB + surviving pending packages → Binder Error); lightweight workflow variant, in-session interview + approval; durable facts promoted to [[wiki/diagnostic/dlt-three-store-consistency]] (2026-08-31) |
+| [[wiki/work/db-health-surface/brief]] | handoff-approved | Surface _meta.consistency_log and the DLT state doctor in the Streamlit app (sidebar DB Health + Debug page); lightweight variant (2026-08-31) |
 
 ## Concepts
 

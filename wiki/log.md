@@ -777,3 +777,11 @@ Notes: Durable facts promoted to the canonical diagnostic page. Architect
   of schemas/eyeon_metadata.schema.yaml (v24→v68) reverted rather than
   committed — the export snapshot is documentation, devs revert incidental
   permutations. Lightweight workflow variant documented as a sanctioned path.
+
+## [2026-08-31] feature-open + handoff-approved | DB Health Surface
+
+Pages created: wiki/work/db-health-surface/{brief,implementation_plan,dev_handoff}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Lightweight variant; the deferred UI slice of dlt-state-consistency.
+  Approved in-session ("Proceed"); implementation continues in-session.
