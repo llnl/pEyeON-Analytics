@@ -67,9 +67,9 @@ Revert the commit; no persisted state involved.
 
 ## Done Checklist
 
-- [ ] Helpers implemented + tested
-- [ ] doctor_text refactor (CLI unchanged)
-- [ ] Sidebar wiring
-- [ ] Debug page expander
-- [ ] Full suite green; verification.md filled
-- [ ] wiki/log.md entry
+- [x] Helpers implemented + tested
+- [x] doctor_text refactor (CLI unchanged)
+- [x] Sidebar wiring
+- [x] Debug page expander
+- [x] Full suite green (20/20); verification.md filled
+- [x] wiki/log.md entry

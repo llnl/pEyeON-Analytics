@@ -147,14 +147,44 @@ def test_doctor_reports_drift_and_events(env):
     load_eyeon.main(utility_id="t1", source=env.source)
 
     conn = duckdb.connect(str(env.db_path))
-    pipeline = load_eyeon._build_pipeline(conn)
-    roots = load_eyeon._doctor_dataset_roots(pipeline)
-    healthy = dlt_state.doctor_report(pipeline, conn, str(env.db_path), dataset_roots=roots)
+    healthy = load_eyeon.doctor_text(conn)
     assert "instance identity" in healthy
     assert "PHYSICAL DRIFT" not in healthy
 
     conn.execute(f"alter table silver.{CERTS_TABLE} drop column rfc822_name")
-    drifted = dlt_state.doctor_report(pipeline, conn, str(env.db_path), dataset_roots=roots)
+    drifted = load_eyeon.doctor_text(conn)
     conn.close()
     assert "PHYSICAL DRIFT" in drifted
     assert "rfc822_name" in drifted
+
+
+def test_health_helpers_without_meta(tmp_path):
+    """Databases predating the consistency layer degrade gracefully."""
+    conn = duckdb.connect(str(tmp_path / "plain.duckdb"))
+    assert dlt_state.recent_events(conn) == []
+    assert dlt_state.unresolved_instance_change(conn) is None
+    conn.close()
+
+
+def test_unresolved_instance_change_lifecycle(env):
+    load_eyeon.main(utility_id="t1", source=env.source)
+
+    conn = duckdb.connect(str(env.db_path))
+    assert dlt_state.unresolved_instance_change(conn) is None
+
+    # A replacement event with no completed load after it is "unresolved".
+    dlt_state.log_event(
+        conn,
+        "db_instance_changed",
+        {"old_instance": "a", "new_instance": "b", "dropped_load_ids": ["1.2"]},
+    )
+    unresolved = dlt_state.unresolved_instance_change(conn)
+    assert unresolved is not None and unresolved["ts"] is not None
+    assert dlt_state.recent_events(conn)[0][1] == "db_instance_changed"
+    conn.close()
+
+    # A completed load resolves it.
+    load_eyeon.main(utility_id="t1", source=env.source)
+    conn = duckdb.connect(str(env.db_path))
+    assert dlt_state.unresolved_instance_change(conn) is None
+    conn.close()

@@ -90,6 +90,12 @@ version/hash, pending packages, per-dataset destination version/hash and
 physical drift, and recent consistency events. Run it whenever a load fails
 strangely or after any manual database surgery.
 
+In the Streamlit app (since [[wiki/work/db-health-surface/brief]]): every
+page's sidebar has a **DB Health** expander with recent consistency events
+and shows a warning when the database was replaced and no load has completed
+since (dropped pending packages may mean batches need re-loading); the Debug
+page's **DLT State Doctor** expander renders the full report on demand.
+
 ## Dev Reset Recipe
 
 To truly start over on a dev machine:

@@ -3,6 +3,7 @@ from pages.pages import app_pages
 from utils.utils import sidebar_config
 from utils.config import settings
 import streamlit as st
+import load_eyeon
 import utils.db as db
 
 
@@ -68,6 +69,18 @@ class LandingPage(BasePageLayout):
                 raise  # or st.error(...); returning silently can hide issues
 
         st.toggle("DuckDB UI", key="duckdb_ui", on_change=change_duckdb_ui)
+
+        with st.expander("DLT State Doctor"):
+            st.caption(
+                "Compares the three stores of DLT state: the local pipeline "
+                "dir, the _dlt_* metadata tables, and the physical tables. "
+                "Same report as `load_eyeon.py --doctor`."
+            )
+            if st.button("Run doctor report"):
+                try:
+                    st.code(load_eyeon.doctor_text(db.get_conn()), language=None)
+                except Exception as e:
+                    st.error(f"Doctor report unavailable: {e}")
 
 
 def main():

@@ -345,18 +345,24 @@ def _doctor_dataset_roots(pipeline: dlt.Pipeline) -> dict:
     return {ds: _dataset_roots(schema, ds) for ds in ("bronze", "silver")}
 
 
+def doctor_text(conn) -> str:
+    """The DLT state consistency report for the configured database.
+
+    Streamlit-friendly entry point: takes an open DuckDB connection, returns
+    the report string, loads nothing.
+    """
+    pipeline = _build_pipeline(conn)
+    return dlt_state.doctor_report(
+        pipeline, conn, str(duckdb_path()), dataset_roots=_doctor_dataset_roots(pipeline)
+    )
+
+
 def doctor(log_level="INFO") -> None:
     """Print the DLT state consistency report without loading anything."""
     _configure_logging(log_level)
-    DB_PATH = str(duckdb_path())
-    conn = duckdb.connect(DB_PATH)
+    conn = duckdb.connect(str(duckdb_path()))
     try:
-        pipeline = _build_pipeline(conn)
-        print(
-            dlt_state.doctor_report(
-                pipeline, conn, DB_PATH, dataset_roots=_doctor_dataset_roots(pipeline)
-            )
-        )
+        print(doctor_text(conn))
     finally:
         conn.close()
 

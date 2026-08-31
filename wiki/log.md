@@ -785,3 +785,15 @@ Pages updated: wiki/index.md
 Contradictions flagged: none
 Notes: Lightweight variant; the deferred UI slice of dlt-state-consistency.
   Approved in-session ("Proceed"); implementation continues in-session.
+
+## [2026-08-31] implemented + verified + closeout | DB Health Surface
+
+Pages updated: wiki/work/db-health-surface/{implementation_plan,verification}.md,
+  wiki/diagnostic/dlt-three-store-consistency.md (in-app surfacing noted),
+  wiki/index.md (status → implemented)
+Contradictions flagged: none
+Notes: Sidebar DB Health expander (recent _meta.consistency_log events) with
+  unresolved-replacement warning banner on every page; Debug page DLT State
+  Doctor expander; doctor_text(conn) factored out of the --doctor CLI. New
+  helpers recent_events()/unresolved_instance_change() in utils/dlt_state.py
+  (Streamlit-free, unit-tested incl. pre-_meta databases). 20/20 tests pass.

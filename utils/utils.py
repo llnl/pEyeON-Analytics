@@ -12,6 +12,7 @@ import streamlit as st
 
 import load_eyeon
 import utils.db as db
+import utils.dlt_state as dlt_state
 from utils.config import duckdb_path, resolve_dlt_path, settings, update_eyeondata_toml
 from utils.schema_ext import EnrichedTable
 
@@ -357,10 +358,41 @@ def load_data(batch_dir: str, utility_id=None):
     load_eyeon.main(utility_id=utility_id, source=batch_dir)
 
 
+def sidebar_db_health():
+    """Surface _meta.consistency_log so DB self-heal events are visible in-app.
+
+    Never allowed to break page rendering: any failure collapses to a caption.
+    """
+    try:
+        conn = db.get_conn()
+        unresolved = dlt_state.unresolved_instance_change(conn)
+        if unresolved:
+            st.warning(
+                f"Database was replaced ({unresolved['ts']:%Y-%m-%d %H:%M}) and no "
+                "load has completed since. Pending packages from the previous "
+                "database were dropped — re-load affected batches. Details in "
+                "DB Health below."
+            )
+        events = dlt_state.recent_events(conn)
+        with st.expander("DB Health"):
+            if events:
+                st.dataframe(
+                    pd.DataFrame(events, columns=["ts", "event", "detail"]),
+                    hide_index=True,
+                )
+                st.caption("Full report: `uv run python load_eyeon.py --doctor`")
+            else:
+                st.caption("No consistency events recorded.")
+    except Exception as e:
+        with st.expander("DB Health"):
+            st.caption(f"Health info unavailable: {e}")
+
+
 def sidebar_db_chooser():
     if db.exists():
         with st.sidebar:
             _db_settings()
+            sidebar_db_health()
 
 
 def list_dirs(directory_path: str) -> pd.DataFrame:

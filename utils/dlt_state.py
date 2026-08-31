@@ -338,6 +338,62 @@ def refresh_instance_marker(pipeline, conn) -> None:
     _instance_marker_path(pipeline).write_text(ensure_meta_tables(conn), encoding="utf-8")
 
 
+def _meta_log_exists(conn) -> bool:
+    return (
+        conn.execute(
+            "select 1 from information_schema.tables"
+            " where table_schema = '_meta' and table_name = 'consistency_log'"
+        ).fetchone()
+        is not None
+    )
+
+
+def recent_events(conn, limit: int = 10) -> list[tuple]:
+    """Latest rows from `_meta.consistency_log`, newest first.
+
+    Returns (ts, event, detail) tuples; empty list when the table does not
+    exist (databases predating the consistency layer).
+    """
+    if not _meta_log_exists(conn):
+        return []
+    return conn.execute(
+        "select ts, event, detail from _meta.consistency_log order by ts desc limit ?",
+        [limit],
+    ).fetchall()
+
+
+def unresolved_instance_change(conn, datasets=("bronze", "silver")) -> dict | None:
+    """The latest `db_instance_changed` event not yet followed by a load.
+
+    A replaced database drops the pending packages of the previous one; until
+    a load completes afterwards, affected batches may be missing. Returns
+    {"ts": ..., "detail": ...} in that window, else None.
+    """
+    if not _meta_log_exists(conn):
+        return None
+    row = conn.execute(
+        "select ts, detail from _meta.consistency_log"
+        " where event = 'db_instance_changed' order by ts desc limit 1"
+    ).fetchone()
+    if row is None:
+        return None
+    event_ts, detail = row
+    for dataset in datasets:
+        try:
+            # Compare in SQL so DuckDB reconciles TIMESTAMPTZ (inserted_at)
+            # with the naive event timestamp via the session timezone.
+            loads_after = conn.execute(
+                f"select count(*) from {_q_ident(dataset)}._dlt_loads"
+                " where inserted_at > ?",
+                [event_ts],
+            ).fetchone()[0]
+        except Exception:
+            continue  # dataset or _dlt_loads missing — no loads there
+        if loads_after:
+            return None
+    return {"ts": event_ts, "detail": detail}
+
+
 def dataset_exists(conn, dataset_name: str) -> bool:
     return (
         conn.execute(
