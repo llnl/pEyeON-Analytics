@@ -748,3 +748,18 @@ Notes: First use of the LIGHTWEIGHT workflow variant: the interview happened
   in the same session on branch grantj-dlt-state-consistency. Architect
   added mid-session: persist consistency events in _meta.consistency_log so
   UIs can surface them.
+
+## [2026-08-31] implemented + verified | DLT State Consistency
+
+Pages updated: wiki/work/dlt-state-consistency/{implementation_plan,verification}.md
+Contradictions flagged: none
+Notes: Implemented in-session per the approved lightweight handoff. New
+  utils/dlt_state.py (heal drift, instance-identity reconcile with pending-
+  package drop, doctor report, _meta.consistency_log event trail); dead
+  _ensure_destination_tables in load_eyeon.py replaced (root cause: keyed by
+  dataset name instead of schema name); pending packages drained before the
+  bronze/silver dataset flip; utils/db.py init() stamps _meta.db_instance
+  and logs db_initialized; load_eyeon.py --doctor added. 3 new tests incl.
+  end-to-end incident regression; 18/18 pass. Refinements found by tests:
+  per-dataset root-table scoping (bronze owns raw_json) and columns-only
+  staging checks. Follow-ups in verification.md.

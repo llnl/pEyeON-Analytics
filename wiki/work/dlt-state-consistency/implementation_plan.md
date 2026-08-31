@@ -113,9 +113,10 @@ else reads it) and can be dropped with `DROP SCHEMA _meta CASCADE`.
 
 ## Done Checklist
 
-- [ ] `utils/dlt_state.py` implemented
-- [ ] `load_eyeon.py` wired (reconcile, drain, ensure, --doctor)
-- [ ] `utils/db.py` init() stamps instance + logs event
-- [ ] Tests pass via `uv run pytest`
-- [ ] `verification.md` filled with exact commands + full output
-- [ ] `wiki/log.md` entry appended
+- [x] `utils/dlt_state.py` implemented
+- [x] `load_eyeon.py` wired (reconcile, drain, ensure, --doctor)
+- [x] `utils/db.py` init() stamps instance + logs event
+- [x] Tests pass (18/18; parallel uv env — repo .venv not executable by the
+      verifying user, see verification.md)
+- [x] `verification.md` filled with exact commands + full output
+- [x] `wiki/log.md` entry appended

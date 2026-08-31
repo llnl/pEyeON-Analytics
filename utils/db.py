@@ -1,6 +1,7 @@
 import streamlit as st
 import duckdb
 import dlt
+import utils.dlt_state as dlt_state
 import utils.schema_ext as schema_ext
 from pathlib import Path
 from utils.config import duckdb_path, resolve_dlt_path
@@ -42,6 +43,12 @@ def init():
     statements = con.extract_statements(ddl_sql)
     for statement in statements:
         con.execute(statement)
+
+    # Stamp this database file with an instance id and record the bootstrap,
+    # so a later "DB replaced under a live pipeline" state is detectable
+    # (see utils/dlt_state.py and wiki/work/dlt-state-consistency/brief.md).
+    dlt_state.ensure_meta_tables(con)
+    dlt_state.log_event(con, "db_initialized", {"source": str(sql_file)})
     con.close()
 
 
