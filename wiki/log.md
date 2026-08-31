@@ -732,3 +732,19 @@ Contradictions flagged: none
 Notes: Architect approved the dev handoff as drafted (module layout, CLI
   shape, page surface, deps, test plan unchanged). Ready for a Developer
   session via the handoff's copy/paste prompt.
+
+## [2026-08-31] feature-open + handoff-approved | DLT State Consistency
+
+Pages created: wiki/work/dlt-state-consistency/{brief,implementation_plan,dev_handoff}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: First use of the LIGHTWEIGHT workflow variant: the interview happened
+  organically inside the 2026-08-31 diagnostic session (root cause of the
+  raw_obs__signatures__certs rfc822_name Binder Error: deleted dev DB +
+  surviving ~/.dlt pending package + stale schema.sql bootstrap +
+  _ensure_destination_tables dead code keyed by dataset instead of schema
+  name). No interview.md kept; Velocity metrics overlay skipped per
+  Architect. Handoff approved in-session ("Proceed"); implementation follows
+  in the same session on branch grantj-dlt-state-consistency. Architect
+  added mid-session: persist consistency events in _meta.consistency_log so
+  UIs can surface them.

@@ -98,6 +98,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/work/parse-multiprocessing-hang/implementation_plan]] | implemented | Fix core parse multiprocessing hang on large Mach-O binaries by using spawn-based workers and recycling each worker after one file |
 | [[wiki/work/parse-terminal-output/brief]] | proposed | Future task: centralize parse worker output in the parent process and consider Rich for stable progress plus readable logs |
 | [[wiki/work/update-loreforge/brief]] | implemented | Migrate AGENTS.md and wiki to the loreforge Engineer/Developer role model, singular directories, and new frontmatter schema (reverse-engineered workflow record) |
+| [[wiki/work/dlt-state-consistency/brief]] | handoff-approved | Heal/detect/explain/record dlt three-store state drift (deleted dev DB + surviving pending packages → Binder Error); lightweight workflow variant, in-session interview + approval (2026-08-31) |
 
 ## Concepts
 
