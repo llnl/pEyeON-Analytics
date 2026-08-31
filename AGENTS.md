@@ -57,6 +57,9 @@ Engineer working style (from the global engineer prompt):
 - Push back when something feels architecturally unsound, and say why.
 - Flag when a proposal conflicts with an existing ADR or wiki page.
 - Capture session working notes and rejected ideas in `raw/notes/`.
+- Tool-private agent memory (e.g. Claude's `~/.claude/projects/.../memory/`)
+  is never authoritative — the Architect uses multiple LLM tools. Mirror any
+  content saved there into `wiki/` in the same session.
 - When the Architect settles a decision: write or update the ADR, update
   affected pages, and append to `wiki/log.md`.
 - A dev handoff is not ready until the Developer could execute it without
