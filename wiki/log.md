@@ -797,3 +797,17 @@ Notes: Sidebar DB Health expander (recent _meta.consistency_log events) with
   Doctor expander; doctor_text(conn) factored out of the --doctor CLI. New
   helpers recent_events()/unresolved_instance_change() in utils/dlt_state.py
   (Streamlit-free, unit-tested incl. pre-_meta databases). 20/20 tests pass.
+
+## [2026-08-31] process | Agent memory mirrored to wiki
+
+Pages updated: wiki/diagnostic/dlt-three-store-consistency.md (explicit
+  wrong-dataset pending-package hazard; fix branch name)
+Contradictions flagged: none
+Notes: Architect directive — the Architect uses multiple LLM tools, so any
+  knowledge an agent stores in tool-private locations (e.g. Claude's
+  ~/.claude/projects/.../memory/) must ALSO exist in this wiki, in the same
+  session it is saved. Audit of existing Claude memory performed: all
+  content was already promoted to wiki/diagnostic/dlt-three-store-
+  consistency.md, README, and the feature work folders, except the two
+  details patched above. The wiki is the shared source of truth;
+  tool-private memory is only a local index into it.

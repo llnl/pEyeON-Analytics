@@ -68,7 +68,11 @@ Runs inside `load_eyeon.main()` on every load:
    recorded.
 2. **Pending-package drain** — surviving legitimate packages are loaded via
    a bare `pipeline.run()` *before* the bronze/silver dataset flip, so they
-   land in the dataset they were extracted for.
+   land in the dataset they were extracted for. (Underlying DLT hazard: one
+   pipeline alternating `dataset_name` per `run()` call retries pending
+   packages under whatever dataset is current, so an undrained silver
+   package picked up during the bronze phase would load into the wrong
+   dataset.)
 3. **Physical drift heal** — before each phase, missing tables/columns are
    created from the DLT schema (add-only, idempotent). Tables are scoped per
    dataset by their root table (`raw_json` → bronze; everything else →
@@ -114,7 +118,7 @@ their source directories.
 
 Root-caused and fixed 2026-08-31 under
 [[wiki/work/dlt-state-consistency/brief]] (lightweight LLM-assisted
-workflow). The original `_ensure_destination_tables` guard in `load_eyeon.py`
+workflow, branch `grantj-dlt-state-consistency`). The original `_ensure_destination_tables` guard in `load_eyeon.py`
 was written for exactly this failure but silently no-oped for its entire
 life: it looked up `pipeline.schemas[dataset_name]`, and that mapping is
 keyed by schema name (`eyeon_metadata`), not dataset name. Regression test:
