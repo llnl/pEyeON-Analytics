@@ -93,6 +93,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/work/vm-image-size-reduction/brief]] | proposed | Future task: reduce qcow2 size by stripping build toolchains, caches, and optional analytics payload rather than chasing nonexistent GUI/X11 weight |
 | [[wiki/work/parse-multiprocessing-hang/implementation_plan]] | implemented | Fix core parse multiprocessing hang on large Mach-O binaries by using spawn-based workers and recycling each worker after one file |
 | [[wiki/work/parse-terminal-output/brief]] | proposed | Future task: centralize parse worker output in the parent process and consider Rich for stable progress plus readable logs |
+| [[wiki/work/add-nfs-support-to-vm/brief]] | handoff-approved | Optional air-gapped NFS client workflow for VM scan inputs and parse outputs, DHCP-first networking cleanup, static example, and local login guidance |
 | [[wiki/work/update-loreforge/brief]] | implemented | Migrate AGENTS.md and wiki to the loreforge Engineer/Developer role model, singular directories, and new frontmatter schema (reverse-engineered workflow record) |
 
 ## Concepts
