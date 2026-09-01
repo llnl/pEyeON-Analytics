@@ -609,3 +609,38 @@ Notes: Architect/Engineer/Developer roles replace wiki-maintainer/code-developme
   marker, domain context, and EyeON-specific reasoning lint rules added.
   Executed on branch grantj-update-loreforge; historical log entries above
   retain pre-migration mode names and plural paths as historical record.
+
+## [2026-09-01] feature-start | AssemblyLine Plugin Using eyeon-parse.sh
+
+Pages created: wiki/work/assemblyline-eyeon-parse-plugin/{brief,references,design,implementation_plan}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Started an AssemblyLine integration feature workflow on branch
+feature/assemblyline-eyeon-parse-plugin. The initial packet grounds the work in
+the current host-oriented wrapper but leaves the AssemblyLine version, extension
+repository, nested-runtime security model, and observation-result contract open
+for Architect decisions before developer handoff.
+
+## [2026-09-01] feature-update | AssemblyLine Plugin Using eyeon-parse.sh
+
+Pages created: wiki/work/assemblyline-eyeon-parse-plugin/{dev_handoff,verification}.md
+Pages updated: wiki/work/assemblyline-eyeon-parse-plugin/{brief,references,design,implementation_plan}.md, wiki/index.md
+Contradictions flagged: none
+Notes: Architect interview selected a standalone AssemblyLine 4 service, a
+dedicated image with pinned EyeON, one submitted file per job, direct scanner
+execution rather than nested runtimes, archive attachment of all JSON output,
+identity/type/count result summary, visible nonfatal failures, and unit plus
+container integration validation. Draft handoff remains pending exact version
+pins, proposed resource-default approval, and data classification/retention
+policy.
+
+## [2026-09-01] feature-update | AssemblyLine Plugin Using eyeon-parse.sh
+
+Pages created: none
+Pages updated: wiki/work/assemblyline-eyeon-parse-plugin/{brief,design,implementation_plan,dev_handoff,verification}.md
+Contradictions flagged: none
+Notes: Architect approved the conservative service defaults: 1 GiB input,
+15-minute timeout, two EyeON threads, 512 MiB compressed archive, and 10,000
+observation JSON files per job. Exact AssemblyLine/EyeON version pins and the
+raw-result classification/retention policy remain deferred; the developer
+handoff remains Draft.

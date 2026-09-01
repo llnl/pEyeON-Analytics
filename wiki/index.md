@@ -111,3 +111,4 @@ Master catalog of all pages. Updated by the agent on every ingest.
 ---
 
 *Last updated: 2026-08-17 (loreforge migration: Architect/Engineer/Developer roles replace operating modes, singular wiki directories, new frontmatter schema backfilled on all pages, updated feature workflow with dev_handoff/verification as instruction/audit artifacts)*
+| [[wiki/work/assemblyline-eyeon-parse-plugin/brief]] | handoff-draft | Standalone AssemblyLine 4 EyeON service: pinned scanner image, one submission per job, raw JSON archive plus identity/type/count summary; version/data-policy approval pending |
