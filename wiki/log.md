@@ -5,6 +5,41 @@ Query: `grep "^## \[" log.md | tail -10`
 
 ---
 
+## [2026-09-01] verification | Linux VM build for add-nfs-support-to-vm
+
+Pages updated: wiki/work/add-nfs-support-to-vm/verification.md
+Contradictions flagged: none
+Notes: Linux has KVM and `/usr/libexec/qemu-kvm`, but the system `packer`
+command is actually `cracklib-packer`. Official HashiCorp Packer v1.16.0 was
+used from `/tmp/opencode/packer-test`; both Packer templates formatted and
+validated successfully. The real amd64 build booted the guest and reached SSH
+provisioning, then failed after 20m39s because the Debian guest did not trust
+the HTTPS certificate for Debian apt mirrors. No artifact was created; NFS
+runtime and air-gapped checks remain pending.
+
+## [2026-09-02] verification | Successful amd64 VM build and boot smoke test
+
+Pages updated: wiki/work/add-nfs-support-to-vm/verification.md,
+  wiki/work/add-nfs-support-to-vm/implementation_plan.md
+Contradictions flagged: none
+Notes: After the guest SSL trust issue was fixed, the amd64 image built
+successfully in 13m11s with official Packer v1.16.0 and KVM. Restricted-network
+boot checks passed for systemd-networkd DHCP, NFS client command availability,
+quickstart and disabled example files, and absence of an active static network
+file. Runtime testing found and fixed two authorized VM-build issues: sbin-path
+NFS commands needed sudo in the quickstart, and cloud-init could not chown
+write_files entries to the not-yet-created eyeon user. No local NFS server was
+available for mount/parse/unmount testing.
+
+## [2026-09-02] verification | NFS server reachability confirmed
+
+Pages updated: wiki/work/add-nfs-support-to-vm/verification.md
+Contradictions flagged: none
+Notes: The booted image discovered the deployed `spk16.llnl.gov` export and
+reached the NFSv3 server and mountd services. The mount was denied by the
+server export ACL, confirming that remaining work is deployment-specific
+network/export authorization rather than VM image or client-tool behavior.
+
 ## [2026-06-26] init | Wiki scaffold from repo scan
 
 Sources read: pEyeON/README.md, pEyeON/CONTRIBUTING.md, pEyeON/src/eyeon/observe.py,
@@ -608,8 +643,57 @@ Notes: Architect/Engineer/Developer roles replace wiki-maintainer/code-developme
   the audit artifact with full output and Deviations From Handoff. SYNTHESIS
   marker, domain context, and EyeON-specific reasoning lint rules added.
   Executed on branch grantj-update-loreforge; historical log entries above
-  retain pre-migration mode names and plural paths as historical record.
+   retain pre-migration mode names and plural paths as historical record.
 
+## [2026-09-01] feature-start | Add NFS support to VM
+
+Pages created: wiki/work/add-nfs-support-to-vm/{interview,brief,references,design,implementation_plan,verification}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Started the feature workflow on branch add-nfs-support-to-vm. Scope is
+optional, client-side NFS for scan inputs and parse-output landing areas; DHCP
+remains the default with a disabled static example. The VM must be usable from
+boot in an air-gapped environment, with local MOTD/quickstart guidance. The
+active DuckDB database remains on local storage and is explicitly excluded from
+the NFS workflow.
+
+## [2026-09-01] handoff-draft | Add NFS support to VM
+
+Pages created: wiki/work/add-nfs-support-to-vm/dev_handoff.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Drafted the Developer instruction document with the settled optional NFS,
+DHCP-default/static-example, MOTD/quickstart, and air-gapped runtime scope.
+Architect approval is pending.
+
+## [2026-09-01] handoff-approved | Add NFS support to VM
+
+Pages updated: wiki/work/add-nfs-support-to-vm/dev_handoff.md, wiki/index.md
+Contradictions flagged: none
+Notes: Architect approved the Developer handoff at 2026-09-01 10:20:58 -0700.
+
+## [2026-09-01] implementation | Add NFS support to VM
+
+Pages created: none
+Pages updated: wiki/work/add-nfs-support-to-vm/{implementation_plan,verification}.md
+Files updated: none by this Developer continuation; the authorized sibling
+`../pEyeON` implementation was already present in the worktree.
+Contradictions flagged: none
+Notes: Verified shell syntax and static safety properties on macOS. Packer is
+not installed locally, and no Linux VM or NFS server is available; Packer,
+offline boot, DHCP, NFS tool, mount, parse-output, and unmount verification are
+explicitly deferred for the Architect's real Linux test.
+
+## [2026-09-01] verification-update | Add NFS support to VM
+
+Pages created: none
+Pages updated: wiki/work/add-nfs-support-to-vm/verification.md
+Contradictions flagged: none
+Notes: Added macOS cloud-init YAML parsing and deterministic safety assertions
+for disabled examples, DuckDB local-storage guidance, `nfs-common`, and both
+Packer installer calls. Packer, QEMU, Docker, and Podman are unavailable on the
+host; no further image-level verification can run without installing tooling or
+moving to Linux.
 ## [2026-08-17] feature-start | Cleanup Streamlit App
 
 Pages created: wiki/work/cleanup-streamlit-app/{brief,references,current_state}.md
