@@ -694,3 +694,109 @@ for disabled examples, DuckDB local-storage guidance, `nfs-common`, and both
 Packer installer calls. Packer, QEMU, Docker, and Podman are unavailable on the
 host; no further image-level verification can run without installing tooling or
 moving to Linux.
+## [2026-08-17] feature-start | Cleanup Streamlit App
+
+Pages created: wiki/work/cleanup-streamlit-app/{brief,references,current_state}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Started via the LLM-assisted feature workflow on branch
+  grantj-cleanup-streamlit. Engineer analysis of EyeOnData.py + pages/ found:
+  vestigial BasePageLayout/registry boilerplate (st.navigation candidate),
+  grab-bag utils/utils.py, dead run_eyeon(), fragile cross-page session-state
+  coupling, inconsistent conventions. Untracked common/ is the orphaned
+  pre-DLT parquet-era app layer (Wintappy ancestry); untracked extras/ holds
+  prototypes. Missed-feature candidates catalogued: OneID auth gate,
+  dataset/db chooser, widget-state helpers, named-SQL pattern, graph viz
+  (cytoscape + x509 cert-chain notebook), Box browsing page,
+  observation-timeline query. UIX design to be directed by the Architect;
+  design.md and implementation_plan.md deferred until those sessions.
+
+## [2026-08-17] implement | Cleanup Streamlit App — Phase 1
+
+Pages created: wiki/work/cleanup-streamlit-app/{design,implementation_plan,verification}.md
+Pages updated: none (canonical streamlit_app.md update deferred until phases settle)
+Contradictions flagged: none
+Notes: Developer slice per Architect direction: migrated EyeOnData.py to
+  st.navigation/st.Page (six pages, Summary default, init form as sole page
+  when no DB); de-boilerplated all pages (removed per-page set_page_config,
+  sidebar_config, LandingPage/BasePageLayout wrappers); deleted
+  pages/pages.py and pages/_base_page.py; removed dead run_eyeon and
+  superseded app_base_config/sidebar_config from utils/utils.py. Fragile
+  coupling, schema chooser, and auth untouched per scope. Verified via
+  AppTest old-vs-new baseline (behavior parity; sole db-present failure is
+  pre-existing missing local dlt state). Discovered pre-existing list_dirs
+  empty-frame bug (directory_path column missing) — reported, not fixed.
+
+## [2026-08-17] design | Cleanup Streamlit App — refactoring candidates pass
+
+Pages created: wiki/work/cleanup-streamlit-app/refactoring_candidates.md
+Pages updated: wiki/work/cleanup-streamlit-app/design.md
+Contradictions flagged: none
+Notes: Engineer pass over pages/ + utils/ for cross-page code sharing.
+  Strongest evidence: metadata-type catalog logic re-implemented at 7 sites
+  (two verbatim duplicates: silver metadata_* discovery SQL, and the
+  gold.all_metadata list_sort + prefix-strip block); guarded query->df
+  patterns on every page (~25 raw db.get_conn() sites); duplicated
+  row-selection/metric-row/shadow-state widget code; wildcard-ilike dance x3
+  plus injection-prone interpolation in search_forms. Proposed packaging:
+  MetadataCatalog class, Query facade class, st_widgets + sqlutil function
+  modules, utils/utils.py cohesion split. Sequenced into three slices;
+  awaiting Architect selection.
+
+## [2026-08-17] implement | Cleanup Streamlit App — Phase 2 (3 slices)
+
+Pages created: none
+Pages updated: wiki/work/cleanup-streamlit-app/{design,implementation_plan,verification,brief,current_state,refactoring_candidates}.md,
+  wiki/component/streamlit_app.md (grounded_by refreshed)
+Contradictions flagged: none
+Notes: Architect approved all three refactor slices + list_dirs fix.
+  Slice A (a774056): utils/metadata_catalog.py MetadataCatalog class +
+  utils/queries.py Query facade + utils/sqlutil.py; migrated 7 duplicated
+  metadata-discovery/naming sites and all guarded-query patterns; certs
+  preflight ordering fixed; cache cleared after loads. Slice B (6933fd0):
+  utils/st_widgets.py (select_rows, metric_row, shadow helpers); search_forms
+  user input now parameterized. Slice C (85ef486): utils/utils.py retired
+  into utils/{batches,loader,app_init,sidebar}.py; list_dirs empty-frame
+  directory_path bug fixed and verified against the previously failing
+  repro. AppTest clean after every slice; entrypoint behavior parity with
+  Phase 1 baseline.
+
+## [2026-08-17] implement | Cleanup Streamlit App — Phase 3 dashboard pages (uncommitted)
+
+Pages created: wiki/work/cleanup-streamlit-app/dashboard_ideas.md
+Pages updated: wiki/work/cleanup-streamlit-app/{design,verification}.md
+Contradictions flagged: none
+Notes: Architect approved dashboard ideas 1-9; implemented as five new
+  Streamlit pages (Inventory, SecurityPosture, DataQuality, ChangeDetection,
+  VariantClusters) plus gold.mart_batch_changes dbt model, sectioned
+  navigation (Overview/Analysis/Admin), and a Posture & Quality KPI row on
+  EyeOnSummary. Verified with AppTest against the local eyeon.duckdb (real
+  data). Data caveats recorded: imphash/telfhash placeholder values,
+  gold_files is per-uuid not per-content. Left UNCOMMITTED per Architect
+  direction pending sample-dataset testing.
+
+## [2026-08-17] commit | Cleanup Streamlit App — Phase 3 committed
+
+Pages updated: wiki/work/cleanup-streamlit-app/{design,implementation_plan}.md
+Contradictions flagged: none
+Notes: Architect tested the Phase 3 dashboard pages with sample datasets,
+  reported the missing sidebar nav (root cause: legacy
+  client.showSidebarNavigation=false suppressing the st.navigation menu;
+  fixed), and approved. Committed.
+
+## [2026-08-27] spike + commit | Cleanup Streamlit App — hierarchy spike recorded; reference material committed; feature paused
+
+Pages created: wiki/work/cleanup-streamlit-app/spike.md
+Pages updated: wiki/work/cleanup-streamlit-app/implementation_plan.md
+Contradictions flagged: none
+Notes: Recorded the raw_obs nested-table hierarchy display spike (prototype
+  at extras/spike_hierarchy_views.py; hybrid recommendation: bronze/silver
+  document detail view + JsonColumn grid cells + keep master-detail;
+  AG Grid rejected — Enterprise-only features). Committed the previously
+  untracked reference material onto grantj-cleanup-streamlit so grounded_by
+  paths resolve from git: TODO.md, common/ (orphaned pre-DLT legacy layer,
+  dispositions pending), extras/{spike_hierarchy_views.py,
+  streamlit_box_ui.py, x509-graphs.ipynb, Schema.ipynb, DataLoading.drawio}.
+  Feature paused; resume points recorded in implementation_plan.md
+  (spike follow-ups, common/extras dispositions, auth question, TODO.md
+  overlaps).

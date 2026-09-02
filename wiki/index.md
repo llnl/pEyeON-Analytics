@@ -95,6 +95,7 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/work/parse-terminal-output/brief]] | proposed | Future task: centralize parse worker output in the parent process and consider Rich for stable progress plus readable logs |
 | [[wiki/work/add-nfs-support-to-vm/brief]] | handoff-approved | Optional air-gapped NFS client workflow for VM scan inputs and parse outputs, DHCP-first networking cleanup, static example, and local login guidance |
 | [[wiki/work/update-loreforge/brief]] | implemented | Migrate AGENTS.md and wiki to the loreforge Engineer/Developer role model, singular directories, and new frontmatter schema (reverse-engineered workflow record) |
+| [[wiki/work/cleanup-streamlit-app/brief]] | analysis | Overhaul EyeOnData.py: structural cleanup + disposition of untracked common/ and extras/ legacy feature candidates; UIX direction pending Architect |
 
 ## Concepts
 
