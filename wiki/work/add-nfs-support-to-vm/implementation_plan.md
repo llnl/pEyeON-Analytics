@@ -38,8 +38,9 @@ feature record. No schema or analytics application changes are expected.
   static-network, NFS, and alternative transfer guidance.
 - [x] Add the future warning about keeping the active DuckDB database off NFS.
 - [x] Update `../pEyeON/builds/README-Deploy.md`.
-- [ ] Build the supported VM architecture(s).
-- [ ] Boot-test in an air-gapped runtime environment.
+- [x] Build the available amd64 VM architecture; arm64 remains unbuilt on this
+  host.
+- [x] Boot-test the amd64 image in a restricted-network runtime environment.
 - [ ] Test DHCP and static-network instructions.
 - [ ] Test NFS tool discovery, manual input/output mounts, parsing, and
   unmounting against a local NFS server.

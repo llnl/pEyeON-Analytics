@@ -5,6 +5,41 @@ Query: `grep "^## \[" log.md | tail -10`
 
 ---
 
+## [2026-09-01] verification | Linux VM build for add-nfs-support-to-vm
+
+Pages updated: wiki/work/add-nfs-support-to-vm/verification.md
+Contradictions flagged: none
+Notes: Linux has KVM and `/usr/libexec/qemu-kvm`, but the system `packer`
+command is actually `cracklib-packer`. Official HashiCorp Packer v1.16.0 was
+used from `/tmp/opencode/packer-test`; both Packer templates formatted and
+validated successfully. The real amd64 build booted the guest and reached SSH
+provisioning, then failed after 20m39s because the Debian guest did not trust
+the HTTPS certificate for Debian apt mirrors. No artifact was created; NFS
+runtime and air-gapped checks remain pending.
+
+## [2026-09-02] verification | Successful amd64 VM build and boot smoke test
+
+Pages updated: wiki/work/add-nfs-support-to-vm/verification.md,
+  wiki/work/add-nfs-support-to-vm/implementation_plan.md
+Contradictions flagged: none
+Notes: After the guest SSL trust issue was fixed, the amd64 image built
+successfully in 13m11s with official Packer v1.16.0 and KVM. Restricted-network
+boot checks passed for systemd-networkd DHCP, NFS client command availability,
+quickstart and disabled example files, and absence of an active static network
+file. Runtime testing found and fixed two authorized VM-build issues: sbin-path
+NFS commands needed sudo in the quickstart, and cloud-init could not chown
+write_files entries to the not-yet-created eyeon user. No local NFS server was
+available for mount/parse/unmount testing.
+
+## [2026-09-02] verification | NFS server reachability confirmed
+
+Pages updated: wiki/work/add-nfs-support-to-vm/verification.md
+Contradictions flagged: none
+Notes: The booted image discovered the deployed `spk16.llnl.gov` export and
+reached the NFSv3 server and mountd services. The mount was denied by the
+server export ACL, confirming that remaining work is deployment-specific
+network/export authorization rather than VM image or client-tool behavior.
+
 ## [2026-06-26] init | Wiki scaffold from repo scan
 
 Sources read: pEyeON/README.md, pEyeON/CONTRIBUTING.md, pEyeON/src/eyeon/observe.py,
