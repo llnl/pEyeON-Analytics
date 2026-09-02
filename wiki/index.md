@@ -62,6 +62,12 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/pipeline/cert_analysis]] | medium | Certificate extraction, deduplication, expiry/key marts |
 | [[wiki/pipeline/metadata_curation]] | high | Silver discovers metadata types; gold curates known types via all_metadata; drift view highlights gaps |
 
+## Diagnostics
+
+| Page | Confidence | Summary |
+|------|------------|---------|
+| [[wiki/diagnostic/dlt-three-store-consistency]] | high | The three stores of DLT state, the self-heal/reconcile layer (utils/dlt_state.py), `load_eyeon.py --doctor`, `_meta.consistency_log`, and the dev DB reset recipe |
+
 ## Decisions
 
 | Page | Status | Summary |
@@ -71,6 +77,8 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/decision/duckdb_dlt_dbt]] | accepted | DuckDB + DLT + dbt as local analytics stack |
 | [[wiki/decision/bronze_silver_gold]] | accepted | Three-layer medallion architecture for EyeON data |
 | [[wiki/decision/feature_work_artifacts]] | accepted | Standard wiki artifacts for LLM-assisted feature work |
+| [[wiki/decision/2026-08-27-adopt-velocity-mini-lab]] | accepted | Adopt the interview stage and Velocity metrics overlay from the Wintap ecosystem |
+| [[wiki/decision/2026-08-27-report-generation-typst]] | accepted | Typst (via typst pip bindings) is the EyeON report-generation engine; WeasyPrint runner-up, Jasper fallback |
 
 ## Tensions
 
@@ -87,6 +95,8 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | Feature | Status | Summary |
 |---------|--------|---------|
 | [[wiki/work/binwalk-support/brief]] | started | Binwalk support requirements, references, design, spike, implementation, and verification skeleton |
+| [[wiki/work/implement-a-report-generator-ability/brief]] | closed | Report-generation tool selected: Typst (ADR 2026-08-27) after 12-candidate matrix + WeasyPrint/Typst spikes on real data; first feature closed under the interview + Velocity workflow (11.2×, Low confidence) |
+| [[wiki/work/report-generator-implementation/brief]] | handoff-approved | Implement the Typst report ability: reports/ package, eyeon-report CLI, Streamlit Reports page (batch changes + dossier, PDF, plotly charts); Developer session implements from approved handoff (2026-08-27) |
 | [[wiki/work/firmware-corpus/brief]] | first-slice-implemented | JSON manifest, list/fetch/checksum utility, OpenWrt Binwalk smoke candidate, and expanded candidate catalog including utility/industrial sources |
 | [[wiki/work/metadata-type-drift/implementation_plan]] | implemented | Add gold.metadata_type_drift and surface it in Schema Blame to show silver-only (unmodeled) metadata types |
 | [[wiki/work/ovf-vm-image-build/brief]] | in-progress | Debian 12 aligned container+VM path: Dockerfile refactor into reusable provision scripts, plus Debian 12 qcow2 appliance VM build scaffold |
@@ -95,7 +105,9 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/work/parse-terminal-output/brief]] | proposed | Future task: centralize parse worker output in the parent process and consider Rich for stable progress plus readable logs |
 | [[wiki/work/add-nfs-support-to-vm/brief]] | handoff-approved | Optional air-gapped NFS client workflow for VM scan inputs and parse outputs, DHCP-first networking cleanup, static example, and local login guidance |
 | [[wiki/work/update-loreforge/brief]] | implemented | Migrate AGENTS.md and wiki to the loreforge Engineer/Developer role model, singular directories, and new frontmatter schema (reverse-engineered workflow record) |
-| [[wiki/work/cleanup-streamlit-app/brief]] | analysis | Overhaul EyeOnData.py: structural cleanup + disposition of untracked common/ and extras/ legacy feature candidates; UIX direction pending Architect |
+ | [[wiki/work/dlt-state-consistency/brief]] | implemented | Heal/detect/explain/record dlt three-store state drift (deleted dev DB + surviving pending packages → Binder Error); lightweight workflow variant, in-session interview + approval; durable facts promoted to [[wiki/diagnostic/dlt-three-store-consistency]] (2026-08-31) |
+ | [[wiki/work/db-health-surface/brief]] | implemented | Surface _meta.consistency_log and the DLT state doctor in the Streamlit app (sidebar DB Health + Debug page); lightweight variant (2026-08-31) |
+ | [[wiki/work/cleanup-streamlit-app/brief]] | analysis | Overhaul EyeOnData.py: structural cleanup + disposition of untracked common/ and extras/ legacy feature candidates; UIX direction pending Architect |
 
 ## Concepts
 
@@ -106,10 +118,18 @@ Master catalog of all pages. Updated by the agent on every ingest.
 | [[wiki/concept/fuzzy_hashing]] | high | ssdeep, telfhash, imphash — purpose and use in EyeON |
 | [[wiki/concept/authenticode]] | medium | Windows PE signing: authentihash, LIEF verification |
 | [[wiki/concept/surfactant]] | medium | Upstream LLNL tool EyeON builds on for plugin management |
-| [[wiki/concept/llm_assisted_feature_workflow]] | medium | Lightweight RFC/ADR/spike workflow for LLM-assisted code changes |
-| [[wiki/concept/feature_work_template]] | medium | Reusable skeleton for new feature work folders |
+| [[wiki/concept/llm_assisted_feature_workflow]] | medium | Lightweight RFC/ADR/spike workflow for LLM-assisted code changes, with interview stage and Velocity metrics overlay |
+| [[wiki/concept/feature_work_template]] | medium | Reusable skeleton for new feature work folders (incl. interview.md, metrics.md) |
+| [[wiki/concept/velocity-metric]] | high | Velocity = solo-hours / (5.714 × days): one number for AI-assisted delivery speed |
+| [[wiki/concept/metrics-template]] | high | Per-feature metrics.md format: Results scorecard + canonical YAML record |
 | [[wiki/concept/build_glossary]] | medium | Builder glossary: containers, qcow2 appliance, multi-arch, and common gotchas |
+
+## Metrics
+
+| Page | Confidence | Summary |
+|------|------------|---------|
+| [[wiki/metrics]] | high | Cross-feature Velocity rollup: one row per closed feature |
 
 ---
 
-*Last updated: 2026-08-17 (loreforge migration: Architect/Engineer/Developer roles replace operating modes, singular wiki directories, new frontmatter schema backfilled on all pages, updated feature workflow with dev_handoff/verification as instruction/audit artifacts)*
+*Last updated: 2026-08-27 (adopted interview stage + Velocity metrics overlay from the Wintap ecosystem: new ADR, velocity-metric and metrics-template concepts, wiki/metrics rollup; workflow and template pages updated)*

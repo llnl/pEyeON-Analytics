@@ -1,8 +1,10 @@
 """Sidebar fragments rendered on every page by the EyeOnData.py entrypoint."""
 
 import streamlit as st
+import pandas as pd
 
 import utils.db as db
+import utils.dlt_state as dlt_state
 from utils.schema_ext import EnrichedTable
 
 
@@ -74,3 +76,30 @@ def sidebar_db_chooser():
     if db.exists():
         with st.sidebar:
             _db_settings()
+            sidebar_db_health()
+
+
+def sidebar_db_health():
+    """Show DLT consistency events without breaking page rendering."""
+    try:
+        conn = db.get_conn()
+        unresolved = dlt_state.unresolved_instance_change(conn)
+        if unresolved:
+            st.warning(
+                f"Database was replaced ({unresolved['ts']:%Y-%m-%d %H:%M}) and no "
+                "load has completed since. Pending packages from the previous "
+                "database were dropped. Re-load affected batches."
+            )
+        events = dlt_state.recent_events(conn)
+        with st.expander("DB Health"):
+            if events:
+                st.dataframe(
+                    pd.DataFrame(events, columns=["ts", "event", "detail"]),
+                    hide_index=True,
+                )
+                st.caption("Full report: `uv run python load_eyeon.py --doctor`")
+            else:
+                st.caption("No consistency events recorded.")
+    except Exception as e:
+        with st.expander("DB Health"):
+            st.caption(f"Health info unavailable: {e}")

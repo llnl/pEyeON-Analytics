@@ -643,8 +643,209 @@ Notes: Architect/Engineer/Developer roles replace wiki-maintainer/code-developme
   the audit artifact with full output and Deviations From Handoff. SYNTHESIS
   marker, domain context, and EyeON-specific reasoning lint rules added.
   Executed on branch grantj-update-loreforge; historical log entries above
-   retain pre-migration mode names and plural paths as historical record.
+  retain pre-migration mode names and plural paths as historical record.
 
+## [2026-08-27] adopt | Interview stage + Velocity metrics overlay (from Wintap ecosystem)
+
+Pages created: wiki/decision/2026-08-27-adopt-velocity-mini-lab.md,
+  wiki/concept/velocity-metric.md, wiki/concept/metrics-template.md,
+  wiki/metrics.md
+Pages updated: wiki/concept/llm_assisted_feature_workflow.md (Interview Stage
+  section, stages table, sealed questions, no-interview invocation variant,
+  metrics close-out), wiki/concept/feature_work_template.md (interview.md and
+  metrics.md skeletons), wiki/index.md
+Contradictions flagged: none
+Notes: Architect directed full adoption of both Wintap-Analytics workflow
+  additions (commits 1016c01 interview stage; b806028..e8a8bcc Velocity
+  v2.1). Formula, field names, and sealed-question phrasing kept identical to
+  the Wintap v2.1 protocol for cross-ecosystem comparability. Local
+  adaptations recorded in the ADR: role mapping (human=Architect), seal-broken
+  handling as the expected single-session case (ai_est_* null), availability
+  anchor = dated verification.md entry, re-domained interview question areas,
+  standing rules live in the ADR (Engineer does not edit AGENTS.md — pointer
+  proposed to Architect separately). In-flight features (cleanup-streamlit-app)
+  not retrofitted.
+
+## [2026-08-27] feature-open | Implement a Report Generator Ability
+
+Pages created: wiki/work/implement-a-report-generator-ability/{interview,brief,metrics}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: First feature opened under the newly adopted interview + Velocity
+  workflow. Three interview rounds resolved: scope = tool decision only
+  (comparison matrix + 1-2 finalist spikes on real eyeon.duckdb data + ADR);
+  PDF-first output; both Streamlit and CLI render contexts; all four report
+  kinds anchor the evaluation; constraints = open-source only, fully offline
+  design+render, Python-first with JVM (Jasper) admitted under burden of
+  proof; GUI designer developer-operated nice-to-have. Acceptance criteria
+  frozen in brief.md. Sealed human estimates recorded verbatim in
+  interview.md ("8 days" solo / "2 days" AI — unit interpretation flagged
+  for close-out). AI-side seal broken (same session ran the interview);
+  ai_est_* null per ADR adaptation 2. Candidate research delegated to the
+  Engineer; design.md next.
+
+## [2026-08-27] design | Report generator tool evaluation — candidate matrix
+
+Pages created: wiki/work/implement-a-report-generator-ability/{design,references}.md
+Pages updated: none
+Contradictions flagged: none
+Notes: Engineer research pass (web snapshot 2026-08-27) over 12 candidates
+  against the frozen constraint set (OSS, offline, DuckDB/SQL, PDF-first,
+  Python-first). Proposed finalists: Jinja2+WeasyPrint (BSD, active v69,
+  dual PDF/HTML from one template) and Typst via typst pip bindings
+  (Apache-2.0, in-process compile, fast batch PDF; offline package
+  vendoring caveat). JasperReports healthy (LGPL, 7.0.6, active 2026) with
+  the field's best GUI designer, but pyreportjasper is inactive and the
+  JVM+subprocess bridge cost fails the "clearly better" bar while the GUI
+  is nice-to-have — kept as fallback. BIRT rejected (governance wobbles,
+  dominated by Jasper). Spike plan: both finalists render a batch
+  change-detection report + dossier fragment from real eyeon.duckdb data.
+  Awaiting Architect review of finalists before spiking.
+
+## [2026-08-27] spike | Report generator finalists — WeasyPrint vs Typst (both pass)
+
+Pages created: wiki/work/implement-a-report-generator-ability/spike.md
+Pages updated: wiki/work/implement-a-report-generator-ability/metrics.md
+  (units recorded; estimate-before-implementation deviation logged)
+Contradictions flagged: none
+Notes: Both approved finalists rendered identical real-data reports (batch
+  change detection from gold.mart_batch_changes + signed-EFI observation
+  dossier with Sectigo certs) from database/eyeon.duckdb. Standard report:
+  WeasyPrint 1.40s/5pp/47KB (+ free HTML sibling from the same template);
+  Typst 0.03s/3pp/137KB. Full 3,275-row report: WeasyPrint 11.36s/125pp/
+  708KB; Typst 1.21s/86pp/4.1MB. Offline verified via strace (0 network
+  connects both). Typst defect found+fixed: unbreakable 64-char hash raw()
+  overflowed its table cell (chunking helper). Engineer lean: WeasyPrint
+  (one template -> PDF+HTML; maturity; summary-sized reports make the speed
+  gap moot). Environment fix recorded: repo is sshfs-mounted from macOS with
+  unresolvable Mac-side .venv symlinks; venv rebuilt on local disk via
+  UV_PROJECT_ENVIRONMENT. Spike deps kept out of pyproject (uv run --with).
+  Awaiting Architect decision -> ADR.
+
+## [2026-08-27] decision + close-out | Report generator: Typst selected; feature closed
+
+Pages created: wiki/decision/2026-08-27-report-generation-typst.md
+Pages updated: wiki/work/implement-a-report-generator-ability/{metrics,brief}.md,
+  wiki/metrics.md (first rollup row), wiki/index.md
+Contradictions flagged: none
+Notes: Architect chose Typst over the Engineer's WeasyPrint lean, weighting
+  render speed at scale (~9x), pip-only deployment, and the in-process
+  bytes API; WeasyPrint recorded as runner-up/fallback, Jasper as JVM
+  fallback. All three frozen acceptance criteria satisfied same-day
+  (matrix, both spikes, accepted ADR). Velocity close-out: 11.2x
+  (plausible range ~5.6-22x), confidence Low (single sealed estimate — AI
+  seal broken; "8 days" hours-interpreted; same-day close on a day-grain
+  denominator, so 11.2 is the conservative reading). Q3 comparability:
+  "Yes" — counts in the fitted trend. First feature closed under the
+  interview + Velocity workflow; process lessons logged in metrics.md
+  (per-unit estimates missed before spike implementation). Follow-on
+  implementation feature will productionize templates, HTML path, and
+  distribution.
+
+## [2026-08-27] feature-open + handoff-draft | Report Generator Implementation
+
+Pages created: wiki/work/report-generator-implementation/{interview,brief,implementation_plan,dev_handoff,metrics}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Follow-on to the Typst ADR, opened via two interview rounds. Scope:
+  productionize the two spike reports (batch changes, dossier) as a
+  reports/ package + eyeon-report console script + Streamlit Reports page;
+  PDF only (HTML deferred); download + -o distribution; deps approved by
+  Architect: typst + plotly/kaleido (NOT matplotlib — chart port required).
+  Implementation by a SEPARATE Developer session from the handoff
+  (Status: Draft, awaiting Architect approval). Metrics: AI-side estimates
+  written to metrics.md BEFORE the sealed questions were asked this time —
+  independent pair restored; human sealed answers recorded verbatim
+  ("2 days" solo, "<1 day" AI). Per-unit estimates recorded at handoff
+  drafting (rgi-01..04), fixing the prior feature's process deviation.
+
+## [2026-08-27] handoff-approved | Report Generator Implementation
+
+Pages updated: wiki/work/report-generator-implementation/dev_handoff.md
+  (Status: Approved, 2026-08-27), wiki/index.md
+Contradictions flagged: none
+Notes: Architect approved the dev handoff as drafted (module layout, CLI
+  shape, page surface, deps, test plan unchanged). Ready for a Developer
+  session via the handoff's copy/paste prompt.
+
+## [2026-08-31] feature-open + handoff-approved | DLT State Consistency
+
+Pages created: wiki/work/dlt-state-consistency/{brief,implementation_plan,dev_handoff}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: First use of the LIGHTWEIGHT workflow variant: the interview happened
+  organically inside the 2026-08-31 diagnostic session (root cause of the
+  raw_obs__signatures__certs rfc822_name Binder Error: deleted dev DB +
+  surviving ~/.dlt pending package + stale schema.sql bootstrap +
+  _ensure_destination_tables dead code keyed by dataset instead of schema
+  name). No interview.md kept; Velocity metrics overlay skipped per
+  Architect. Handoff approved in-session ("Proceed"); implementation follows
+  in the same session on branch grantj-dlt-state-consistency. Architect
+  added mid-session: persist consistency events in _meta.consistency_log so
+  UIs can surface them.
+
+## [2026-08-31] implemented + verified | DLT State Consistency
+
+Pages updated: wiki/work/dlt-state-consistency/{implementation_plan,verification}.md
+Contradictions flagged: none
+Notes: Implemented in-session per the approved lightweight handoff. New
+  utils/dlt_state.py (heal drift, instance-identity reconcile with pending-
+  package drop, doctor report, _meta.consistency_log event trail); dead
+  _ensure_destination_tables in load_eyeon.py replaced (root cause: keyed by
+  dataset name instead of schema name); pending packages drained before the
+  bronze/silver dataset flip; utils/db.py init() stamps _meta.db_instance
+  and logs db_initialized; load_eyeon.py --doctor added. 3 new tests incl.
+  end-to-end incident regression; 18/18 pass. Refinements found by tests:
+  per-dataset root-table scoping (bronze owns raw_json) and columns-only
+  staging checks. Follow-ups in verification.md.
+
+## [2026-08-31] closeout | DLT State Consistency
+
+Pages created: wiki/diagnostic/dlt-three-store-consistency.md
+Pages updated: wiki/index.md (status → implemented; new Diagnostics section),
+  wiki/concept/llm_assisted_feature_workflow.md (Lightweight Variant section),
+  README.md (--doctor usage, dev DB reset recipe, yaml revert-don't-commit note)
+Contradictions flagged: none
+Notes: Durable facts promoted to the canonical diagnostic page. Architect
+  decisions recorded: schemas/schema.sql keeps the current base but no longer
+  creates _dlt_* bookkeeping tables (Architect edit, committed); local churn
+  of schemas/eyeon_metadata.schema.yaml (v24→v68) reverted rather than
+  committed — the export snapshot is documentation, devs revert incidental
+  permutations. Lightweight workflow variant documented as a sanctioned path.
+
+## [2026-08-31] feature-open + handoff-approved | DB Health Surface
+
+Pages created: wiki/work/db-health-surface/{brief,implementation_plan,dev_handoff}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Lightweight variant; the deferred UI slice of dlt-state-consistency.
+  Approved in-session ("Proceed"); implementation continues in-session.
+
+## [2026-08-31] implemented + verified + closeout | DB Health Surface
+
+Pages updated: wiki/work/db-health-surface/{implementation_plan,verification}.md,
+  wiki/diagnostic/dlt-three-store-consistency.md (in-app surfacing noted),
+  wiki/index.md (status → implemented)
+Contradictions flagged: none
+Notes: Sidebar DB Health expander (recent _meta.consistency_log events) with
+  unresolved-replacement warning banner on every page; Debug page DLT State
+  Doctor expander; doctor_text(conn) factored out of the --doctor CLI. New
+  helpers recent_events()/unresolved_instance_change() in utils/dlt_state.py
+  (Streamlit-free, unit-tested incl. pre-_meta databases). 20/20 tests pass.
+
+## [2026-08-31] process | Agent memory mirrored to wiki
+
+Pages updated: wiki/diagnostic/dlt-three-store-consistency.md (explicit
+  wrong-dataset pending-package hazard; fix branch name)
+Contradictions flagged: none
+Notes: Architect directive — the Architect uses multiple LLM tools, so any
+  knowledge an agent stores in tool-private locations (e.g. Claude's
+  ~/.claude/projects/.../memory/) must ALSO exist in this wiki, in the same
+  session it is saved. Audit of existing Claude memory performed: all
+  content was already promoted to wiki/diagnostic/dlt-three-store-
+  consistency.md, README, and the feature work folders, except the two
+  details patched above. The wiki is the shared source of truth;
+  tool-private memory is only a local index into it.
 ## [2026-09-01] feature-start | Add NFS support to VM
 
 Pages created: wiki/work/add-nfs-support-to-vm/{interview,brief,references,design,implementation_plan,verification}.md
