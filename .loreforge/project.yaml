@@ -1,0 +1,39 @@
+schema_version: 1
+catalog_version: 1
+project:
+  project_name: pEyeON-Analytics
+  host_repo: .
+  primary_repo: ../pEyeON
+  sibling_repos: []
+  needs_review: true
+features:
+  adaptive-feature-interview: 1
+  approval-gated-handoff: 1
+  canonical-promotion: 1
+  contradiction-workflow: 1
+  decisions: 1
+  developer-handoff: 1
+  domain-frontmatter: 1
+  feature-workflow: 2
+  frontmatter-governance: 1
+  grounding-markers: 1
+  index-log: 1
+  lint-contract: 1
+  live-repo-source-policy: 1
+  managed-sections: 1
+  opencode-integration: 1
+  operations: 1
+  project-profile: 1
+  raw-provenance: 1
+  research-threads: 1
+  role-governance: 1
+  session-startup: 1
+  speculative-marker: 1
+  tensions: 1
+  vault-layout: 1
+  velocity-metrics: 1
+  verification-audit: 1
+  write-boundaries: 1
+ownership:
+  managed_sections: []
+  detached_features: []
