@@ -1,0 +1,20 @@
+{
+  "error": null,
+  "migrations": [
+    {
+      "category": "profile",
+      "detail": "",
+      "path": ".loreforge/project.yaml",
+      "status": "applied",
+      "subject": "project-profile"
+    }
+  ],
+  "plan_id": "5970a54958ae5035d88ce6ff4e355f5779f6f4172fac958ccfe625296070bcc7",
+  "schema_version": 1,
+  "snapshots": {
+    ".loreforge/project.yaml": null
+  },
+  "state": "completed",
+  "target": ".",
+  "target_digest": "c4a1f0f02ade9283f34342d8b6c4f21e3a61f26bcb9345306adc922cc36e4233"
+}
