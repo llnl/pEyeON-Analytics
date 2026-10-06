@@ -15,4 +15,8 @@ textColor = "#FFFFFF"
 font = "serif"
 
 [client]
-showSidebarNavigation = false
+# Must be true (the default) now that EyeOnData.py uses st.navigation —
+# false suppresses the st.navigation sidebar menu entirely. It was
+# originally false to hide the auto-generated pages/ nav when the app
+# drew its own menu with st.sidebar.page_link.
+showSidebarNavigation = true

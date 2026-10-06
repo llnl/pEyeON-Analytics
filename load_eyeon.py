@@ -11,9 +11,9 @@ import socket
 import dlt
 import duckdb
 
+import utils.dlt_state as dlt_state
 import utils.schema_blame as schema_blame
 from utils.config import duckdb_path, resolve_dlt_path
-from dlt.common.storages.exceptions import SchemaNotFoundError
 
 # Validate UUIDs
 UUID_RE = re.compile(r'"uuid"\s*:\s*"([^"]+)"')
@@ -259,10 +259,15 @@ def parse_args():
     )
     parser.add_argument(
         "--utility_id",
-        required=True,
+        required=False,
         help="Utility company ID, which is a short, unique string LLNL uses",
     )
-    parser.add_argument("--source", required=True, help="Source path of JSON files")
+    parser.add_argument("--source", required=False, help="Source path of JSON files")
+    parser.add_argument(
+        "--doctor",
+        action="store_true",
+        help="Print the DLT state consistency report and exit (no load)",
+    )
     parser.add_argument(
         "--depth",
         required=False,
@@ -279,22 +284,21 @@ def parse_args():
     )
 
     args = parser.parse_args()
+    if not args.doctor and not (args.utility_id and args.source):
+        parser.error("--utility_id and --source are required unless --doctor is given")
     return vars(args)
 
 
-def main(utility_id, source, depth=4, log_level="INFO") -> None:
+def _configure_logging(log_level: str) -> None:
     logging.basicConfig(
         level=getattr(logging, log_level),
         format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    DB_PATH = str(duckdb_path())
-    conn = duckdb.connect(DB_PATH)  # native duckdb connection
 
-    src = eyeon_source(utility_id, source, depth)  # has 4 resources
-
-    pipeline = dlt.pipeline(
+def _build_pipeline(conn) -> dlt.Pipeline:
+    return dlt.pipeline(
         pipeline_name="eyeon_metadata",
         destination=dlt.destinations.duckdb(conn),
         dataset_name="bronze",  # default schema (can override per run)
@@ -302,131 +306,122 @@ def main(utility_id, source, depth=4, log_level="INFO") -> None:
         export_schema_path=str(resolve_dlt_path("schemas")),
     )
 
-    def _duckdb_type(dlt_type: str | None) -> str:
-        # Minimal mapping; anything unknown becomes VARCHAR.
-        match (dlt_type or "").lower():
-            case "text" | "varchar" | "string":
-                return "VARCHAR"
-            case "bigint" | "int" | "integer":
-                return "BIGINT"
-            case "double" | "float":
-                return "DOUBLE"
-            case "bool" | "boolean":
-                return "BOOLEAN"
-            case "timestamp" | "timestamp_tz" | "datetime":
-                return "TIMESTAMP"
-            case "json":
-                return "JSON"
-            case _:
-                return "VARCHAR"
 
-    def _q_ident(name: str) -> str:
-        return '"' + name.replace('"', '""') + '"'
+# The single eyeon_metadata DLT schema spans both datasets; these root tables
+# live in bronze, everything else lands in silver.
+BRONZE_ROOT_TABLES = {"raw_json"}
 
-    def _ensure_destination_tables(dataset_name: str) -> None:
-        """Create missing tables/columns for the current DLT schema.
 
-        Root cause for the reported error: the local DLT schema can know about a
-        table (eg `metadata_generic_file`) while the DuckDB file doesn't have it
-        (because `schemas/schema.sql` is a snapshot and can lag). In that case
-        DLT may try to insert into a non-existent table.
+def _dataset_roots(schema, dataset_name: str) -> set[str]:
+    """Root tables that belong in `dataset_name` (staging follows its base)."""
+    if dataset_name.startswith("bronze"):
+        return BRONZE_ROOT_TABLES
+    return dlt_state.schema_root_tables(schema) - BRONZE_ROOT_TABLES
 
-        We proactively create missing tables and add missing columns based on
-        the pipeline schema before running `pipeline.run()`.
-        """
 
-        # On a fresh machine/user, the pipeline may not have any persisted schema
-        # under ~/.dlt yet (it is created on the first successful pipeline.run()).
-        # In that case, skip pre-creating tables; the run will bootstrap state.
-        try:
-            schema = pipeline.schemas[dataset_name]
-        except SchemaNotFoundError:
-            return
-        tables = getattr(schema, "tables", {}) or {}
-        if not tables:
-            return
+def _ensure_destination_tables(pipeline: dlt.Pipeline, conn, dataset_name: str) -> None:
+    """Heal physical drift for `dataset_name` (and its staging sibling).
 
-        conn.execute(f"create schema if not exists {_q_ident(dataset_name)}")
+    On a fresh machine the pipeline has no schema yet (it is created on the
+    first successful `pipeline.run()`); in that case the run bootstraps
+    everything itself and there is nothing to heal.
+    """
+    if not pipeline.default_schema_name:
+        return
+    schema = pipeline.default_schema
+    roots = _dataset_roots(schema, dataset_name)
+    dlt_state.ensure_destination_tables(schema, conn, dataset_name, roots=roots)
+    staging = f"{dataset_name}_staging"
+    if dlt_state.dataset_exists(conn, staging):
+        dlt_state.ensure_destination_tables(
+            schema, conn, staging, roots=roots, columns_only=True
+        )
 
-        # Cache existing tables + columns.
-        existing_tables = {
-            r[0]
-            for r in conn.execute(
-                """
-                select table_name
-                from information_schema.tables
-                where table_schema = ?
-                """,
-                [dataset_name],
-            ).fetchall()
-        }
 
-        existing_cols: dict[str, set[str]] = {}
-        if existing_tables:
-            rows = conn.execute(
-                """
-                select table_name, column_name
-                from information_schema.columns
-                where table_schema = ?
-                """,
-                [dataset_name],
-            ).fetchall()
-            for t, c in rows:
-                existing_cols.setdefault(t, set()).add(c)
+def _doctor_dataset_roots(pipeline: dlt.Pipeline) -> dict:
+    if not pipeline.default_schema_name:
+        return {"bronze": None, "silver": None}
+    schema = pipeline.default_schema
+    return {ds: _dataset_roots(schema, ds) for ds in ("bronze", "silver")}
 
-        for table_name, table_def in tables.items():
-            # Skip internal tables (DLT manages those separately).
-            if str(table_name).startswith("_dlt"):
-                continue
 
-            cols_def: dict = (table_def or {}).get("columns", {}) or {}
-            if not cols_def:
-                continue
+def doctor_text(conn) -> str:
+    """The DLT state consistency report for the configured database.
 
-            full_table = f"{_q_ident(dataset_name)}.{_q_ident(str(table_name))}"
-
-            if table_name not in existing_tables:
-                col_sql = []
-                for col_name, col in cols_def.items():
-                    dtype = _duckdb_type(col.get("data_type"))
-                    nullable = col.get("nullable")
-                    null_sql = "" if nullable or nullable is None else " NOT NULL"
-                    col_sql.append(f"{_q_ident(str(col_name))} {dtype}{null_sql}")
-                conn.execute(f"create table if not exists {full_table} ({', '.join(col_sql)})")
-                existing_tables.add(table_name)
-                existing_cols[table_name] = set(cols_def.keys())
-                continue
-
-            # Add missing columns on existing tables.
-            present = existing_cols.get(table_name, set())
-            for col_name, col in cols_def.items():
-                if col_name in present:
-                    continue
-                dtype = _duckdb_type(col.get("data_type"))
-                conn.execute(f"alter table {full_table} add column {_q_ident(str(col_name))} {dtype}")
-                present.add(col_name)
-            existing_cols[table_name] = present
-
-    bronze = src.with_resources("raw_json")
-    silver = src.with_resources(
-        "batch_resource", "files_resource", "json_errors", "metadata_resource"
+    Streamlit-friendly entry point: takes an open DuckDB connection, returns
+    the report string, loads nothing.
+    """
+    pipeline = _build_pipeline(conn)
+    return dlt_state.doctor_report(
+        pipeline, conn, str(duckdb_path()), dataset_roots=_doctor_dataset_roots(pipeline)
     )
 
-    # Ensure the destination has the necessary tables before each load.
-    _ensure_destination_tables("bronze")
-    bronze_info = pipeline.run(bronze, dataset_name="bronze")
-    # loads raw_json into bronze schema, no parsing of JSON
-    print_schema_changes(bronze_info, "bronze")
 
-    _ensure_destination_tables("silver")
-    silver_info = pipeline.run(silver, dataset_name="silver")
-    # Parses JSON into several different tables into silver schema
-    print_schema_changes(silver_info, "silver")
+def doctor(log_level="INFO") -> None:
+    """Print the DLT state consistency report without loading anything."""
+    _configure_logging(log_level)
+    conn = duckdb.connect(str(duckdb_path()))
+    try:
+        print(doctor_text(conn))
+    finally:
+        conn.close()
 
-    # Process any schema changes and perist in the database
-    schema_blame.materialize_schema_blame(conn)
+
+def main(utility_id, source, depth=4, log_level="INFO") -> None:
+    _configure_logging(log_level)
+
+    DB_PATH = str(duckdb_path())
+    conn = duckdb.connect(DB_PATH)  # native duckdb connection
+    try:
+        src = eyeon_source(utility_id, source, depth)  # has 4 resources
+
+        pipeline = _build_pipeline(conn)
+
+        # Detect a database replaced under this pipeline (dev DBs get deleted
+        # and re-bootstrapped from schemas/schema.sql); on mismatch, pending
+        # packages built against the old database are dropped and the event is
+        # recorded in _meta.consistency_log.
+        dlt_state.reconcile_db_instance(pipeline, conn)
+
+        # Drain legitimate pending packages before the bronze/silver dataset
+        # flip below: a bare run() loads them under the pipeline's stored
+        # dataset_name, i.e. the dataset they were extracted for.
+        if pipeline.has_pending_data:
+            logger.warning(
+                "Pending load packages found; loading them into dataset %s "
+                "before extracting new data.",
+                pipeline.dataset_name,
+            )
+            _ensure_destination_tables(pipeline, conn, pipeline.dataset_name)
+            pipeline.run()
+
+        bronze = src.with_resources("raw_json")
+        silver = src.with_resources(
+            "batch_resource", "files_resource", "json_errors", "metadata_resource"
+        )
+
+        # Ensure the destination has the necessary tables before each load.
+        _ensure_destination_tables(pipeline, conn, "bronze")
+        bronze_info = pipeline.run(bronze, dataset_name="bronze")
+        # loads raw_json into bronze schema, no parsing of JSON
+        print_schema_changes(bronze_info, "bronze")
+
+        _ensure_destination_tables(pipeline, conn, "silver")
+        silver_info = pipeline.run(silver, dataset_name="silver")
+        # Parses JSON into several different tables into silver schema
+        print_schema_changes(silver_info, "silver")
+
+        # Process any schema changes and perist in the database
+        schema_blame.materialize_schema_blame(conn)
+
+        dlt_state.refresh_instance_marker(pipeline, conn)
+    finally:
+        conn.close()
 
 
 if __name__ == "__main__":
     args = parse_args()
-    main(**args)
+    if args.pop("doctor", False):
+        doctor(log_level=args.get("log_level", "INFO"))
+    else:
+        main(**args)

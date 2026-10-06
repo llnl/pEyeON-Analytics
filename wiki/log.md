@@ -5,6 +5,41 @@ Query: `grep "^## \[" log.md | tail -10`
 
 ---
 
+## [2026-09-01] verification | Linux VM build for add-nfs-support-to-vm
+
+Pages updated: wiki/work/add-nfs-support-to-vm/verification.md
+Contradictions flagged: none
+Notes: Linux has KVM and `/usr/libexec/qemu-kvm`, but the system `packer`
+command is actually `cracklib-packer`. Official HashiCorp Packer v1.16.0 was
+used from `/tmp/opencode/packer-test`; both Packer templates formatted and
+validated successfully. The real amd64 build booted the guest and reached SSH
+provisioning, then failed after 20m39s because the Debian guest did not trust
+the HTTPS certificate for Debian apt mirrors. No artifact was created; NFS
+runtime and air-gapped checks remain pending.
+
+## [2026-09-02] verification | Successful amd64 VM build and boot smoke test
+
+Pages updated: wiki/work/add-nfs-support-to-vm/verification.md,
+  wiki/work/add-nfs-support-to-vm/implementation_plan.md
+Contradictions flagged: none
+Notes: After the guest SSL trust issue was fixed, the amd64 image built
+successfully in 13m11s with official Packer v1.16.0 and KVM. Restricted-network
+boot checks passed for systemd-networkd DHCP, NFS client command availability,
+quickstart and disabled example files, and absence of an active static network
+file. Runtime testing found and fixed two authorized VM-build issues: sbin-path
+NFS commands needed sudo in the quickstart, and cloud-init could not chown
+write_files entries to the not-yet-created eyeon user. No local NFS server was
+available for mount/parse/unmount testing.
+
+## [2026-09-02] verification | NFS server reachability confirmed
+
+Pages updated: wiki/work/add-nfs-support-to-vm/verification.md
+Contradictions flagged: none
+Notes: The booted image discovered the deployed `spk16.llnl.gov` export and
+reached the NFSv3 server and mountd services. The mount was denied by the
+server export ACL, confirming that remaining work is deployment-specific
+network/export authorization rather than VM image or client-tool behavior.
+
 ## [2026-06-26] init | Wiki scaffold from repo scan
 
 Sources read: pEyeON/README.md, pEyeON/CONTRIBUTING.md, pEyeON/src/eyeon/observe.py,
@@ -644,3 +679,360 @@ Notes: Architect approved the conservative service defaults: 1 GiB input,
 observation JSON files per job. Exact AssemblyLine/EyeON version pins and the
 raw-result classification/retention policy remain deferred; the developer
 handoff remains Draft.
+
+## [2026-08-27] adopt | Interview stage + Velocity metrics overlay (from Wintap ecosystem)
+
+Pages created: wiki/decision/2026-08-27-adopt-velocity-mini-lab.md,
+  wiki/concept/velocity-metric.md, wiki/concept/metrics-template.md,
+  wiki/metrics.md
+Pages updated: wiki/concept/llm_assisted_feature_workflow.md (Interview Stage
+  section, stages table, sealed questions, no-interview invocation variant,
+  metrics close-out), wiki/concept/feature_work_template.md (interview.md and
+  metrics.md skeletons), wiki/index.md
+Contradictions flagged: none
+Notes: Architect directed full adoption of both Wintap-Analytics workflow
+  additions (commits 1016c01 interview stage; b806028..e8a8bcc Velocity
+  v2.1). Formula, field names, and sealed-question phrasing kept identical to
+  the Wintap v2.1 protocol for cross-ecosystem comparability. Local
+  adaptations recorded in the ADR: role mapping (human=Architect), seal-broken
+  handling as the expected single-session case (ai_est_* null), availability
+  anchor = dated verification.md entry, re-domained interview question areas,
+  standing rules live in the ADR (Engineer does not edit AGENTS.md — pointer
+  proposed to Architect separately). In-flight features (cleanup-streamlit-app)
+  not retrofitted.
+
+## [2026-08-27] feature-open | Implement a Report Generator Ability
+
+Pages created: wiki/work/implement-a-report-generator-ability/{interview,brief,metrics}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: First feature opened under the newly adopted interview + Velocity
+  workflow. Three interview rounds resolved: scope = tool decision only
+  (comparison matrix + 1-2 finalist spikes on real eyeon.duckdb data + ADR);
+  PDF-first output; both Streamlit and CLI render contexts; all four report
+  kinds anchor the evaluation; constraints = open-source only, fully offline
+  design+render, Python-first with JVM (Jasper) admitted under burden of
+  proof; GUI designer developer-operated nice-to-have. Acceptance criteria
+  frozen in brief.md. Sealed human estimates recorded verbatim in
+  interview.md ("8 days" solo / "2 days" AI — unit interpretation flagged
+  for close-out). AI-side seal broken (same session ran the interview);
+  ai_est_* null per ADR adaptation 2. Candidate research delegated to the
+  Engineer; design.md next.
+
+## [2026-08-27] design | Report generator tool evaluation — candidate matrix
+
+Pages created: wiki/work/implement-a-report-generator-ability/{design,references}.md
+Pages updated: none
+Contradictions flagged: none
+Notes: Engineer research pass (web snapshot 2026-08-27) over 12 candidates
+  against the frozen constraint set (OSS, offline, DuckDB/SQL, PDF-first,
+  Python-first). Proposed finalists: Jinja2+WeasyPrint (BSD, active v69,
+  dual PDF/HTML from one template) and Typst via typst pip bindings
+  (Apache-2.0, in-process compile, fast batch PDF; offline package
+  vendoring caveat). JasperReports healthy (LGPL, 7.0.6, active 2026) with
+  the field's best GUI designer, but pyreportjasper is inactive and the
+  JVM+subprocess bridge cost fails the "clearly better" bar while the GUI
+  is nice-to-have — kept as fallback. BIRT rejected (governance wobbles,
+  dominated by Jasper). Spike plan: both finalists render a batch
+  change-detection report + dossier fragment from real eyeon.duckdb data.
+  Awaiting Architect review of finalists before spiking.
+
+## [2026-08-27] spike | Report generator finalists — WeasyPrint vs Typst (both pass)
+
+Pages created: wiki/work/implement-a-report-generator-ability/spike.md
+Pages updated: wiki/work/implement-a-report-generator-ability/metrics.md
+  (units recorded; estimate-before-implementation deviation logged)
+Contradictions flagged: none
+Notes: Both approved finalists rendered identical real-data reports (batch
+  change detection from gold.mart_batch_changes + signed-EFI observation
+  dossier with Sectigo certs) from database/eyeon.duckdb. Standard report:
+  WeasyPrint 1.40s/5pp/47KB (+ free HTML sibling from the same template);
+  Typst 0.03s/3pp/137KB. Full 3,275-row report: WeasyPrint 11.36s/125pp/
+  708KB; Typst 1.21s/86pp/4.1MB. Offline verified via strace (0 network
+  connects both). Typst defect found+fixed: unbreakable 64-char hash raw()
+  overflowed its table cell (chunking helper). Engineer lean: WeasyPrint
+  (one template -> PDF+HTML; maturity; summary-sized reports make the speed
+  gap moot). Environment fix recorded: repo is sshfs-mounted from macOS with
+  unresolvable Mac-side .venv symlinks; venv rebuilt on local disk via
+  UV_PROJECT_ENVIRONMENT. Spike deps kept out of pyproject (uv run --with).
+  Awaiting Architect decision -> ADR.
+
+## [2026-08-27] decision + close-out | Report generator: Typst selected; feature closed
+
+Pages created: wiki/decision/2026-08-27-report-generation-typst.md
+Pages updated: wiki/work/implement-a-report-generator-ability/{metrics,brief}.md,
+  wiki/metrics.md (first rollup row), wiki/index.md
+Contradictions flagged: none
+Notes: Architect chose Typst over the Engineer's WeasyPrint lean, weighting
+  render speed at scale (~9x), pip-only deployment, and the in-process
+  bytes API; WeasyPrint recorded as runner-up/fallback, Jasper as JVM
+  fallback. All three frozen acceptance criteria satisfied same-day
+  (matrix, both spikes, accepted ADR). Velocity close-out: 11.2x
+  (plausible range ~5.6-22x), confidence Low (single sealed estimate — AI
+  seal broken; "8 days" hours-interpreted; same-day close on a day-grain
+  denominator, so 11.2 is the conservative reading). Q3 comparability:
+  "Yes" — counts in the fitted trend. First feature closed under the
+  interview + Velocity workflow; process lessons logged in metrics.md
+  (per-unit estimates missed before spike implementation). Follow-on
+  implementation feature will productionize templates, HTML path, and
+  distribution.
+
+## [2026-08-27] feature-open + handoff-draft | Report Generator Implementation
+
+Pages created: wiki/work/report-generator-implementation/{interview,brief,implementation_plan,dev_handoff,metrics}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Follow-on to the Typst ADR, opened via two interview rounds. Scope:
+  productionize the two spike reports (batch changes, dossier) as a
+  reports/ package + eyeon-report console script + Streamlit Reports page;
+  PDF only (HTML deferred); download + -o distribution; deps approved by
+  Architect: typst + plotly/kaleido (NOT matplotlib — chart port required).
+  Implementation by a SEPARATE Developer session from the handoff
+  (Status: Draft, awaiting Architect approval). Metrics: AI-side estimates
+  written to metrics.md BEFORE the sealed questions were asked this time —
+  independent pair restored; human sealed answers recorded verbatim
+  ("2 days" solo, "<1 day" AI). Per-unit estimates recorded at handoff
+  drafting (rgi-01..04), fixing the prior feature's process deviation.
+
+## [2026-08-27] handoff-approved | Report Generator Implementation
+
+Pages updated: wiki/work/report-generator-implementation/dev_handoff.md
+  (Status: Approved, 2026-08-27), wiki/index.md
+Contradictions flagged: none
+Notes: Architect approved the dev handoff as drafted (module layout, CLI
+  shape, page surface, deps, test plan unchanged). Ready for a Developer
+  session via the handoff's copy/paste prompt.
+
+## [2026-08-31] feature-open + handoff-approved | DLT State Consistency
+
+Pages created: wiki/work/dlt-state-consistency/{brief,implementation_plan,dev_handoff}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: First use of the LIGHTWEIGHT workflow variant: the interview happened
+  organically inside the 2026-08-31 diagnostic session (root cause of the
+  raw_obs__signatures__certs rfc822_name Binder Error: deleted dev DB +
+  surviving ~/.dlt pending package + stale schema.sql bootstrap +
+  _ensure_destination_tables dead code keyed by dataset instead of schema
+  name). No interview.md kept; Velocity metrics overlay skipped per
+  Architect. Handoff approved in-session ("Proceed"); implementation follows
+  in the same session on branch grantj-dlt-state-consistency. Architect
+  added mid-session: persist consistency events in _meta.consistency_log so
+  UIs can surface them.
+
+## [2026-08-31] implemented + verified | DLT State Consistency
+
+Pages updated: wiki/work/dlt-state-consistency/{implementation_plan,verification}.md
+Contradictions flagged: none
+Notes: Implemented in-session per the approved lightweight handoff. New
+  utils/dlt_state.py (heal drift, instance-identity reconcile with pending-
+  package drop, doctor report, _meta.consistency_log event trail); dead
+  _ensure_destination_tables in load_eyeon.py replaced (root cause: keyed by
+  dataset name instead of schema name); pending packages drained before the
+  bronze/silver dataset flip; utils/db.py init() stamps _meta.db_instance
+  and logs db_initialized; load_eyeon.py --doctor added. 3 new tests incl.
+  end-to-end incident regression; 18/18 pass. Refinements found by tests:
+  per-dataset root-table scoping (bronze owns raw_json) and columns-only
+  staging checks. Follow-ups in verification.md.
+
+## [2026-08-31] closeout | DLT State Consistency
+
+Pages created: wiki/diagnostic/dlt-three-store-consistency.md
+Pages updated: wiki/index.md (status → implemented; new Diagnostics section),
+  wiki/concept/llm_assisted_feature_workflow.md (Lightweight Variant section),
+  README.md (--doctor usage, dev DB reset recipe, yaml revert-don't-commit note)
+Contradictions flagged: none
+Notes: Durable facts promoted to the canonical diagnostic page. Architect
+  decisions recorded: schemas/schema.sql keeps the current base but no longer
+  creates _dlt_* bookkeeping tables (Architect edit, committed); local churn
+  of schemas/eyeon_metadata.schema.yaml (v24→v68) reverted rather than
+  committed — the export snapshot is documentation, devs revert incidental
+  permutations. Lightweight workflow variant documented as a sanctioned path.
+
+## [2026-08-31] feature-open + handoff-approved | DB Health Surface
+
+Pages created: wiki/work/db-health-surface/{brief,implementation_plan,dev_handoff}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Lightweight variant; the deferred UI slice of dlt-state-consistency.
+  Approved in-session ("Proceed"); implementation continues in-session.
+
+## [2026-08-31] implemented + verified + closeout | DB Health Surface
+
+Pages updated: wiki/work/db-health-surface/{implementation_plan,verification}.md,
+  wiki/diagnostic/dlt-three-store-consistency.md (in-app surfacing noted),
+  wiki/index.md (status → implemented)
+Contradictions flagged: none
+Notes: Sidebar DB Health expander (recent _meta.consistency_log events) with
+  unresolved-replacement warning banner on every page; Debug page DLT State
+  Doctor expander; doctor_text(conn) factored out of the --doctor CLI. New
+  helpers recent_events()/unresolved_instance_change() in utils/dlt_state.py
+  (Streamlit-free, unit-tested incl. pre-_meta databases). 20/20 tests pass.
+
+## [2026-08-31] process | Agent memory mirrored to wiki
+
+Pages updated: wiki/diagnostic/dlt-three-store-consistency.md (explicit
+  wrong-dataset pending-package hazard; fix branch name)
+Contradictions flagged: none
+Notes: Architect directive — the Architect uses multiple LLM tools, so any
+  knowledge an agent stores in tool-private locations (e.g. Claude's
+  ~/.claude/projects/.../memory/) must ALSO exist in this wiki, in the same
+  session it is saved. Audit of existing Claude memory performed: all
+  content was already promoted to wiki/diagnostic/dlt-three-store-
+  consistency.md, README, and the feature work folders, except the two
+  details patched above. The wiki is the shared source of truth;
+  tool-private memory is only a local index into it.
+## [2026-09-01] feature-start | Add NFS support to VM
+
+Pages created: wiki/work/add-nfs-support-to-vm/{interview,brief,references,design,implementation_plan,verification}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Started the feature workflow on branch add-nfs-support-to-vm. Scope is
+optional, client-side NFS for scan inputs and parse-output landing areas; DHCP
+remains the default with a disabled static example. The VM must be usable from
+boot in an air-gapped environment, with local MOTD/quickstart guidance. The
+active DuckDB database remains on local storage and is explicitly excluded from
+the NFS workflow.
+
+## [2026-09-01] handoff-draft | Add NFS support to VM
+
+Pages created: wiki/work/add-nfs-support-to-vm/dev_handoff.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Drafted the Developer instruction document with the settled optional NFS,
+DHCP-default/static-example, MOTD/quickstart, and air-gapped runtime scope.
+Architect approval is pending.
+
+## [2026-09-01] handoff-approved | Add NFS support to VM
+
+Pages updated: wiki/work/add-nfs-support-to-vm/dev_handoff.md, wiki/index.md
+Contradictions flagged: none
+Notes: Architect approved the Developer handoff at 2026-09-01 10:20:58 -0700.
+
+## [2026-09-01] implementation | Add NFS support to VM
+
+Pages created: none
+Pages updated: wiki/work/add-nfs-support-to-vm/{implementation_plan,verification}.md
+Files updated: none by this Developer continuation; the authorized sibling
+`../pEyeON` implementation was already present in the worktree.
+Contradictions flagged: none
+Notes: Verified shell syntax and static safety properties on macOS. Packer is
+not installed locally, and no Linux VM or NFS server is available; Packer,
+offline boot, DHCP, NFS tool, mount, parse-output, and unmount verification are
+explicitly deferred for the Architect's real Linux test.
+
+## [2026-09-01] verification-update | Add NFS support to VM
+
+Pages created: none
+Pages updated: wiki/work/add-nfs-support-to-vm/verification.md
+Contradictions flagged: none
+Notes: Added macOS cloud-init YAML parsing and deterministic safety assertions
+for disabled examples, DuckDB local-storage guidance, `nfs-common`, and both
+Packer installer calls. Packer, QEMU, Docker, and Podman are unavailable on the
+host; no further image-level verification can run without installing tooling or
+moving to Linux.
+## [2026-08-17] feature-start | Cleanup Streamlit App
+
+Pages created: wiki/work/cleanup-streamlit-app/{brief,references,current_state}.md
+Pages updated: wiki/index.md
+Contradictions flagged: none
+Notes: Started via the LLM-assisted feature workflow on branch
+  grantj-cleanup-streamlit. Engineer analysis of EyeOnData.py + pages/ found:
+  vestigial BasePageLayout/registry boilerplate (st.navigation candidate),
+  grab-bag utils/utils.py, dead run_eyeon(), fragile cross-page session-state
+  coupling, inconsistent conventions. Untracked common/ is the orphaned
+  pre-DLT parquet-era app layer (Wintappy ancestry); untracked extras/ holds
+  prototypes. Missed-feature candidates catalogued: OneID auth gate,
+  dataset/db chooser, widget-state helpers, named-SQL pattern, graph viz
+  (cytoscape + x509 cert-chain notebook), Box browsing page,
+  observation-timeline query. UIX design to be directed by the Architect;
+  design.md and implementation_plan.md deferred until those sessions.
+
+## [2026-08-17] implement | Cleanup Streamlit App — Phase 1
+
+Pages created: wiki/work/cleanup-streamlit-app/{design,implementation_plan,verification}.md
+Pages updated: none (canonical streamlit_app.md update deferred until phases settle)
+Contradictions flagged: none
+Notes: Developer slice per Architect direction: migrated EyeOnData.py to
+  st.navigation/st.Page (six pages, Summary default, init form as sole page
+  when no DB); de-boilerplated all pages (removed per-page set_page_config,
+  sidebar_config, LandingPage/BasePageLayout wrappers); deleted
+  pages/pages.py and pages/_base_page.py; removed dead run_eyeon and
+  superseded app_base_config/sidebar_config from utils/utils.py. Fragile
+  coupling, schema chooser, and auth untouched per scope. Verified via
+  AppTest old-vs-new baseline (behavior parity; sole db-present failure is
+  pre-existing missing local dlt state). Discovered pre-existing list_dirs
+  empty-frame bug (directory_path column missing) — reported, not fixed.
+
+## [2026-08-17] design | Cleanup Streamlit App — refactoring candidates pass
+
+Pages created: wiki/work/cleanup-streamlit-app/refactoring_candidates.md
+Pages updated: wiki/work/cleanup-streamlit-app/design.md
+Contradictions flagged: none
+Notes: Engineer pass over pages/ + utils/ for cross-page code sharing.
+  Strongest evidence: metadata-type catalog logic re-implemented at 7 sites
+  (two verbatim duplicates: silver metadata_* discovery SQL, and the
+  gold.all_metadata list_sort + prefix-strip block); guarded query->df
+  patterns on every page (~25 raw db.get_conn() sites); duplicated
+  row-selection/metric-row/shadow-state widget code; wildcard-ilike dance x3
+  plus injection-prone interpolation in search_forms. Proposed packaging:
+  MetadataCatalog class, Query facade class, st_widgets + sqlutil function
+  modules, utils/utils.py cohesion split. Sequenced into three slices;
+  awaiting Architect selection.
+
+## [2026-08-17] implement | Cleanup Streamlit App — Phase 2 (3 slices)
+
+Pages created: none
+Pages updated: wiki/work/cleanup-streamlit-app/{design,implementation_plan,verification,brief,current_state,refactoring_candidates}.md,
+  wiki/component/streamlit_app.md (grounded_by refreshed)
+Contradictions flagged: none
+Notes: Architect approved all three refactor slices + list_dirs fix.
+  Slice A (a774056): utils/metadata_catalog.py MetadataCatalog class +
+  utils/queries.py Query facade + utils/sqlutil.py; migrated 7 duplicated
+  metadata-discovery/naming sites and all guarded-query patterns; certs
+  preflight ordering fixed; cache cleared after loads. Slice B (6933fd0):
+  utils/st_widgets.py (select_rows, metric_row, shadow helpers); search_forms
+  user input now parameterized. Slice C (85ef486): utils/utils.py retired
+  into utils/{batches,loader,app_init,sidebar}.py; list_dirs empty-frame
+  directory_path bug fixed and verified against the previously failing
+  repro. AppTest clean after every slice; entrypoint behavior parity with
+  Phase 1 baseline.
+
+## [2026-08-17] implement | Cleanup Streamlit App — Phase 3 dashboard pages (uncommitted)
+
+Pages created: wiki/work/cleanup-streamlit-app/dashboard_ideas.md
+Pages updated: wiki/work/cleanup-streamlit-app/{design,verification}.md
+Contradictions flagged: none
+Notes: Architect approved dashboard ideas 1-9; implemented as five new
+  Streamlit pages (Inventory, SecurityPosture, DataQuality, ChangeDetection,
+  VariantClusters) plus gold.mart_batch_changes dbt model, sectioned
+  navigation (Overview/Analysis/Admin), and a Posture & Quality KPI row on
+  EyeOnSummary. Verified with AppTest against the local eyeon.duckdb (real
+  data). Data caveats recorded: imphash/telfhash placeholder values,
+  gold_files is per-uuid not per-content. Left UNCOMMITTED per Architect
+  direction pending sample-dataset testing.
+
+## [2026-08-17] commit | Cleanup Streamlit App — Phase 3 committed
+
+Pages updated: wiki/work/cleanup-streamlit-app/{design,implementation_plan}.md
+Contradictions flagged: none
+Notes: Architect tested the Phase 3 dashboard pages with sample datasets,
+  reported the missing sidebar nav (root cause: legacy
+  client.showSidebarNavigation=false suppressing the st.navigation menu;
+  fixed), and approved. Committed.
+
+## [2026-08-27] spike + commit | Cleanup Streamlit App — hierarchy spike recorded; reference material committed; feature paused
+
+Pages created: wiki/work/cleanup-streamlit-app/spike.md
+Pages updated: wiki/work/cleanup-streamlit-app/implementation_plan.md
+Contradictions flagged: none
+Notes: Recorded the raw_obs nested-table hierarchy display spike (prototype
+  at extras/spike_hierarchy_views.py; hybrid recommendation: bronze/silver
+  document detail view + JsonColumn grid cells + keep master-detail;
+  AG Grid rejected — Enterprise-only features). Committed the previously
+  untracked reference material onto grantj-cleanup-streamlit so grounded_by
+  paths resolve from git: TODO.md, common/ (orphaned pre-DLT legacy layer,
+  dispositions pending), extras/{spike_hierarchy_views.py,
+  streamlit_box_ui.py, x509-graphs.ipynb, Schema.ipynb, DataLoading.drawio}.
+  Feature paused; resume points recorded in implementation_plan.md
+  (spike follow-ups, common/extras dispositions, auth question, TODO.md
+  overlaps).

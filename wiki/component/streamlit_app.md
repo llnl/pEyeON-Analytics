@@ -5,7 +5,7 @@ confidence: high
 grounded_by:
   - ../pEyeON-Analytics/README.md
   - ../pEyeON-Analytics/pages/ObservationHierarchy.py
-  - ../pEyeON-Analytics/pages/pages.py
+  - ../pEyeON-Analytics/EyeOnData.py
 policy: agent-editable
 last_validated: 2026-06-30
 repo_scope: pEyeON-Analytics

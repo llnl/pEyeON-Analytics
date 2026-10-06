@@ -4,14 +4,14 @@ type: concept
 confidence: medium
 grounded_by: []
 policy: agent-editable
-last_validated: 2026-08-17
+last_validated: 2026-08-27
 repo_scope: cross-repo
 implementation_area: dev-environment
 format_domain: none
 audience: mixed
 status: reviewed
 source_paths: wiki/concept/feature_work_template.md
-tags: [workflow, llm, template, feature-work]
+tags: [workflow, llm, template, feature-work, interview, metrics]
 ---
 
 # Concept: Feature Work Template
@@ -29,6 +29,7 @@ The expected output is:
 
 ```text
 wiki/work/<feature-slug>/
+  interview.md             (optional; record of the context-building Q&A + sealed estimates)
   brief.md                 (required)
   references.md            (optional)
   design.md                (optional)
@@ -36,8 +37,15 @@ wiki/work/<feature-slug>/
   implementation_plan.md   (optional)
   dev_handoff.md           (optional)
   verification.md          (optional)
+  metrics.md               (optional; plain-language Velocity results + technical record — see [[wiki/concept/metrics-template]])
   index.md                 (optional; long-running research threads)
 ```
+
+The interview stage (see [[wiki/concept/llm_assisted_feature_workflow]])
+normally runs before any artifact is written; `interview.md` is only created
+when its Q&A record adds value beyond what lands in `brief.md` — except that
+when the metrics overlay is in play, it is created at least for the
+`## Sealed — human estimates` section.
 
 Only create the artifacts that are useful for the feature. For a small feature,
 `brief.md` plus `verification.md` may be enough. For a high-uncertainty feature,
@@ -74,6 +82,68 @@ tags: [feature-work]
 ```
 
 The body skeletons below assume this frontmatter is present.
+
+## `interview.md`
+
+Record of the interactive context-building session between the Architect and
+the Engineer. Keep it condensed — resolved topics with outcomes, not a
+verbatim chat transcript. Every item under Decisions/Constraints/Delegations
+must also be reflected in `brief.md`; this file preserves the *why* behind
+them.
+
+```markdown
+# Feature Interview: <Feature Name>
+
+## Initial Idea
+
+<The Architect's original statement of the idea, as given.>
+
+## Context Established Before Questioning
+
+<Wiki pages read and repo paths spot-checked; facts taken as given without
+asking.>
+
+## Interview Log
+
+### Round <n>
+
+**Q:** <question, with options offered if any>
+**A:** <the Architect's answer, condensed>
+**Outcome:** decision | constraint | delegated | deferred — <one line>
+
+## Decisions
+
+## Constraints
+
+## Delegations
+
+## Deferred / Open Questions
+
+## Playback Summary
+
+<The confirmed summary that seeded brief.md.>
+
+## Sealed — human estimates
+
+<Asked as the interview's final two questions, answers recorded as given.
+SEALED: any agent that will produce its own estimates (e.g. the Engineer at
+exploration start) must not read this section until feature close-out. See
+[[wiki/decision/2026-08-27-adopt-velocity-mini-lab]] and
+[[wiki/concept/velocity-metric]]. If the Architect declines or the questions
+were skipped, leave blank — missing data is fine.>
+
+**Q: If you had to build this exact scope alone, without AI, how many working
+hours would it take? And on what date would it realistically have been
+available? (Forced counterfactual — answer even if you would not have
+attempted it solo. The hours are the feature's solo-hours: the Velocity
+numerator and portfolio weight. The calendar date absorbs weekends and
+distractions.)**
+**A:**
+
+**Q: With the AI workflow, on what date do you predict this feature will be
+available? (Calendar prediction, open date to availability.)**
+**A:**
+```
 
 ## `brief.md`
 
@@ -254,6 +324,14 @@ explicitly; write `None` if there were none.
 ## Follow-Ups
 ```
 
+## `metrics.md`
+
+Optional Velocity results file. It opens with a plain-language **Results**
+scorecard and keeps formulas and canonical YAML under **Technical Record**.
+Skeleton, field definitions, and lifecycle live in
+[[wiki/concept/metrics-template]]; protocol in
+[[wiki/decision/2026-08-27-adopt-velocity-mini-lab]].
+
 ## `index.md` (research threads)
 
 For long-running research threads that accumulate dated snapshots and handoffs
@@ -278,3 +356,5 @@ canonical pages until findings are validated.>
 
 - [[wiki/concept/llm_assisted_feature_workflow]] - process overview
 - [[wiki/decision/feature_work_artifacts]] - accepted organization
+- [[wiki/concept/metrics-template]] - Velocity Results and technical-record format
+- [[wiki/decision/2026-08-27-adopt-velocity-mini-lab]] - metrics overlay protocol

@@ -133,6 +133,34 @@ Useful log levels:
 uv run dbt build --project-dir dbt_eyeon_gold --profiles-dir dbt_eyeon_gold
 ```
 
+### Check DLT state consistency
+
+If a load fails strangely (e.g. a DuckDB Binder Error deep inside DLT) or
+after any manual database surgery, print the state doctor report:
+
+```bash
+uv run python load_eyeon.py --doctor
+```
+
+It compares the three stores of DLT state (the local pipeline dir under
+`~/.dlt/`, the `_dlt_*` metadata tables, and the physical tables) and lists
+recent self-heal events from `_meta.consistency_log`. Details:
+`wiki/diagnostic/dlt-three-store-consistency.md`.
+
+### Reset a dev database
+
+The DuckDB file and the DLT pipeline working dir are one unit of state —
+reset both or neither:
+
+```bash
+rm <database>.duckdb
+rm -rf ~/.dlt/pipelines/eyeon_metadata/
+```
+
+Deleting only the database file is detected and self-healed on the next load
+(pending packages from the old database are dropped and logged), but the full
+reset is the clean option.
+
 ## Repo Layout
 
 - `load_eyeon.py`: loads EyeOn JSON into DuckDB via `dlt`
@@ -176,7 +204,7 @@ flowchart TD
 
 ## Notes
 
-- `schemas/eyeon_metadata.schema.yaml` is generated as part of the DLT workflow and is intentionally checked in.
+- `schemas/eyeon_metadata.schema.yaml` is generated as part of the DLT workflow and is intentionally checked in. It is export-only documentation — nothing reads it back. Loading data locally churns it; revert that churn rather than committing whatever permutation your dev database produced.
 - `EyeOnData.toml` is local configuration and should not be committed.
 - `test.sh` is a simple local smoke-test script and assumes local sample data paths exist.
 
